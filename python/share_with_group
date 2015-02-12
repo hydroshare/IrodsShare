@@ -1,0 +1,14 @@
+#!/usr/bin/python
+
+import sys
+from api import share_with_group
+from irods.session import iRODSSession
+
+s = iRODSSession(host='localhost', port=1247, user='rods', password='c0rv3tt3', zone='tempZone')
+
+length = len(sys.argv)
+
+if length == 3:
+  share_with_group(s, sys.argv[1], sys.argv[2])
+else:
+  print "Usage: %s path group-name" % sys.argv[0]
