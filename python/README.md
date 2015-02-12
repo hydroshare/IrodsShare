@@ -4,12 +4,14 @@ This project leverages iRODS `icommands` and Python client API to expose basic c
 
 ## Command Line Tools
 
-* `add_to_group       group_name user_name`
-* `remove_from_group  group_name user_name`
-* `share_with_user    path       user_name`
-* `unshare_with_user  path       user_name`
-* `share_with_group   path       group_name`
-* `unshare_with_group path       group_name`
+```sh
+add_to_group       group_name user_name
+remove_from_group  group_name user_name
+share_with_user    path       user_name
+unshare_with_user  path       user_name
+share_with_group   path       group_name
+unshare_with_group path       group_name
+```
 
 ### Notes
 
@@ -20,12 +22,14 @@ This project leverages iRODS `icommands` and Python client API to expose basic c
 
 ## Python API
 
-* `share_with_user    (sess, resource, user)`
-* `unshare_with_user  (sess, resource, user)`
-* `share_with_group   (sess, resource, group)`
-* `unshare_with_group (sess, resource, group)`
-* `add_to_group       (group, user)`
-* `remove_from_group  (group, user)`
+```python
+def share_with_user    (sess, resource, user):
+def unshare_with_user  (sess, resource, user):
+def share_with_group   (sess, resource, group):
+def unshare_with_group (sess, resource, group):
+def add_to_group       (group, user):
+def remove_from_group  (group, user):
+```
 
 ### Notes
 
