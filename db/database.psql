@@ -1,0 +1,337 @@
+
+-- MUST DROP IN REVERSE ORDER 
+-- in order to avoid dependencies. 
+
+DROP TABLE IF EXISTS user_tags_of_resource; 
+DROP TABLE IF EXISTS user_folder_of_resource; 
+DROP VIEW IF EXISTS user_group_privilege_over_resource;
+DROP TABLE IF EXISTS group_access_to_resource; 
+DROP TABLE IF EXISTS user_membership_in_group; 
+DROP VIEW IF EXISTS user_privilege_over_group;
+DROP TABLE IF EXISTS user_access_to_group; 
+DROP VIEW IF EXISTS user_privilege_over_resource;
+DROP TABLE IF EXISTS user_access_to_resource; 
+DROP TABLE IF EXISTS user_folders; 
+DROP TABLE IF EXISTS user_tags; 
+DROP TABLE IF EXISTS resources; 
+DROP TABLE IF EXISTS groups; 
+DROP TABLE IF EXISTS users; 
+DROP TABLE IF EXISTS privileges; 
+
+-------------------------------------------------
+-- controlled vocabulary and print names for privileges 
+-- these presume that increasing number indicates 
+-- decreasing privilege and privilege merges are done
+-- by taking the minimum. 
+-------------------------------------------------
+
+CREATE TABLE privileges (
+   privilege_id INTEGER PRIMARY KEY, 
+   privilege_code VARCHAR(5) UNIQUE NOT NULL, 
+   privilege_name VARCHAR(20) UNIQUE NOT NULL, 
+   privilege_explanation VARCHAR(100) UNIQUE NOT NULL
+); 
+
+INSERT INTO privileges VALUES 
+    (1, 'own', 'owner',			-- only users can be owners
+     'can read, write, delete, share, and remove sharing privileges'),
+    (2, 'rw', 'read/write', 		-- regular access 
+     'can read, write, and share read/write privileges' ),
+    (3, 'ro', 'read only',		-- limited access 
+     'can read but not write; can share read privileges with others'),
+    (4, 'ns', 'read without sharing', 	-- do not redistribute
+     'can read but cannot share with others' ) ; 
+
+-------------------------------------------------
+-- GENERAL DATABASE STRUCTURE 
+-- * Database is designed around "assertion logic". Transactions are facts 
+--   to be made true. Either they are made true or an error is returned. 
+-- * provenance is determined through assertion_user_id and
+--   assertion_timestamp; these are the user responsible for 
+--   the most recent change and the time of change.  
+-- * For speed, tables are indexed by integers so that comparisons are quick. 
+--   Other keys in tables are indexed through UNIQUE constraints. 
+-------------------------------------------------
+
+-------------------------------------------------
+-- table of all users known to the privilege system. 
+-- * the primary key must be the iRODS login name. 
+--   This is necessary so that iRODS can look up privileges here. 
+-- * the secondary key is the user GUID. 
+--   This is necessary to implement user landing pages. 
+-- flags indicate user status 
+-- * administrative users are allowed special privileges. 
+-- * inactive users are retained for provenance purposes but
+--   cannot login or make changes. 
+-- limitations: 
+-- * it is not possible to delete a user login. This creates provenance
+--   ambiguities. 
+-- * it is possible to retire one login and then use another. User GUIDS 
+--   disambiguate this situation
+-- * there must be one administrative user with a NULL provenance. Thus
+--   provenance cannot be declared NON-NULL. 
+-------------------------------------------------
+
+CREATE TABLE users (
+   user_id SERIAL PRIMARY KEY,
+   user_login VARCHAR(40) UNIQUE NOT NULL,	-- user name
+   user_guid VARCHAR(40) UNIQUE NOT NULL, 	-- guid of landing page 
+   user_name VARCHAR(200), 			-- user full name 
+   user_active BOOL NOT NULL, 			-- whether user can act 
+   user_admin BOOL NOT NULL, 			-- whether user has admin 
+   assertion_user_id INTEGER REFERENCES users(user_id), 
+   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP)
+);
+
+-- bootstrap the system with a single administrative user 
+INSERT INTO users VALUES 
+  (DEFAULT, 'admin', 'ouserguid001', 'HydroShare Administrator',
+   TRUE, TRUE, NULL, DEFAULT);
+
+-------------------------------------------------
+-- groups are globally distinct 
+-- * primary key is GUID
+-- * no other disambiguations: group names can be identical and disambiguated
+--   through other means, e.g., owners. 
+-- * assertion_user_id is creator, but a group can have no members and owners; 
+--   - membership must be declared explicitly via user_membership_in_group
+--   - ownership must be declared explicitly via user_access_to_group
+-------------------------------------------------
+
+CREATE TABLE groups (
+   group_id SERIAL PRIMARY KEY,
+   group_name VARCHAR(40) NOT NULL,
+   group_guid VARCHAR(40) UNIQUE NOT NULL, 
+   group_description VARCHAR(200), 
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   assertion_timestamp timestamp NOT NULL DEFAULT(CURRENT_TIMESTAMP)
+);
+
+-------------------------------------------------
+-- existence table for resources. 
+-- only resources entered here (via GUID) are considered to be under
+-- protection of the sharing system. 
+-- NOTE: at this time, only minimal metadata is being kept here. 
+-------------------------------------------------
+
+CREATE TABLE resources (
+   resource_id SERIAL PRIMARY KEY,		
+   resource_guid VARCHAR(40) UNIQUE NOT NULL, 	-- guid of landing page 
+   resource_path VARCHAR(1000) UNIQUE NOT NULL, -- pathname in iRODS
+   resource_title VARCHAR(200) NOT NULL,	-- resource print title 
+   resource_immutable BOOL NOT NULL,		
+	-- whether resource has been declared to be immutable/published.  
+   assertion_user_id integer REFERENCES users(user_id) NOT NULL, 
+   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP)
+);
+
+-------------------------------------------------
+-- resource tags created by a specific user. 
+-- these are implicitly owned by the user. 
+-- assertion_user_id is that user. 
+-- only one instance of each tag can be created. 
+-------------------------------------------------
+CREATE TABLE user_tags (
+   user_tag_id SERIAL PRIMARY KEY,
+   user_tag_name VARCHAR(200) UNIQUE NOT NULL,
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),
+   CONSTRAINT user_tags_unique UNIQUE (user_tag_name, assertion_user_id) 
+);
+
+-------------------------------------------------
+-- directories created by a specific user. 
+-- this establishes the existence of the directory. 
+-- contents of the directory are established separately. 
+-- thus, a directory can be empty. 
+-- assertion_user_id is owner. 
+-------------------------------------------------
+CREATE TABLE user_folders (
+   user_folder_id SERIAL PRIMARY KEY,
+   user_folder_name VARCHAR(200) NOT NULL,
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+   CONSTRAINT user_folders_unique 
+	UNIQUE (user_folder_name, assertion_user_id) 
+);
+
+-------------------------------------------------
+-- access control for resources 
+-- Each record asserts that 
+-- * the user designated by user_id 
+-- * gains the privilege designated by privilege_id 
+-- * over the resource designated via resource_id. 
+-- the uniqueness constraint limits each user to 
+-- asserting at most one privilege over a resource 
+-- for another user. This avoids database clutter. 
+-- This does NOT prevent other users from granting 
+-- similar privileges to that resource. 
+-- Privileges combine by use of the MIN operator 
+-- over all grantors. 
+-------------------------------------------------
+
+CREATE TABLE user_access_to_resource ( 
+   id SERIAL PRIMARY KEY, 
+   user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
+   privilege_id INTEGER REFERENCES privileges(privilege_id) NOT NULL, 
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+   -- one user can grant another user access exactly once.
+   -- new assertions with the same user pair override older ones. 
+   -- access control privileges are cumulative over all grants. 
+   -- this is a performance issue 
+   CONSTRAINT user_resource_access_unique 
+	UNIQUE (user_id, resource_id, privilege_id, assertion_user_id) 
+); 
+
+-------------------------------------------------
+-- privileges over a resource are the logical-or
+-- of privileges granted by individuals. 
+-------------------------------------------------
+
+CREATE VIEW user_privilege_over_resource AS 
+    SELECT user_id, resource_id, MIN(privilege_id) 
+    FROM user_access_to_resource 
+    GROUP BY user_id, resource_id; 
+
+-------------------------------------------------
+-- access control for groups 
+-- This is similar to access control for resources. 
+-- * the user designated by user_id 
+-- * gains the privilege designated by privilege_id 
+-- * over the group designated via group_id. 
+-- Again, the uniqueness constraint limits each user to 
+-- asserting at most one privilege over a resource 
+-- for another user. This avoids database clutter. 
+-- This does NOT prevent other users from granting 
+-- similar privileges to that resource. 
+-- Privileges combine by use of the MIN operator 
+-- over all grantors. 
+-- Note that the API translates between group_id 
+-- and group_guid as necessary. 
+-------------------------------------------------
+
+create table user_access_to_group ( 
+   id SERIAL PRIMARY KEY, 
+   user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   group_id INTEGER REFERENCES groups(group_id) NOT NULL, 
+   privilege_id INTEGER REFERENCES privileges(privilege_id) NOT NULL, 
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),
+   -- one user can impose at most one access control grant for another user. 
+   -- access control is cumulative over all grants. 
+   -- this is a performance issue 
+   CONSTRAINT user_group_access_unique 
+	UNIQUE(user_id, group_id, privilege_id, assertion_user_id)
+); 
+
+-------------------------------------------------
+-- privileges over a group are the logical-or
+-- of privileges granted by individuals. 
+-------------------------------------------------
+
+CREATE VIEW user_privilege_over_group AS 
+    SELECT user_id, group_id, MIN(privilege_id) 
+    FROM user_access_to_group 
+    GROUP BY user_id, group_id; 
+
+-------------------------------------------------
+-- group membership 
+-- Each record asserts that 
+-- * the user designated by user_id 
+-- * is a member of the group designated via group_id. 
+-- This is subject to privilege level logic in the API.
+-------------------------------------------------
+
+CREATE TABLE user_membership_in_group ( 
+   id SERIAL PRIMARY KEY, 
+   user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   group_id INTEGER REFERENCES groups(group_id) NOT NULL, 
+   -- who put user into group, and when? 
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL,
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+   -- there can be at most one assertion that a user is in a group. 
+   -- this is a performance issue, not a security issue. 
+   CONSTRAINT user_membership_unique UNIQUE(user_id, group_id)
+);
+
+-------------------------------------------------
+-- group access to resource 
+-- Each record asserts that 
+-- * all users in the group designated via group_id. 
+-- * gains the privilege designated by privilege_id 
+-- * over the resource designated via resource_id. 
+-- Privileges are again combined by logical OR. 
+-- Only one record can exist for each user, granting user pair. 
+-- If a user grants access twice, the prior level of grant is 
+-- overridden. 
+-------------------------------------------------
+
+CREATE TABLE group_access_to_resource (
+   id SERIAL PRIMARY KEY, 
+   group_id INTEGER REFERENCES groups(group_id) NOT NULL, 
+   resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
+   privilege_id INTEGER REFERENCES privileges(privilege_id) NOT NULL,
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL,
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+   -- there can be at most one assertion per user that a group can 
+   -- access a resource. 
+   -- this is a performance issue, not a security issue. 
+   CONSTRAINT group_resource_access_unique 
+	UNIQUE(group_id, resource_id, privilege_id, assertion_user_id)
+); 
+
+-------------------------------------------------
+-- user privileges determined by group membership
+-- are a logical-OR of their group privileges 
+-------------------------------------------------
+
+CREATE VIEW user_group_privilege_over_resource AS 
+    SELECT um.user_id, ga.resource_id, MIN(ga.privilege_id) 
+    FROM group_access_to_resource as ga
+       LEFT JOIN user_membership_in_group AS um 
+	    ON ga.group_id=um.group_id 
+    GROUP BY um.user_id, ga.resource_id; 
+
+-------------------------------------------------
+-- a folder is a per-user abstraction 
+-- that should be unique for a resource and a user. 
+-- user_id is the asserting user. 
+-- Asserting a folder in the API inserts records 
+-- into both user_folders and user_folder_of_resource. 
+-------------------------------------------------
+
+CREATE TABLE user_folder_of_resource (
+   id INTEGER PRIMARY KEY, 
+   user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   user_folder_id INTEGER REFERENCES user_folders(user_folder_id) NOT NULL, 
+   resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
+   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),  
+   -- there can be at most one assertion of a specific folder by a user. 
+   CONSTRAINT user_folder_of_resource_unique 
+	UNIQUE (user_id, user_folder_id, resource_id), 
+   -- there may be only one folder per user and resource. 
+   CONSTRAINT user_folder_binding_unique 
+	UNIQUE (user_id, resource_id)
+); 
+
+-------------------------------------------------
+-- A user tag is a per-user abstraction.
+-- Single resources can have multiple tags.
+-- user_id is the asserting user. 
+-- Asserting a tag in the API inserts records 
+-- in both user_tags and user_tags_of_resource 
+-------------------------------------------------
+
+CREATE TABLE user_tags_of_resource ( 
+   id SERIAL PRIMARY KEY, 
+   user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   user_tag_id INTEGER REFERENCES user_tags(user_tag_id) NOT NULL, 
+   resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
+   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+   -- each resource can be tagged with each tag exactly once. 
+   -- this is a performance issue. 
+   CONSTRAINT user_tags_of_resource_unique 
+	UNIQUE(user_id, user_tag_id, resource_id)
+); 
