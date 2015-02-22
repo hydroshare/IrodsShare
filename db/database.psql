@@ -2,6 +2,7 @@
 -- MUST DROP IN REVERSE ORDER 
 -- in order to avoid dependencies. 
 
+DROP VIEW IF EXISTS user_resource_privilege;
 DROP TABLE IF EXISTS user_tags_of_resource; 
 DROP TABLE IF EXISTS user_folder_of_resource; 
 DROP VIEW IF EXISTS user_group_privilege_over_resource;
@@ -47,7 +48,7 @@ INSERT INTO privileges VALUES
 -- * Database is designed around "assertion logic". Transactions are facts 
 --   to be made true. Either they are made true or an error is returned. 
 -- * provenance is determined through assertion_user_id and
---   assertion_timestamp; these are the user responsible for 
+--   assertion_time; these are the user responsible for 
 --   the most recent change and the time of change.  
 -- * For speed, tables are indexed by integers so that comparisons are quick. 
 --   Other keys in tables are indexed through UNIQUE constraints. 
@@ -80,7 +81,7 @@ CREATE TABLE users (
    user_active BOOL NOT NULL, 			-- whether user can act 
    user_admin BOOL NOT NULL, 			-- whether user has admin 
    assertion_user_id INTEGER REFERENCES users(user_id), 
-   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP)
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP)
 );
 
 -- bootstrap the system with a single administrative user 
@@ -104,7 +105,7 @@ CREATE TABLE groups (
    group_guid VARCHAR(40) UNIQUE NOT NULL, 
    group_description VARCHAR(200), 
    assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
-   assertion_timestamp timestamp NOT NULL DEFAULT(CURRENT_TIMESTAMP)
+   assertion_time time NOT NULL DEFAULT(CURRENT_TIMESTAMP)
 );
 
 -------------------------------------------------
@@ -122,7 +123,7 @@ CREATE TABLE resources (
    resource_immutable BOOL NOT NULL,		
 	-- whether resource has been declared to be immutable/published.  
    assertion_user_id integer REFERENCES users(user_id) NOT NULL, 
-   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP)
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP)
 );
 
 -------------------------------------------------
@@ -135,7 +136,7 @@ CREATE TABLE user_tags (
    user_tag_id SERIAL PRIMARY KEY,
    user_tag_name VARCHAR(200) UNIQUE NOT NULL,
    assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
-   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),
    CONSTRAINT user_tags_unique UNIQUE (user_tag_name, assertion_user_id) 
 );
 
@@ -150,7 +151,7 @@ CREATE TABLE user_folders (
    user_folder_id SERIAL PRIMARY KEY,
    user_folder_name VARCHAR(200) NOT NULL,
    assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
-   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
    CONSTRAINT user_folders_unique 
 	UNIQUE (user_folder_name, assertion_user_id) 
 );
@@ -176,7 +177,7 @@ CREATE TABLE user_access_to_resource (
    resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
    privilege_id INTEGER REFERENCES privileges(privilege_id) NOT NULL, 
    assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
-   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
    -- one user can grant another user access exactly once.
    -- new assertions with the same user pair override older ones. 
    -- access control privileges are cumulative over all grants. 
@@ -191,7 +192,7 @@ CREATE TABLE user_access_to_resource (
 -------------------------------------------------
 
 CREATE VIEW user_privilege_over_resource AS 
-    SELECT user_id, resource_id, MIN(privilege_id) 
+    SELECT user_id, resource_id, MIN(privilege_id) as privilege_id
     FROM user_access_to_resource 
     GROUP BY user_id, resource_id; 
 
@@ -232,7 +233,7 @@ create table user_access_to_group (
 -------------------------------------------------
 
 CREATE VIEW user_privilege_over_group AS 
-    SELECT user_id, group_id, MIN(privilege_id) 
+    SELECT user_id, group_id, MIN(privilege_id) as privilege_id
     FROM user_access_to_group 
     GROUP BY user_id, group_id; 
 
@@ -288,7 +289,7 @@ CREATE TABLE group_access_to_resource (
 -------------------------------------------------
 
 CREATE VIEW user_group_privilege_over_resource AS 
-    SELECT um.user_id, ga.resource_id, MIN(ga.privilege_id) 
+    SELECT um.user_id, ga.resource_id, MIN(ga.privilege_id) as privilege_id
     FROM group_access_to_resource as ga
        LEFT JOIN user_membership_in_group AS um 
 	    ON ga.group_id=um.group_id 
@@ -307,7 +308,7 @@ CREATE TABLE user_folder_of_resource (
    user_id INTEGER REFERENCES users(user_id) NOT NULL, 
    user_folder_id INTEGER REFERENCES user_folders(user_folder_id) NOT NULL, 
    resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
-   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),  
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),  
    -- there can be at most one assertion of a specific folder by a user. 
    CONSTRAINT user_folder_of_resource_unique 
 	UNIQUE (user_id, user_folder_id, resource_id), 
@@ -329,9 +330,21 @@ CREATE TABLE user_tags_of_resource (
    user_id INTEGER REFERENCES users(user_id) NOT NULL, 
    user_tag_id INTEGER REFERENCES user_tags(user_tag_id) NOT NULL, 
    resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
-   assertion_timestamp TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
    -- each resource can be tagged with each tag exactly once. 
    -- this is a performance issue. 
    CONSTRAINT user_tags_of_resource_unique 
 	UNIQUE(user_id, user_tag_id, resource_id)
 ); 
+
+-------------------------------------------------
+-- make a union of the two kinds of privilege 
+-- over a resource, so that we can query privilege 
+-- via a single query.
+-------------------------------------------------
+CREATE VIEW user_resource_privilege AS 
+  SELECT user_id, resource_id, privilege_id 
+  FROM user_privilege_over_resource
+  UNION 
+  SELECT user_id, resource_id, privilege_id 
+  FROM user_group_privilege_over_resource; 
