@@ -32,10 +32,10 @@ class HSAccess:
     Access control class for HydroShare Resources, Groups
     """
     _NO_PRIVILEGE = 100  # code that no privilege is asserted
-    _OWN = 1  # owner of thing
-    _RW = 2   # can read and write thing
-    _RO = 3   # can read thing
-    _NS = 4   # can read but not share with others
+    _OWN = 1             # owner of thing
+    _RW = 2              # can read and write thing
+    _RO = 3              # can read thing
+    _NS = 4              # can read but not share with others
 
     def __init__(self, database, user, password, host, port):
         try:
@@ -166,6 +166,8 @@ class HSAccess:
             raise HSAException("user login '" + login + "' does not exist")
 
     # this is a no-frills assert of a user record without object use
+    # CLI: this will normally be done by django. But we need a debugging command
+    # 'hs_register_user' for our own use.
     def assert_user(self, user_login, assert_login, user_guid, user_name, user_active=True, user_admin=False):
         """
         Register or update the registration of a user login name
@@ -303,6 +305,7 @@ class HSAccess:
             return False
 
     # this is a no-frills assert user without object use
+    # CLI: hs_create_group and hs_modify_group
     def assert_group(self, group_guid, assert_login, group_name):
         """
         Register or update a group
@@ -345,6 +348,7 @@ class HSAccess:
                          (group_name, assertion_user_id, group_guid))
         self.conn.commit()
 
+    # CLI: hs_delete_group
     def retract_group(self, login, guid):
         """
         Delete a group and all membership information
@@ -354,7 +358,6 @@ class HSAccess:
         Retractions are handled via database cascade logic
         """
         # only an owner can retract a group
-
         if self.group_is_owned(login, guid):
             self.cur.execute("""delete from groups where group_guid=%s""", (guid,))
         else:
@@ -441,9 +444,12 @@ class HSAccess:
         :return: None
         """
         self.assert_resource(metadata['guid'], requesting_login,
-                             metadata['path'], metadata['title'], metadata['immutable'])
+                             metadata['path'], metadata['title'],
+                             metadata['immutable'])
 
     # a primitive resource instantiation without objects
+    # CLI: currently this can only be done properly through django
+    # but we need a debugging command "hs_register_resource" for our own use
     def assert_resource(self, resource_guid, assert_login,
                         resource_path, resource_title, resource_immutable=False):
         """
@@ -558,13 +564,19 @@ class HSAccess:
         """
         user_id = self._get_user_id_from_login(user_login)
         resource_id = self._get_resource_id_from_guid(resource_guid)
+        # user_resource_privilege is a UNION of user and group privileges and contains duplicates
+        # collapse the duplicates with a MIN function
         self.cur.execute("""select min(privilege_id) as privilege_id from user_resource_privilege
                          where user_id=%s and resource_id=%s""",
                          (user_id, resource_id))
         if self.cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one record for a specific user/resource pair")
         if self.cur.rowcount > 0:
-            return self.cur.fetchone()['privilege_id']
+            priv = self.cur.fetchone()['privilege_id']
+            if self.resource_is_immutable(resource_guid):
+                return max(priv, self._RO)  # eliminate write privileges from base privilege word.
+            else:
+                return priv
         else:
             return self._NO_PRIVILEGE  # no privilege
 
@@ -621,6 +633,7 @@ class HSAccess:
         """
         return self.resource_accessible(login, guid, 'ns')
 
+    # CLI: hs_share_resource
     def share_resource_with_user(self, requesting_login, resource_guid, user_login, privilege_code='ns'):
         """
         Share a specific resource with a specific user
@@ -679,41 +692,8 @@ class HSAccess:
         else:
             return False
 
-    # def _get_group_access_to_resource_privilege(self, group_id, resource_id, asserting_user_id):
-    #     """ PRIVATE Check low-level access to a group by a user: used only in share_resource_with_group
-    #     :param group_id: the group for which to check privilege
-    #     :param resource_id: the resource id for which to check privilege
-    #     :param asserting_user_id: the asserting user looking to change privilege
-    #     :return: an integer between 1 and self._NO_PRIVILEGE, denoting privilege level
-    #     """
-    #     self.cur.execute("""select privilege_id from group_access_to_resource where group_id=%s
-    #                       and resource_id=%s and assertion_user_id=%s""",
-    #                      (group_id, resource_id, asserting_user_id))
-    #     if self.cur.rowcount>0:
-    #         return self.cur.fetchone()['privilege_id']
-    #     else:
-    #         raise HSAException("no privileges recorded for group_id "+group_id+", resource_id "+resource_id
-    #               +", granting user id "+asserting_user_id)
-
-    # # utilize a join view to summarize user privilege
-    # # OBSOLETE due to refactoring of get_user_privilege_over_resource
-    # def _get_user_group_privilege_over_resource(self, user_login, resource_guid):
-    #     """ Get the privileges over a resource resulting from all group memberships
-    #     :param user_login: the user on which to report
-    #     :param resource_guid: the resource on which to report
-    #     :return: an integer between 1 and self._NO_PRIVILEGE, denoting a privilege level
-    #     """
-    #     user_id = self._get_user_id_from_login(user_login)
-    #     resource_id = self._get_resource_id_from_guid(resource_guid)
-    #     self.cur.execute(
-    #         """select privilege_id from user_group_privilege_over_resource where user_id=%s and resource_id=%s""",
-    #         (user_id, resource_id))
-    #     if self.cur.rowcount > 0:
-    #         return self.cur.fetchone()['privilege_id']
-    #     else:
-    #         return self._NO_PRIVILEGE  # no privilege
-
     # share a resource with a group of users
+    # CLI: hs_share_resource
     def share_resource_with_group(self, requesting_login, resource_guid, group_guid, privilege_code='ns'):
         """
         Share a resource with a group of users
@@ -795,6 +775,7 @@ class HSAccess:
         else:
             return False
 
+    # CLI: hs_add_user_to_group
     def assert_user_in_group(self, requesting_login, user_login, group_guid):
         """
         Add a user to a group if not present already
@@ -810,6 +791,7 @@ class HSAccess:
             self.cur.execute("insert into user_membership_in_group VALUES (DEFAULT, %s, %s, %s, DEFAULT)",
                              (user_id, group_id, requesting_id))
 
+    # CLI: hs_remove_user_from_group
     def retract_user_from_group(self, requesting_login, user_login, group_guid):
         """
         Remove a user from a group if not absent already
@@ -934,6 +916,7 @@ class HSAccess:
         """
         return self.group_accessible(login, guid, 'ns')
 
+    # CLI: share_group
     def share_group_with_user(self, requesting_login, group_guid, user_login, privilege_code='ns'):
         """
         Attempt to share a group with a user: this allows read/write to the group membership list
@@ -992,6 +975,7 @@ class HSAccess:
     ###########################################################
     # faceted information retrieval
     ###########################################################
+   # CLI: hs_ls
     def resources_held_by_user(self, user_login):
         """
         Make a list of resources held by user, sorted by title
@@ -1010,6 +994,7 @@ class HSAccess:
                            'path': row['resource_path']})
         return result
 
+    # CLI: hs_groups
     def groups_of_user(self, user_login):
         """
         Make a list of groups in which a user is a member.
