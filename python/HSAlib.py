@@ -355,13 +355,29 @@ class HSAccess:
         :param group_name: str: name of group
         :return: None
         """
-        if not (self.user_is_admin(assert_login)):
-            raise HSAException("Insufficient privilege to complete operation")
+
         assert_id = self._get_user_id_from_login(assert_login)
         if self.group_exists(group_guid):
-            self._assert_group_update(group_guid, assert_id, group_name)
+            if self.user_is_admin(assert_login) or self.group_is_owned(assert_login, group_guid):
+                self._assert_group_update(group_guid, assert_id, group_name)
+            else:
+                raise HSAException("Insufficient privilege to complete operation")
+
         else:
+            # NEW GROUP:
+            # 1) add new group to group list
             self._assert_group_add(group_guid, assert_id, group_name)
+
+            # 2) make the asserting user the owner
+            # it is necessary to run around protections for this one step
+            # because of a chicken-and-egg problem
+            privilege_id = self._get_privilege_id_from_code('own')
+            group_id = self._get_group_id_from_guid(group_guid)
+            self._share_group_user_add(assert_id, assert_id, group_id, privilege_id)
+
+            # 3) put the asserting user into the group as well.
+            # since that person is now the owner, this is straightforward.
+            self.assert_user_in_group(assert_login, assert_login, group_guid)
 
     def _assert_group_add(self, group_guid, assertion_user_id, group_name):
         """
@@ -399,6 +415,7 @@ class HSAccess:
         Retractions are handled via database cascade logic
         """
         # only an owner can retract a group
+        # this depends upon cascading in the database system.
         if self.group_is_owned(login, guid):
             self.cur.execute("""delete from groups where group_guid=%s""", (guid,))
         else:
@@ -407,6 +424,7 @@ class HSAccess:
     ###########################################################
     # resource handling
     ###########################################################
+
     def _get_resource_id_from_guid(self, guid):
         """
         PRIVATE: get resource_id from resource digital identifier (guid)
@@ -484,69 +502,81 @@ class HSAccess:
         :param metadata: a metadata record as returned by get_resource_metadata
         :return: None
         """
-        self.assert_resource(metadata['guid'], requesting_login,
+        self.assert_resource(requesting_login, metadata['guid'],
                              metadata['path'], metadata['title'],
                              metadata['immutable'])
 
     # a primitive resource instantiation without objects
     # CLI: currently this can only be done properly through django
     # but we need a debugging command "hs_register_resource" for our own use
-    def assert_resource(self, resource_guid, assert_login,
+    def assert_resource(self, requesting_login, resource_guid,
                         resource_path, resource_title, resource_immutable=False):
         """
         Add or modify a resource in the registry
         :param resource_guid: resource identifier
-        :param assert_login: str: user login of adding person
+        :param requesting_login: str: user login of adding person
         :param resource_path: path in iRODS
         :param resource_title: human-readable title
         :param resource_immutable: whether resource is immutable
         :return: None
         """
-        if not (self.user_exists(assert_login)):
-            raise HSAException("Asserting login '" + assert_login + "' does not exist")
-        assert_id = self._get_user_id_from_login(assert_login)
+        if not (self.user_exists(requesting_login)):
+            raise HSAException("Asserting login '" + requesting_login + "' does not exist")
+
+        requesting_user_id = self._get_user_id_from_login(requesting_login)
 
         if self.resource_exists(resource_guid):
-            # add update privilege logic here
-            self._assert_resource_update(resource_guid, assert_id,
-                                         resource_path, resource_title, resource_immutable)
+            # only admin users or owners can change the resource name
+            if self.user_is_admin(requesting_login) or self.resource_is_owned(requesting_login, resource_guid):
+                self._assert_resource_update(requesting_user_id, resource_guid,
+                                             resource_path, resource_title, resource_immutable)
         else:
-            self._assert_resource_add(resource_guid, assert_id,
+            # NEW RESOURCE
+            # 1) put the resource into the registry
+            self._assert_resource_add(requesting_user_id, resource_guid,
                                       resource_path, resource_title, resource_immutable)
+            # 2) make it owned by the asserting user
+            # get the newly minted resource id
+            resource_id = self._get_resource_id_from_guid(resource_guid)
+            privilege_id = self._get_privilege_id_from_code('own')
+            # This bypasses checks because this user created the resource.
+            self._share_resource_user_add(requesting_user_id, requesting_user_id, resource_id, privilege_id)
             # add owner logic here
 
     # subfunction: add a resource whose guid (primary key) does not exist
-    def _assert_resource_add(self, resource_guid, assertion_user_id,
+    # this has no inherent protection and is used internally for some
+    # initial creation tasks.
+    def _assert_resource_add(self, requesting_user_id, resource_guid,
                              resource_path, resource_title, resource_immutable=False):
         """
         PRIVATE: add a new resource to the registry
         :param resource_guid: resource identifier
-        :param assertion_user_id: user id of adding person
+        :param requesting_user_id: user id of adding person
         :param resource_path: path in iRODS
         :param resource_title: human-readable title
         :param resource_immutable: whether resource is immutable
         :return: None
         """
         self.cur.execute("""insert into resources values (DEFAULT, %s, %s, %s, %s, %s, DEFAULT)""",
-                         (resource_guid, resource_path, resource_title, resource_immutable, assertion_user_id))
+                         (resource_guid, resource_path, resource_title, resource_immutable, requesting_user_id))
         self.conn.commit()
 
     # subfunction: update a resource whose guid is known
-    def _assert_resource_update(self, resource_guid, assertion_user_id, resource_path, resource_title,
-                                resource_immutable=False):
+    def _assert_resource_update(self, requesting_user_id, resource_guid,
+                                resource_path, resource_title, resource_immutable=False):
         """
         PRIVATE: update an existing resource in the registry
         :param resource_guid: resource identifier
-        :param assertion_user_id: user id of adding person
+        :param requesting_user_id: user id of adding person
         :param resource_path: path in iRODS
         :param resource_title: human-readable title
         :param resource_immutable: whether resource is immutable
         :return: None
         """
         self.cur.execute("""update resources set resource_path=%s, resource_title=%s, resource_immutable=%s,
-            assertion_user_id=%s, assertion_time=CURRENT_TIMESTAMP
-            where resource_guid=%s""",
-                         (resource_path, resource_title, resource_immutable, assertion_user_id, resource_guid))
+                         assertion_user_id=%s, assertion_time=CURRENT_TIMESTAMP
+                         where resource_guid=%s""",
+                         (resource_path, resource_title, resource_immutable, requesting_user_id, resource_guid))
         self.conn.commit()
 
     ###########################################################
@@ -737,23 +767,40 @@ class HSAccess:
                          (user_id, resource_id, privilege_id, requesting_id))
         self.conn.commit()
 
+    def unshare_resource_with_user(self, requesting_login, resource_guid, user_login):
+        """
+        Remove all sharing with user (owner only)
+        :param requesting_login: instigator
+        :param resource_guid: resource to change
+        :param user_login: user with whom resource is currently shared
+        :return: None
+        """
+        victim_id = self._get_user_id_from_login(user_login)
+        if self.user_is_admin(requesting_login) or self.resource_is_owned(requesting_login,resource_guid):
+            self.cur.execute("""delete from user_access_to_resource where user_id = %s""", (victim_id,))
+        else:
+            raise HSAException("insufficient privilege to remove user")
+
     ###########################################################
     # group privilege
     ###########################################################
 
-    def _group_access_to_resource_exists(self, group_id, resource_id, asserting_user_id):
+    def _group_access_to_resource_exists(self, requesting_id, resource_id, group_id):
         """
         Check whether there is already a privilege record for asserting user, group, and resource
         :type self: HSAccess
-        :param group_id: int: group id of affected group
-        :param resource_id: int: resource id of affected resource
-        :param asserting_user_id: int: id of user requesting change
+        :type group_id: int
+        :type resource_id: int
+        :type requesting_id: int
+        :param group_id: group id of affected group
+        :param resource_id: resource id of affected resource
+        :param requesting_id: id of user requesting change
         :return:
         """
         self.cur.execute(
             """select privilege_id from group_access_to_resource where group_id=%s
             and resource_id=%s and assertion_user_id=%s""",
-            (group_id, resource_id, asserting_user_id))
+            (group_id, resource_id, requesting_id))
         if self.cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one record for "
                                + "specific group, resource, and user")
@@ -775,6 +822,11 @@ class HSAccess:
     def share_resource_with_group(self, requesting_login, resource_guid, group_guid, privilege_code='ns'):
         """
         Share a resource with a group of users
+        :type self: HSAccess
+        :type requesting_login: str
+        :type resource_guid: str
+        :type group_guid: str
+        :type privilege_code: str
         :param requesting_login: the user asking to share the resource: must have access
         :param resource_guid: the resource to be shared
         :param group_guid: the group with which to share it: requesting_login must be a member.
@@ -800,7 +852,7 @@ class HSAccess:
                     if user_priv > privilege_id:
                         raise HSAException("User has insufficient privilege to share this resource at this level")
         # sufficient privileges present to share this resource
-        if self._group_access_to_resource_exists(group_id, resource_id, requesting_id):
+        if self._group_access_to_resource_exists(requesting_id,  resource_id, group_id):
             self._share_resource_group_update(requesting_id, group_id, resource_id, privilege_id)
         else:
             self._share_resource_group_add(requesting_id, group_id, resource_id, privilege_id)
@@ -808,10 +860,15 @@ class HSAccess:
     def _share_resource_group_update(self, requesting_id, group_id, resource_id, privilege_id):
         """
         PRIVATE: update group sharing record for a resource
-        :param requesting_id: int: id of requesting user
-        :param group_id: int: id of group to modify
-        :param resource_id: int: id of resource to modify
-        :param privilege_id: int: privilege to assign
+        :type self: HSAccess
+        :type requesting_id: int
+        :type group_id: int
+        :type resource_id: int
+        :type privilege_id: int
+        :param requesting_id: id of requesting user
+        :param group_id: id of group to modify
+        :param resource_id: id of resource to modify
+        :param privilege_id: privilege to assign
         :return: None
         """
         self.cur.execute("""update group_access_to_resource set privilege_id = %s,
@@ -823,10 +880,15 @@ class HSAccess:
     def _share_resource_group_add(self, requesting_id, group_id, resource_id, privilege_id):
         """
         PRIVATE: add a new group sharing record for a resource
-        :param requesting_id: int: id of requesting user
-        :param group_id: int: id of group to modify
-        :param resource_id: int: id of resource to modify
-        :param privilege_id: int: privilege to assign
+        :type self: HSAccess
+        :type requesting_id: int
+        :type group_id: int
+        :type resource_id: int
+        :type privilege_id: int
+        :param requesting_id: id of requesting user
+        :param group_id: id of group to modify
+        :param resource_id: id of resource to modify
+        :param privilege_id: privilege to assign
         :return: None
         """
         self.cur.execute("""insert into group_access_to_resource values (DEFAULT, %s, %s, %s, %s, DEFAULT)""",
@@ -839,6 +901,9 @@ class HSAccess:
     def user_in_group(self, login, guid):
         """
         Check whether a user is a member of a group
+        :type self: HSAccess
+        :type login: str
+        :type guid: str
         :param login: login name of a valid user
         :param guid: group guid of a valid group
         :return: True if the login is in the group
@@ -859,6 +924,10 @@ class HSAccess:
     def assert_user_in_group(self, requesting_login, user_login, group_guid):
         """
         Add a user to a group if not present already
+        :type self: HSAccess
+        :type requesting_login: str
+        :type user_login: str
+        :type group_guid: str
         :param requesting_login: user requesting change
         :param user_login: user to be added to the group
         :param group_guid: group to which to add user
@@ -879,6 +948,10 @@ class HSAccess:
     def retract_user_from_group(self, requesting_login, user_login, group_guid):
         """
         Remove a user from a group if not absent already
+        :type self: HSAccess
+        :type requesting_login: str
+        :type user_login: str
+        :type group_guid: str
         :param requesting_login: user requesting change
         :param user_login: user to be removed from the group
         :param group_guid: group from which to remove user
@@ -893,24 +966,28 @@ class HSAccess:
             self.cur.execute("delete from user_membership_in_group where user_id=%s and group_id=%s",
                              (user_id, group_id))
         else:
-            raise HSAException("Insufficient privilege to retract group")
+            raise HSAException("Insufficient privilege to retract user from group")
 
     ###########################################################
     # group access
     ###########################################################
 
-    def _user_access_to_group_exists(self, user_id, group_id, asserting_user_id):
+    def _user_access_to_group_exists(self, requesting_id, user_id, group_id):
         """
         Test whether there is an access record for a specific user, group, and asserting user
+        :type self: HSAccess
+        :type user_id: int
+        :type group_id: int
+        :type requesting_id: int
         :param user_id: user id of user who needs privilege
         :param group_id: group id of group to which privilege will be assigned
-        :param asserting_user_id: user id of user assigning privilege
+        :param requesting_id: user id of user assigning privilege
         :return:
         """
         self.cur.execute(
             """select privilege_id from user_access_to_group where user_id=%s and group_id=%s
             and assertion_user_id=%s""",
-            (user_id, group_id, asserting_user_id))
+            (user_id, group_id, requesting_id))
         if self.cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one record for a group privilege triple")
         if self.cur.rowcount > 0:
@@ -918,23 +995,16 @@ class HSAccess:
         else:
             return False
 
-    # def _get_user_access_to_group_privilege(self, user_id, group_id, asserting_user_id):
-    #     self.cur.execute("""select privilege_id from user_access_to_group where user_id=%s and group_id=%s
-    #                       and assertion_user_id=%s""",
-    #                      (user_id, group_id, asserting_user_id))
-    #     if self.cur.rowcount>0:
-    #         return self.cur.fetchone()['privilege_id']
-    #     else:
-    #         raise HSAException("no privileges recorded for user_id "+user_id+", group_id "+group_id+",
-    #               granting user id "+asserting_user_id)
-
     # utilize a join view to summarize user privilege
     def get_user_privilege_over_group(self, user_login, group_guid):
         """
         Get the privilege that is specified for a user over a specific group
+        :type self: HSAccess
+        :type user_login: str
+        :type group_guid: str
         :param user_login: login of user for which to obtain privilege
-        :param group_guid:  group to which to allow access
-        :return: int: privilege code 1-199
+        :param group_guid: group to which to allow access
+        :return: int: privilege code 1-100
         """
         user_id = self._get_user_id_from_login(user_login)
         group_id = self._get_group_id_from_guid(group_guid)
@@ -950,9 +1020,13 @@ class HSAccess:
     def group_accessible(self, login, guid, code):
         """
         Check whether a group is accessible to a user
-        :param login: str: login of user for whom to check privilege (key to users table)
-        :param guid: str: gui of group for which to check privilege (key to groups table)
-        :param code: str: privilege code (key to privileges table)
+        :type self: HSAccess
+        :type login: str
+        :type guid: str
+        :type code: str
+        :param login: login of user for whom to check privilege (key to users table)
+        :param guid: guid of group for which to check privilege (key to groups table)
+        :param code: privilege code (key to privileges table)
         :return: bool: True if group is accessible to user in the provided mode
         """
         # OBSOLETE user_id = self._get_user_id_from_login(login)
@@ -967,8 +1041,11 @@ class HSAccess:
     def group_is_owned(self, login, guid):
         """
         Check whether a group is owned by a user
-        :param login: str: login name of user to check
-        :param guid: str: group guid of group to check
+        :type self: HSAccess
+        :type login: str
+        :type guid: str
+        :param login: login name of user to check
+        :param guid: group guid of group to check
         :return: bool: True if group guid is owned by login
         """
         return self.group_accessible(login, guid, 'own')
@@ -976,8 +1053,11 @@ class HSAccess:
     def group_is_readwrite(self, login, guid):
         """
         Check whether a group is owned by a user
-        :param login: str: login name of user to check
-        :param guid: str: group guid of group to check
+        :type self: HSAccess
+        :type login: str
+        :type guid: str
+        :param login: login name of user to check
+        :param guid: group guid of group to check
         :return: bool: True if group guid is owned by login
         """
         return self.group_accessible(login, guid, 'rw')
@@ -985,8 +1065,11 @@ class HSAccess:
     def group_is_readable(self, login, guid):
         """
         Check whether a group is owned by a user
-        :param login: str: login name of user to check
-        :param guid: str: group guid of group to check
+        :type self: HSAccess
+        :type login: str
+        :type guid: str
+        :param login: login name of user to check
+        :param guid: group guid of group to check
         :return: bool: True if group guid is readable by login
         """
         return self.group_accessible(login, guid, 'ro')
@@ -994,8 +1077,11 @@ class HSAccess:
     def group_is_readable_without_sharing(self, login, guid):
         """
         Check whether a group is readable without sharing by a user
-        :param login: str: login name of user to check
-        :param guid: str: group guid of group to check
+        :type self: HSAccess
+        :type login: str
+        :type guid: str
+        :param login: login name of user to check
+        :param guid: group guid of group to check
         :return: True if group guid is readable without sharing
         """
         return self.group_accessible(login, guid, 'ns')
@@ -1004,10 +1090,15 @@ class HSAccess:
     def share_group_with_user(self, requesting_login, group_guid, user_login, privilege_code='ns'):
         """
         Attempt to share a group with a user: this allows read/write to the group membership list
-        :param requesting_login: str: login of user trying to grant the privilege
-        :param group_guid:  str: group identifier of group to which privilege should be assigned
-        :param user_login: str: login of user to whom privilege should be granted
-        :param privilege_code: str: privilege to be granted.
+        :type self: HSAccess
+        :type requesting_login: str
+        :type group_guid:  str
+        :type user_login: str
+        :type privilege_code: str
+        :param requesting_login: login of user trying to grant the privilege
+        :param group_guid: group identifier of group to which privilege should be assigned
+        :param user_login: login of user to whom privilege should be granted
+        :param privilege_code: privilege to be granted.
         :return: None
         """
         user_id = self._get_user_id_from_login(user_login)
@@ -1024,7 +1115,7 @@ class HSAccess:
                 if user_priv > privilege_id:
                     raise HSAException("User has insufficient privilege to share this resource")
         # sufficient privileges present to share this resource
-        if self._user_access_to_group_exists(user_id, group_id, requesting_id):
+        if self._user_access_to_group_exists(requesting_id, user_id, group_id):
             self._share_group_user_update(requesting_id, user_id, group_id, privilege_id)
         else:
             self._share_group_user_add(requesting_id, user_id, group_id, privilege_id)
@@ -1032,10 +1123,15 @@ class HSAccess:
     def _share_group_user_update(self, requesting_id, user_id, group_id, privilege_id):
         """
         PRIVATE: update user access to a group
-        :param requesting_id: int: id of user requesting change
-        :param user_id: int: id of user to be enabled
-        :param group_id: int: id of group to be modified
-        :param privilege_id: int: id of privilege to be installed
+        :type self: HSAccess
+        :type requesting_id: int
+        :type user_id: int
+        :type group_id: int
+        :type privilege_id: int
+        :param requesting_id: id of user requesting change
+        :param user_id: id of user to be enabled
+        :param group_id: id of group to be modified
+        :param privilege_id: id of privilege to be installed
         :return: None
         """
         self.cur.execute("""update user_access_to_group set privilege_id = %s,
@@ -1046,6 +1142,11 @@ class HSAccess:
     def _share_group_user_add(self, requesting_id, user_id, group_id, privilege_id):
         """
         PRIVATE: add new user access for a group
+        :type self: HSAccess
+        :type requesting_id: int
+        :type user_id: int
+        :type group_id: int
+        :type privilege_id: int
         :param requesting_id: int: id of user requesting change
         :param user_id: int: id of user to be enabled
         :param group_id: int: id of group to be modified
@@ -1063,7 +1164,9 @@ class HSAccess:
     def resources_held_by_user(self, user_login):
         """
         Make a list of resources held by user, sorted by title
-        :param user_login: str: login of user
+        :type self: HSAccess
+        :type user_login: str
+        :param user_login: login of user
         :return: List of resources containing dict items
         """
         user_id = self._get_user_id_from_login(user_login)
@@ -1082,7 +1185,9 @@ class HSAccess:
     def groups_of_user(self, user_login):
         """
         Make a list of groups in which a user is a member.
-        :param user_login: str: login of user
+        :type self: HSAccess
+        :type user_login: str
+        :param user_login: login of user
         :return: list of dict entries, one per group
         """
         user_id = self._get_user_id_from_login(user_login)
