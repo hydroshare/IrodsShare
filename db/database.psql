@@ -75,8 +75,8 @@ INSERT INTO privileges VALUES
 
 CREATE TABLE users (
    user_id SERIAL PRIMARY KEY,
-   user_login VARCHAR(40) UNIQUE NOT NULL,	-- user name
-   user_guid VARCHAR(40) UNIQUE NOT NULL, 	-- guid of landing page 
+   user_uuid VARCHAR(32) UNIQUE NOT NULL, 	-- uuid of landing page 
+   user_login VARCHAR(40) UNIQUE NOT NULL,	-- user login name on iRODS
    user_name VARCHAR(200), 			-- user full name 
    user_active BOOL NOT NULL, 			-- whether user can act 
    user_admin BOOL NOT NULL, 			-- whether user has admin 
@@ -86,7 +86,7 @@ CREATE TABLE users (
 
 -- bootstrap the system with a single administrative user 
 INSERT INTO users VALUES 
-  (DEFAULT, 'admin', 'ouserguid001', 'HydroShare Administrator',
+  (DEFAULT, 'placeholderuuid0001', 'admin', 'HydroShare Administrator',
    TRUE, TRUE, NULL, DEFAULT);
 
 -------------------------------------------------
@@ -101,8 +101,9 @@ INSERT INTO users VALUES
 
 CREATE TABLE groups (
    group_id SERIAL PRIMARY KEY,
+   group_uuid VARCHAR(40) UNIQUE NOT NULL, 
    group_name VARCHAR(40) NOT NULL,
-   group_guid VARCHAR(40) UNIQUE NOT NULL, 
+   group_active bool NOT NULL, 		-- whether group is active 
    assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
    assertion_time time NOT NULL DEFAULT(CURRENT_TIMESTAMP)
 );
@@ -116,7 +117,7 @@ CREATE TABLE groups (
 
 CREATE TABLE resources (
    resource_id SERIAL PRIMARY KEY,		
-   resource_guid VARCHAR(40) UNIQUE NOT NULL, 	-- guid of landing page 
+   resource_uuid VARCHAR(40) UNIQUE NOT NULL, 	-- uuid of landing page 
    resource_path VARCHAR(1000) UNIQUE NOT NULL, -- pathname in iRODS
    resource_title VARCHAR(200) NOT NULL,	-- resource print title 
    resource_immutable BOOL NOT NULL,		
@@ -209,7 +210,7 @@ CREATE VIEW user_privilege_over_resource AS
 -- Privileges combine by use of the MIN operator 
 -- over all grantors. 
 -- Note that the API translates between group_id 
--- and group_guid as necessary. 
+-- and group_uuid as necessary. 
 -------------------------------------------------
 
 create table user_access_to_group ( 
