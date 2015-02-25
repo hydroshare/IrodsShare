@@ -1247,3 +1247,131 @@ class HSAccess:
         for row in self._cur:
             result.append({'uuid': row['group_uuid'], 'name': row['group_name']})
         return result
+
+    # ##########################################################
+    # stubs for folder subsystem
+    # ##########################################################
+    def assert_folder(self, folder_name):
+        """
+        Create a folder in the user_folders relation
+        :param folder_name: The name of the folder
+        :return: None
+        Uses: self._user_uuid: the identity of the current user.
+        Folders are local to the current user.
+        """
+        return
+
+    def retract_folder(self, folder_name):
+        """
+        Reemove a folder; things in the folder become "unfiled"
+        :param folder_name: The name of the folder
+        :return: None
+        Uses: self._user_uuid: the identity of the current user.
+        Folders are local to the current user.
+        """
+        return
+
+    def assert_resource_in_folder(self, resource_uuid, folder_name):
+        """
+        Put a resource into a previously created folder
+        :param resource_uuid: identifier of resource to put into folder
+        :param folder_name: name of the folder
+        :return: None
+        Uses: self._user_uuid: the identity of the current user.
+        Folders are local to the current user.
+        """
+        return
+
+    def retract_resource_in_folder(self, resource_uuid, folder_name):
+        """
+        Remove a resource from a folder; it becomes unfiled.
+        :param resource_uuid: identifier of resource to put into folder
+        :param folder_name: name of the folder
+        :return: None
+        """
+        return
+
+    def get_folders(self):
+        """
+        Return a list of folders for this user
+        :return: A list of folder names
+        Uses: self._user_uuid: current user identity
+        """
+        return
+
+
+    def get_resources_in_folders(self, folder=None):
+        """
+        Get a structured dictionary of folders and their contents
+        :param folder: the name of a folder to use
+        :return: A dict object of contents
+        Uses: self._user_uuid: the current user.
+        This returns a dictionary structure of the form
+        { folder: { resource_uuid : { title : "resource title", 'access' : "access code" }}}
+        If folder is not None, report on only one folder.
+        """
+        return
+
+    # ##########################################################
+    # stubs for tag subsystem
+    # ##########################################################
+    def assert_tag(self, tag_name):
+        """
+        Create a tag in the user_tags relation
+        :param tag_name: The name of the tag
+        :return: None
+        Uses: self._user_uuid: the identity of the current user.
+        Folders are local to the current user.
+        """
+        return
+
+    def retract_tag(self, tag_name):
+        """
+        Reemove a tag; things in the tag become "untagged"
+        :param tag_name: The name of the tag
+        :return: None
+        Uses: self._user_uuid: the identity of the current user.
+        Folders are local to the current user.
+        """
+        return
+
+    def assert_resource_has_tag(self, resource_uuid, tag_name):
+        """
+        Put a resource into a previously created tag
+        :param resource_uuid: identifier of resource to put into tag
+        :param tag_name: name of the tag
+        :return: None
+        Uses: self._user_uuid: the identity of the current user.
+        Folders are local to the current user.
+        Multiple asserts with different tags apply all of them
+        """
+        return
+
+    def retract_resource_has_tag(self, resource_uuid, tag_name):
+        """
+        Remove a resource from a tag; it becomes unfiled.
+        :param resource_uuid: identifier of resource to put into tag
+        :param tag_name: name of the tag
+        :return: None
+        """
+        return
+
+    def get_tags(self):
+        """
+        Return a list of tags for this user
+        :return: A list of tag names
+        Uses: self._user_uuid: current user identity
+        """
+        return
+
+    def get_resources_by_tag(self, tag=None):
+        """
+        Get a structured dictionary of tags and their contents
+        :param tag: the name of a tag to use
+        :return: A dict object of contents
+        Uses: self._user_uuid: the current user.
+        This returns a dictionary structure of the form
+        { "tag": { resource_uuid : { title : "resource title", 'access' : "access code" }}}
+        If tag argument is not None, report on only one tag.
+        """
+        return
