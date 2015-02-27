@@ -96,11 +96,11 @@ class HSAccess:
         for row in rows:
             result += [
                 {
-                    login: row['user_login'],
-                    uuid: row['user_uuid'],
-                    name: row['user_name'],
-                    active: row['user_active'],
-                    admin: row['user_admin']
+                    'login': row['user_login'],
+                    'uuid': row['user_uuid'],
+                    'name': row['user_name'],
+                    'active': row['user_active'],
+                    'admin': row['user_admin']
                 }
             ]
         return result
