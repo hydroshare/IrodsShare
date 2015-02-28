@@ -3,6 +3,7 @@ __author__ = 'Alva Couch'
 import psycopg2
 import psycopg2.extras
 import uuid
+from pprint import pprint
 
 
 ##################################################################
@@ -15,6 +16,17 @@ import uuid
 # Assertions are facts about the protection of resources.
 # An assertion is either made true, or an exception is raised
 # indicating why it cannot be made true.
+##################################################################
+# to be done:
+# deep logic for ownership: do not allow the last owner to disown
+# - for groups
+# - for resources
+# turn off privileges for
+# - inactive groups
+# - inactive users
+# invite/accept logic for groups
+# access control for groups: don't allow unauthorized people to ls
+# rationalize group membership: one database rather than two
 ##################################################################
 
 # exception class specifically for access control exceptions
@@ -55,6 +67,7 @@ class HSAccess:
             raise HSAException("unable to connect to the database")
         self._user_id = self._get_user_id_from_login(irods_user)
         self._user_uuid = self._get_user_uuid_from_login(irods_user)
+
     def __del__(self):
         if self._conn is not None:
             self._conn.close()
@@ -109,8 +122,8 @@ class HSAccess:
         """
         Get metadata for a user as a dict record
         :type self: HSAccess
-        :type login: str
-        :param login: login name of user for which to fetch metadata
+        :type user_uuid: str
+        :param user_uuid: uuid of user for which to fetch metadata
         :return: Dict of metadata for the login specified
         """
         self._cur.execute("""select u.user_login, u.user_uuid, u.user_name, u.user_active, u.user_admin,
@@ -190,7 +203,26 @@ class HSAccess:
         else:
             raise HSAException("User uuid '" + user_uuid + "' does not exist")
 
-    # get a specific login id for use as an entity id for recording actions
+    # get a specific login for use as a logging aid
+    def _get_user_login_from_uuid(self, user_uuid=None):
+        """
+        PRIVATE: get user database id from login name
+        :type self: HSAccess
+        :type user_uuid: str
+        :param user_uuid: uuid of user
+        :return: integer user id
+        """
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+        self._cur.execute("select user_login from users where user_uuid=%s", (user_uuid,))
+        if self._cur.rowcount > 1:
+            raise HSAException("Database integrity violation: more than one record for a specific user uuid")
+        if self._cur.rowcount > 0:
+            return self._cur.fetchone()['user_login']
+        else:
+            raise HSAException("User uuid '" + user_uuid + "' does not exist")
+
+    # get a specific login uuid for use in requesting actions
     def _get_user_uuid_from_login(self, login):
         """
         PRIVATE: get user database id from login name
@@ -295,13 +327,14 @@ class HSAccess:
         if not (self.user_is_active(self._user_uuid)):
             raise HSAException("Asserting uuid '" + self._user_uuid + "' is inactive")
         if not (self.user_is_admin(self._user_uuid)):
-            raise HSAException("User uuid '" + self._user_uuid + "' is not an administrator; operation requires privilege")
+            raise HSAException("User uuid '" + self._user_uuid
+                               + "' is not an administrator; operation requires privilege")
 
         if user_uuid is None:
             # try the other keys to see if it is defined
             try:
                 user_uuid = self._get_user_uuid_from_login(user_login)
-            except:
+            except HSAException:
                 user_uuid = uuid.uuid4().hex
         # print "resource uuid is", resource_uuid
 
@@ -397,7 +430,7 @@ class HSAccess:
                           from groups g
                           left join user_membership_in_group m on m.group_id=g.group_id
                           left join users u on u.user_id = m.user_id
-                          left join user_privilege_over_group p on p.user_id=u.user_id and p.group_id=g.group_id
+                          left join user_group_privilege p on p.user_id=u.user_id and p.group_id=g.group_id
                           left join privileges x on x.privilege_id=p.privilege_id
                           where u.user_uuid=%s
                           order by g.group_name, g.group_uuid""",
@@ -407,7 +440,6 @@ class HSAccess:
         for row in rows:
             result += [{'uuid': row['group_uuid'], 'name': row['group_name'], 'code': row['privilege_code']}]
         return result
-
 
     def get_group_metadata(self, group_uuid):
         """
@@ -457,6 +489,21 @@ class HSAccess:
         else:
             raise HSAException("Group uuid '" + group_uuid + "' does not exist")
 
+    # get a specific login id for use as an entity id for recording actions
+    def _get_group_name_from_uuid(self, group_uuid):
+        """
+        PRIVATE: translate from group object identifier to database id
+        :param group_uuid: str: group object identifier
+        :return: int: group_id in HSAccess database
+        """
+        self._cur.execute("select group_name from groups where group_uuid=%s", (group_uuid,))
+        if self._cur.rowcount > 1:
+            raise HSAException("Database integrity violation: more than one record for a specific group uuid")
+        if self._cur.rowcount > 0:
+            return self._cur.fetchone()['group_name']
+        else:
+            raise HSAException("Group uuid '" + group_uuid + "' does not exist")
+
     # test whether a login exists without recovering its id or metadata
     def group_exists(self, group_uuid):
         """
@@ -477,8 +524,9 @@ class HSAccess:
     def assert_group(self, group_name, group_active=True, group_uuid=None, user_uuid=None):
         """
         Register or update a group
-        :param group_uuid: str: group identifier
         :param group_name: str: name of group
+        :param group_uuid: str: group identifier
+        :param group_active: bool: whether group is active
         :return: None
         if group_uuid is None, then a new group uuid is created.
         if user_uuid is not None and the current user has admin privilege,
@@ -486,16 +534,16 @@ class HSAccess:
         """
         if not (self.user_exists(self._user_uuid)):
             raise HSAException("Asserting login '" + self._irods_user + "' does not exist")
-        requesting_user_id = self._get_user_id_from_uuid(self._user_uuid)
+        # requesting_user_id = self._get_user_id_from_uuid(self._user_uuid)
         if user_uuid is not None and user_uuid != self._user_uuid and not (self.user_is_admin()):
             raise HSAException("Asserting login '"+self._irods_user+"' does not have admin privilege")
         if user_uuid is None:
             user_uuid = self._user_uuid
-        requesting_user_id = self._get_user_id_from_uuid(user_uuid)
+        # requesting_user_id = self._get_user_id_from_uuid(user_uuid)
         if group_uuid is None:
             group_uuid = uuid.uuid4().hex
 
-        assert_id = self._get_user_id_from_uuid(self._user_uuid)
+        assert_id = self._get_user_id_from_uuid(user_uuid)
         if self.group_exists(group_uuid):
             if self.user_is_admin(self._user_uuid) or self.group_is_owned(group_uuid):
                 self._assert_group_update(assert_id, group_uuid, group_name, group_active)
@@ -515,7 +563,8 @@ class HSAccess:
 
             # 3) put the asserting user into the group as well.
             # since that person is now the owner, this is straightforward.
-            self.assert_user_in_group(self._user_uuid, group_uuid)
+            # self._assert_user_in_group(group_uuid, self._user_uuid)
+            # refactoring to remove duplication among membership and access
         return group_uuid
 
     def _assert_group_add(self, assertion_user_id, group_uuid, group_name, group_active):
@@ -566,9 +615,8 @@ class HSAccess:
                 raise HSAException("cannot retract groups owned by other users: this requires admin privilege")
         group_id = self._get_group_id_from_uuid(group_uuid)
         self._cur.execute("""delete from user_access_to_group where group_id=%s""", (group_id,))
-        self._cur.execute("""delete from user_membership_in_group where group_id=%s""", (group_id,))
+        # self._cur.execute("""delete from user_membership_in_group where group_id=%s""", (group_id,))
         self._cur.execute("""delete from groups where group_id=%s""", (group_id,))
-
 
     ###########################################################
     # resource handling
@@ -671,11 +719,12 @@ class HSAccess:
 
     # a primitive resource instantiation without objects
     # CLI: currently this can only be done properly through django
-    # but we need a debugging command "hs_register_resource" for our own use
-    def assert_resource(self, resource_path, resource_title, resource_immutable=False, resource_uuid=None, user_uuid=None):
+    # but we need a debugging command "hs register path" for our own use
+
+    def assert_resource(self, resource_path, resource_title, resource_immutable=False,
+                        resource_uuid=None, user_uuid=None):
         """
-        Add or modify a resource in the registry
-        :param resource_uuid: resource identifier
+        Add or modify a resource in the resource registry
         :param resource_path: path in iRODS
         :param resource_title: human-readable title
         :param resource_immutable: whether resource is immutable
@@ -705,7 +754,7 @@ class HSAccess:
             # try the other keys to see if it is defined
             try:
                 resource_uuid = self._get_resource_uuid_from_path(resource_path)
-            except:
+            except HSAException:
                 resource_uuid = uuid.uuid4().hex
         # print "resource uuid is", resource_uuid
         if self.resource_exists(resource_uuid):
@@ -806,13 +855,16 @@ class HSAccess:
     # utilize a join view to summarize user privilege over a resource
     # this utilizes the immutable flag and does not even allow the owner to
     # redefine immutability. Only an admin can do that.
-    def get_user_privilege_over_resource(self, user_uuid, resource_uuid):
+    def get_user_privilege_over_resource(self, resource_uuid, user_uuid=None):
         """
         Summarize privileges of a user over a resource
-        :param user_login: str: login of user
+        :param user_uuid: str: uuid of user
         :param resource_uuid: str: uuid of resource
         :return: int: privilege number 1-100
         """
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+
         user_id = self._get_user_id_from_uuid(user_uuid)
         resource_id = self._get_resource_id_from_uuid(resource_uuid)
         # user_resource_privilege is a UNION of user and group privileges and contains duplicates
@@ -850,7 +902,7 @@ class HSAccess:
         # OBSOLETE: user_id = self._get_user_id_from_login(login)
         # OBSOLETE: resource_id = self._get_resource_id_from_uuid(uuid)
         privilege_id = self._get_privilege_id_from_code(code)
-        actual_priv = self.get_user_privilege_over_resource(user_uuid, resource_uuid)
+        actual_priv = self.get_user_privilege_over_resource(resource_uuid, user_uuid)
         # print "desired privilege", privilege_id, "actual privilege", actual_priv
         if actual_priv <= privilege_id:
             return True
@@ -932,7 +984,7 @@ class HSAccess:
         # access control logic: cannot grant sharing above own privilege
         if not (self.user_is_admin(self._user_uuid)):
             # use join to access privilege records
-            user_priv = self.get_user_privilege_over_resource(self._user_uuid, resource_uuid)
+            user_priv = self.get_user_privilege_over_resource(resource_uuid)
             if user_priv >= self._PRIVILEGE_NS:
                 raise HSAException("Cannot share a resource to which one has no sharing privileges")
             else:
@@ -940,7 +992,12 @@ class HSAccess:
                     raise HSAException("User has insufficient privilege to share this resource at this level")
         # sufficient privileges present to share this resource
         if self._user_access_to_resource_exists(user_id, resource_id, requesting_id):
-            self._share_resource_user_update(requesting_id, user_id, resource_id, privilege_id)
+            # don't let user remove last owner.
+            if self.get_number_of_resource_owners(resource_uuid)>1 \
+                or self.get_user_privilege_over_resource(resource_uuid, user_uuid)>1:
+                self._share_resource_user_update(requesting_id, user_id, resource_id, privilege_id)
+            else:
+                raise HSAException("cannot remove last resource owner, including self")
         else:
             self._share_resource_user_add(requesting_id, user_id, resource_id, privilege_id)
 
@@ -973,19 +1030,34 @@ class HSAccess:
                           (user_id, resource_id, privilege_id, requesting_id))
         self._conn.commit()
 
-    def unshare_resource_with_user(self,  resource_uuid, user_uuid):
+    def unshare_resource_with_user(self,  resource_uuid, user_uuid=None):
         """
         Remove all sharing with user (owner only)
         :param resource_uuid: resource to change
         :param user_uuid: user with whom resource is currently shared
         :return: None
+        Note: since sharing is cumulative, each user sharing a document with another must separately retract sharing
+        before all sharing is removed. It is possible that a user will have several different paths to a resource.
+        This routine unshares a resource under three conditions
+        a) user is admin
+        b) user owns resource
+        c) user is the sharing target: one should be able to "forget" a share if necessary
         """
-        assert_id = self._get_user_id_from_uuid(self._user_uuid)
-        victim_id = self._get_user_id_from_uuid(user_uuid)
-        if self.user_is_admin(self._user_uuid) or self.resource_is_owned(resource_uuid):
-            self._cur.execute("""delete from user_access_to_resource where user_id = %s and assertion_user_id=%s""",
-                              (victim_id,assert_id))
-            self._conn.commit()
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+        # assert_id = self._get_user_id_from_uuid(self._user_uuid)
+        resource_id = self._get_resource_id_from_uuid(resource_uuid)
+        user_id = self._get_user_id_from_uuid(user_uuid)
+        if self.user_is_admin(self._user_uuid) \
+                or self.resource_is_owned(resource_uuid) \
+                or user_uuid == self._user_uuid:
+            if self.get_number_of_resource_owners(resource_uuid) > 1 \
+                    or not self.resource_is_owned(resource_uuid, user_uuid):
+                self._cur.execute("""delete from user_access_to_resource where user_id = %s and resource_id = %s""",
+                                  (user_id, resource_id))
+                self._conn.commit()
+            else:
+                raise HSAException("cannot remove last owner of a resource")
         else:
             raise HSAException("insufficient privilege to unshare resource with user: must be owner or admin")
 
@@ -1051,7 +1123,7 @@ class HSAccess:
                 raise HSAException("User must be a member of a group to share something with the group")
             if not (self.user_is_admin(self._user_uuid)):
                 # use join to access privilege records
-                user_priv = self.get_user_privilege_over_resource(self._user_uuid, resource_uuid)
+                user_priv = self.get_user_privilege_over_resource(resource_uuid)
                 if user_priv >= self._PRIVILEGE_NS:
                     raise HSAException("Cannot share a group for which user has no sharing privileges")
                 else:
@@ -1101,18 +1173,19 @@ class HSAccess:
                           (group_id, resource_id, privilege_id, requesting_id))
         self._conn.commit()
 
-    def unshare_resource_with_group(self,  resource_uuid, group_uuid):
+    def unshare_resource_with_group(self, resource_uuid, group_uuid):
         """
         Remove all sharing with user (owner only)
         :param resource_uuid: resource to change
-        :param user_uuid: user with whom resource is currently shared
+        :param group_uuid: group with whom resource is currently potentially shared
         :return: None
         """
-        assert_id = self._get_user_id_from_uuid(self._user_uuid)
-        victim_id = self._get_group_id_from_uuid(group_uuid)
+        # assert_id = self._get_user_id_from_uuid(self._user_uuid)
+        resource_id = self._get_resource_id_from_uuid(resource_uuid)
+        group_id = self._get_group_id_from_uuid(group_uuid)
         if self.user_is_admin(self._user_uuid) or self.resource_is_owned(resource_uuid):
-            self._cur.execute("""delete from group_access_to_resource where group_id = %s and assertion_user_id=%s""",
-                              (victim_id,assert_id))
+            self._cur.execute("""delete from group_access_to_resource where group_id = %s and resource_id=%s""",
+                              (group_id, resource_id))
             self._conn.commit()
         else:
             raise HSAException("insufficient privilege to unshare resource with group: must be owner or admin")
@@ -1120,6 +1193,7 @@ class HSAccess:
     ###########################################################
     # group membership
     ###########################################################
+    # refactored to remove duplication between group privilege and membership
     def user_in_group(self, group_uuid, user_uuid=None):
         """
         Check whether a user is a member of a group
@@ -1134,7 +1208,7 @@ class HSAccess:
             user_uuid = self._user_uuid
         user_id = self._get_user_id_from_uuid(user_uuid)
         group_id = self._get_group_id_from_uuid(group_uuid)
-        self._cur.execute("""select id from user_membership_in_group where user_id=%s and group_id=%s""",
+        self._cur.execute("""select privilege_id from user_group_privilege where user_id=%s and group_id=%s""",
                           (user_id, group_id))
         if self._cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one group membership record "
@@ -1144,54 +1218,102 @@ class HSAccess:
         else:
             return False
 
-    # CLI: hs_add_user_to_group
-    def assert_user_in_group(self,  user_uuid, group_uuid):
-        """
-        Add a user to a group if not present already
-        :type self: HSAccess
-        :type user_uuid: str
-        :type group_uuid: str
-        :param user_uuid: user to be added to the group
-        :param group_uuid: group to which to add user
-        :return: None
-        """
-
-        if not self.user_is_active(self._user_uuid):
-            raise HSAException("User '"+self._irods_user+"' is not active")
-        if not self.user_is_active(user_uuid):
-            raise HSAException("User '"+user_uuid+"' is not active")
-        requesting_id = self._get_user_id_from_uuid(self._user_uuid)
-        user_id = self._get_user_id_from_uuid(user_uuid)
-        group_id = self._get_group_id_from_uuid(group_uuid)
-        if not (self.user_in_group(group_uuid, user_uuid)):
-            self._cur.execute("insert into user_membership_in_group VALUES (DEFAULT, %s, %s, %s, DEFAULT)",
-                              (user_id, group_id, requesting_id))
-            self._conn.commit()
-
-    # CLI: hs_remove_user_from_group
-    def retract_user_from_group(self, user_uuid, group_uuid):
-        """
-        Remove a user from a group if not absent already
-        :type self: HSAccess
-        :type user_uuid: str
-        :type group_uuid: str
-        :param user_uuid: user to be removed from the group
-        :param group_uuid: group from which to remove user
-        :return: None
-        """
-
-        user_id = self._get_user_id_from_uuid(user_uuid)
-        group_id = self._get_group_id_from_uuid(group_uuid)
-
-        # for now, let people remove themselves
-        if self._user_uuid == user_uuid and self.user_in_group(group_uuid, user_uuid):
-            self._cur.execute("delete from user_membership_in_group where user_id=%s and group_id=%s",
-                              (user_id, group_id))
-        else:
-            raise HSAException("Insufficient privilege to retract user from group")
+    # # OLD VERSION with specific user_membership_in_group table
+    # # REPLACED with conflation of privilege with membership
+    # # to avoid potential data skwews
+    # def user_in_group(self, group_uuid, user_uuid=None):
+    #     """
+    #     Check whether a user is a member of a group
+    #     :type self: HSAccess
+    #     :type user_uuid: str
+    #     :type group_uuid: str
+    #     :param user_uuid: uuid of a valid user
+    #     :param group_uuid: group uuid of a valid group
+    #     :return: True if the uuid is in the group
+    #     """
+    #     if user_uuid is None:
+    #         user_uuid = self._user_uuid
+    #     user_id = self._get_user_id_from_uuid(user_uuid)
+    #     group_id = self._get_group_id_from_uuid(group_uuid)
+    #     self._cur.execute("""select id from user_membership_in_group where user_id=%s and group_id=%s""",
+    #                       (user_id, group_id))
+    #     if self._cur.rowcount > 1:
+    #         raise HSAException("Database integrity violation: more than one group membership record "
+    #                            + "for a user and group")
+    #     if self._cur.rowcount > 0:
+    #         return True
+    #     else:
+    #         return False
+    #
+    # def assert_user_in_group(self, group_uuid, user_uuid=None):
+    #     """
+    #     Add a user to a group if not present already
+    #     :type self: HSAccess
+    #     :type user_uuid: str
+    #     :type group_uuid: str
+    #     :param user_uuid: user to be added to the group
+    #     :param group_uuid: group to which to add user
+    #     :return: None
+    #     """
+    #     if user_uuid is None:
+    #         user_uuid = self._user_uuid
+    #     # if not self.user_is_active(self._user_uuid):
+    #     #     raise HSAException("User login '"+self._get_user_login_from_uuid(self._user_uuid)+"' is not active")
+    #     if not self.user_exists(user_uuid):
+    #         raise HSAException("User uuid '"+user_uuid+"' does not exist")
+    #     if not self.user_is_active(user_uuid):
+    #         raise HSAException("User login '"+self._get_user_login_from_uuid(user_uuid)+"' is not active")
+    #     if not self.group_is_readwrite(group_uuid, self._user_uuid):
+    #         raise HSAException("Group '"+self._get_group_name_from_uuid(group_uuid)
+    #                            + "' is not writeable to user login '"
+    #                            + self._get_user_login_from_uuid(self._user_uuid)+"'")
+    #     self._assert_user_in_group(group_uuid, user_uuid)
+    #
+    # # need this in certain system routines to avoid protection chicken-and-egg problems
+    # def _assert_user_in_group(self, group_uuid, user_uuid=None):
+    #     """
+    #     Override protection scheme to insert first user into group
+    #     :param user_uuid:
+    #     :param group_uuid:
+    #     :return:
+    #     """
+    #     if user_uuid is None:
+    #         user_uuid = self._user_uuid
+    #     requesting_id = self._get_user_id_from_uuid(self._user_uuid)
+    #     user_id = self._get_user_id_from_uuid(user_uuid)
+    #     group_id = self._get_group_id_from_uuid(group_uuid)
+    #     if not (self.user_in_group(group_uuid, user_uuid)):
+    #         self._cur.execute("insert into user_membership_in_group VALUES (DEFAULT, %s, %s, %s, DEFAULT)",
+    #                           (user_id, group_id, requesting_id))
+    #         self._conn.commit()
+    #     # self.share_group_with_user(group_uuid, user_uuid, 'ro')
+    #
+    # # CLI: hs_remove_user_from_group
+    # def retract_user_from_group(self, user_uuid, group_uuid):
+    #     """
+    #     Remove a user from a group if not absent already
+    #     :type self: HSAccess
+    #     :type user_uuid: str
+    #     :type group_uuid: str
+    #     :param user_uuid: user to be removed from the group
+    #     :param group_uuid: group from which to remove user
+    #     :return: None
+    #     """
+    #
+    #     user_id = self._get_user_id_from_uuid(user_uuid)
+    #     group_id = self._get_group_id_from_uuid(group_uuid)
+    #
+    #     # for now, let people remove themselves
+    #     if self._user_uuid == user_uuid and self.user_in_group(group_uuid, user_uuid):
+    #         self._cur.execute("delete from user_membership_in_group where user_id=%s and group_id=%s",
+    #                           (user_id, group_id))
+    #     else:
+    #         raise HSAException("Insufficient privilege to retract user from group")
+    #     self.unshare_group_with_user(group_uuid, user_uuid)
 
     ###########################################################
     # group access
+    # in current version this is synonymous with membership
     ###########################################################
 
     def _user_access_to_group_exists(self, requesting_id, user_id, group_id):
@@ -1218,7 +1340,7 @@ class HSAccess:
             return False
 
     # utilize a join view to summarize user privilege
-    def get_user_privilege_over_group(self, user_uuid, group_uuid):
+    def get_user_privilege_over_group(self, group_uuid, user_uuid=None):
         """
         Get the privilege that is specified for a user over a specific group
         :type self: HSAccess
@@ -1228,9 +1350,11 @@ class HSAccess:
         :param group_uuid: group to which to allow access
         :return: int: privilege code 1-100
         """
+        if user_uuid is None:
+            user_uuid = self._user_uuid
         user_id = self._get_user_id_from_uuid(user_uuid)
         group_id = self._get_group_id_from_uuid(group_uuid)
-        self._cur.execute("""select privilege_id from user_privilege_over_group where user_id=%s and group_id=%s""",
+        self._cur.execute("""select privilege_id from user_group_privilege where user_id=%s and group_id=%s""",
                           (user_id, group_id))
         if self._cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one protection int for a user and group")
@@ -1239,9 +1363,10 @@ class HSAccess:
         else:
             return self._PRIVILEGE_NONE  # no privilege
 
-    def group_accessible(self, user_uuid, group_uuid, code):
+    # utility routine returns numeric code for privilege
+    def _group_accessible(self, user_uuid, group_uuid, code):
         """
-        Check whether a group is accessible to a user
+        PRIVATE: check whether a group is accessible to a user
         :type self: HSAccess
         :type user_uuid: str
         :type group_uuid: str
@@ -1251,13 +1376,15 @@ class HSAccess:
         :param code: privilege code (key to privileges table)
         :return: bool: True if group is accessible to user in the provided mode
         """
-        privilege_id = self._get_privilege_id_from_code(code)
-        actual_priv = self.get_user_privilege_over_group(user_uuid, group_uuid)
-        if actual_priv <= privilege_id:
+        requested_priv = self._get_privilege_id_from_code(code)
+        actual_priv = self.get_user_privilege_over_group(group_uuid, user_uuid)
+        # print user_uuid, group_uuid, "requested priv=", requested_priv, "actual priv=", actual_priv
+        if actual_priv <= requested_priv:
             return True
         else:
             return False
 
+    # can remove group and disinvite group members.
     def group_is_owned(self, group_uuid, user_uuid=None):
         """
         Check whether a group is owned by a user
@@ -1270,8 +1397,9 @@ class HSAccess:
         """
         if user_uuid is None:
             user_uuid = self._user_uuid
-        return self.group_accessible(user_uuid, group_uuid, 'own')
+        return self._group_accessible(user_uuid, group_uuid, 'own')
 
+    # can invite members to group
     def group_is_readwrite(self, group_uuid, user_uuid=None):
         """
         Check whether a group is owned by a user
@@ -1284,8 +1412,9 @@ class HSAccess:
         """
         if user_uuid is None:
             user_uuid = self._user_uuid
-        return self.group_accessible(user_uuid, group_uuid, 'rw')
+        return self._group_accessible(user_uuid, group_uuid, 'rw')
 
+    # minimal group membership: can see members but cannot add/invite them
     def group_is_readable(self, group_uuid, user_uuid=None):
         """
         Check whether a group is owned by a user
@@ -1298,24 +1427,230 @@ class HSAccess:
         """
         if user_uuid is None:
             user_uuid = self._user_uuid
-        return self.group_accessible(user_uuid, group_uuid, 'ro')
+        return self._group_accessible(user_uuid, group_uuid, 'ro')
 
-    def group_is_readable_without_sharing(self, group_uuid, user_uuid=None):
+    # # this is a meaningless protection
+    # def group_is_readable_without_sharing(self, group_uuid, user_uuid=None):
+    #     """
+    #     Check whether a group is readable without sharing by a user
+    #     :type self: HSAccess
+    #     :type user_uuid: str
+    #     :type group_uuid: str
+    #     :param user_uuid: uuid of user to check
+    #     :param group_uuid: group uuid of group to check
+    #     :return: True if group uuid is readable without sharing to user uuid
+    #     """
+    #     if user_uuid is None:
+    #         user_uuid = self._user_uuid
+    #     return self._group_accessible(user_uuid, group_uuid, 'ns')
+
+    # CLI: hs invite ....
+    def invite_user_to_group(self, group_uuid, user_uuid, privilege_code='ro'):
         """
-        Check whether a group is readable without sharing by a user
+        Invite a user into a group. The user must accept in a separate step
+        :param group_uuid:
+        :param user_uuid:
+        :param privilege_code:
+        :return:
+        """
+        user_id = self._get_user_id_from_uuid(user_uuid)
+        privilege_id = self._get_privilege_id_from_code(privilege_code)
+        group_id = self._get_group_id_from_uuid(group_uuid)
+        requesting_id = self._get_user_id_from_uuid(self._user_uuid)
+        # sanity logic: no such thing as 'ns' access.
+        if privilege_code == 'ns':
+            raise HSAException("privilege 'readable without sharing' does not apply to groups")
+        # access control logic: cannot grant sharing above own privilege
+        if not (self.user_is_admin(self._user_uuid)):
+            # use join to access privilege records
+            user_priv = self.get_user_privilege_over_group(group_uuid)
+            if user_priv >= self._PRIVILEGE_RO:  # read-only or no-sharing
+                raise HSAException("user lacks read/write privilege necessary to invite to this group")
+            else:
+                if user_priv > privilege_id:
+                    raise HSAException("user must hold a privilege in order to share it")
+        # sufficient privileges present to share this resource
+        if self._user_invite_to_group_exists(requesting_id, group_id, user_id):
+            self._invite_group_user_update(requesting_id, user_id, group_id, privilege_id)
+        else:
+            self._invite_group_user_add(requesting_id, user_id, group_id, privilege_id)
+
+    def _invite_group_user_update(self, requesting_id, user_id, group_id, privilege_id):
+        """
+        PRIVATE: update user access to a group
         :type self: HSAccess
-        :type user_uuid: str
-        :type group_uuid: str
-        :param user_uuid: uuid of user to check
-        :param group_uuid: group uuid of group to check
-        :return: True if group uuid is readable without sharing to user uuid
+        :type requesting_id: int
+        :type user_id: int
+        :type group_id: int
+        :type privilege_id: int
+        :param requesting_id: id of user requesting change
+        :param user_id: id of user to be enabled
+        :param group_id: id of group to be modified
+        :param privilege_id: id of privilege to be installed
+        :return: None
+        """
+        self._cur.execute("""update user_invitations_to_group set privilege_id = %s,
+                          assertion_time=CURRENT_TIMESTAMP where user_id=%s and group_id=%s and assertion_user_id=%s""",
+                          (privilege_id, user_id, group_id, requesting_id))
+        self._conn.commit()
+
+    def _invite_group_user_add(self, requesting_id, user_id, group_id, privilege_id):
+        """
+        PRIVATE: add new user access for a group
+        :type self: HSAccess
+        :type requesting_id: int
+        :type user_id: int
+        :type group_id: int
+        :type privilege_id: int
+        :param requesting_id: int: id of user requesting change
+        :param user_id: int: id of user to be enabled
+        :param group_id: int: id of group to be modified
+        :param privilege_id: int: id of privilege to be installed
+        :return: None
+        """
+        self._cur.execute("""insert into user_invitations_to_group values (DEFAULT, %s, %s, %s, %s, DEFAULT)""",
+                          (user_id, group_id, privilege_id, requesting_id))
+        self._conn.commit()
+
+    # determine whether an invitation exists already
+    def _user_invite_to_group_exists(self, requesting_id, group_id, user_id):
+        """
+        Test whether there is an access record for a specific user, group, and asserting user
+        :type self: HSAccess
+        :type user_id: int
+        :type group_id: int
+        :type requesting_id: int
+        :param user_id: user id of user who needs privilege
+        :param group_id: group id of group to which privilege will be assigned
+        :param requesting_id: user id of user assigning privilege
+        :return:
+        """
+        self._cur.execute(
+            """select privilege_id from user_invitations_to_group where user_id=%s and group_id=%s
+            and assertion_user_id=%s""",
+            (user_id, group_id, requesting_id))
+        if self._cur.rowcount > 1:
+            raise HSAException("Database integrity violation: more than one record for a group privilege triple")
+        if self._cur.rowcount > 0:
+            return True
+        else:
+            return False
+
+    def _get_privilege_from_group_invite(self, requesting_id, user_id, group_id):
+        """
+        Test whether there is an access record for a specific user, group, and asserting user
+        :type self: HSAccess
+        :type user_id: int
+        :type group_id: int
+        :type requesting_id: int
+        :param user_id: user id of user who needs privilege
+        :param group_id: group id of group to which privilege will be assigned
+        :param requesting_id: user id of user assigning privilege
+        :return:
+        """
+        self._cur.execute(
+            """select privilege_id from user_invitations_to_group where user_id=%s and group_id=%s
+            and assertion_user_id=%s""",
+            (user_id, group_id, requesting_id))
+        if self._cur.rowcount > 1:
+            raise HSAException("Database integrity violation: more than one record for a group privilege triple")
+        if self._cur.rowcount > 0:
+            return self._cur.fetchone()['privilege_id']
+        else:
+            raise HSAException("no existing group invitation")
+
+    # a user can only revoke one's own invitations
+    # CLI: hs uninvite ....
+    def uninvite_user_to_group(self, group_uuid, user_uuid):
+        """
+        Uninvite a user the current user invited; does not undo other invitations
+        Revoke an invitation to join a group
+        :param group_uuid: uuid of group
+        :param user_uuid: uuid of user
+        :return:
+        """
+        user_id = self._get_user_id_from_uuid(user_uuid)
+        group_id = self._get_group_id_from_uuid(group_uuid)
+        requesting_id = self._get_user_id_from_uuid(self._user_uuid)
+        self._uninvite_user_to_group(requesting_id, group_id, user_id)
+
+    def _uninvite_user_to_group(self, requesting_id, group_id, user_id):
+        if self._user_invite_to_group_exists(requesting_id, group_id, user_id):
+            self._cur.execute("""delete from user_invitations_to_group where user_id=%s
+                              and group_id=%s and assertion_user_id=%s""",
+                              (user_id, group_id, requesting_id))
+            self._conn.commit()
+
+    # CLI hs ls invitations
+    def get_group_invitations_for_user(self, user_uuid=None):
+        """
+        get a list of invitations that can be accepted
+        :param user_uuid:
+        :return:
         """
         if user_uuid is None:
             user_uuid = self._user_uuid
-        return self.group_accessible(user_uuid, group_uuid, 'ns')
+        self._cur.execute("""select g.group_uuid, g.group_name, p.privilege_code, a.user_uuid, a.user_name, a.user_login
+                          from user_invitations_to_group i
+                          left join groups g on i.group_id=g.group_id
+                          left join users u on u.user_id = i.user_id
+                          left join users a on a.user_id = i.assertion_user_id
+                          left join privileges p on p.privilege_id=i.privilege_id
+                          where u.user_uuid=%s
+                          order by i.assertion_time desc""",
+                          (user_uuid,))
+        rows = self._cur.fetchall()
+        result = []
+        for row in rows:
+            result += [{'group': {'uuid': row['group_uuid'],
+                                  'name': row['group_name'],
+                                  'privilege': row['privilege_code']},
+                        'host': { 'uuid': row['user_uuid'],
+                                  'name': row['user_name'],
+                                  'login': row['user_login']}}]
+        return result
 
-    # CLI: share_group
-    def share_group_with_user(self, group_uuid, user_uuid, privilege_code='ns'):
+    # CLI: hs accept ...
+    def accept_invitation_to_group(self, group_uuid, host_uuid):
+        """
+        Accept an invitation to join a group
+        :type group_uuid: str
+        :type host_uuid: str
+        :param group_uuid: uuid of group for which to accept invitation
+        :param host_uuid: user uuid of person who invited you
+        :return:
+        """
+        user_id = self._get_user_id_from_uuid(self._user_uuid)
+        group_id = self._get_group_id_from_uuid(group_uuid)
+        requesting_id = self._get_user_id_from_uuid(host_uuid)
+        privilege_id = self._get_privilege_from_group_invite(requesting_id, user_id, group_id)
+        if self._user_invite_to_group_exists(requesting_id, group_id, user_id):
+            self._share_group_with_user(requesting_id, user_id, group_id, privilege_id)
+            # remove invitation after acting on it
+            self._uninvite_user_to_group(requesting_id, group_id, user_id)
+        else:
+            raise HSAException("no group invitation exists for user")
+
+    # CLI: hs refuse
+    def refuse_invitation_to_group(self, group_uuid, host_uuid):
+        """
+        Refuse an invitation to join a group
+        :param group_uuid:
+        :param host_uuid: user uuid of person who invited
+        :return:
+        """
+        user_id = self._get_user_id_from_uuid(self._user_uuid)
+        group_id = self._get_group_id_from_uuid(group_uuid)
+        requesting_id = self._get_user_id_from_uuid(host_uuid)
+        if self._user_invite_to_group_exists(requesting_id, group_id, user_id):
+            # remove invitation without acting on it
+            self._uninvite_user_to_group(requesting_id, group_id, user_id)
+        else:
+            raise HSAException("no group invitation exists for user")
+
+    #  for now, couple group membership with group privilege
+    # self.assert_user_in_group(group_uuid, user_uuid)
+    def share_group_with_user(self, group_uuid, user_uuid, privilege_code='ro'):
         """
         Attempt to share a group with a user: this allows read/write to the group membership list
         :type self: HSAccess
@@ -1331,16 +1666,30 @@ class HSAccess:
         privilege_id = self._get_privilege_id_from_code(privilege_code)
         group_id = self._get_group_id_from_uuid(group_uuid)
         requesting_id = self._get_user_id_from_uuid(self._user_uuid)
+        # sanity logic: no such thing as 'ns' access.
+        if privilege_code == 'ns':
+            raise HSAException("privilege 'readable without sharing' does not apply to groups")
         # access control logic: cannot grant sharing above own privilege
         if not (self.user_is_admin(self._user_uuid)):
             # use join to access privilege records
-            user_priv = self.get_user_privilege_over_group(self._user_uuid, group_uuid)
+            user_priv = self.get_user_privilege_over_group(group_uuid)
             if user_priv >= self._PRIVILEGE_RO:  # read-only or no-sharing
-                raise HSAException("Cannot modify a group without read/write privileges")
+                raise HSAException("user lacks read/write privilege necessary to share this group")
             else:
                 if user_priv > privilege_id:
-                    raise HSAException("User has insufficient privilege to share this resource")
-        # sufficient privileges present to share this resource
+                    raise HSAException("user has insufficient privilege to share this group in this way")
+        self._share_group_with_user(requesting_id, user_id, group_id, privilege_id)
+        # for now, couple group membership with group privilege; the following is obsolete
+        # self.assert_user_in_group(group_uuid, user_uuid)
+
+    def _share_group_with_user(self, requesting_id, user_id, group_id, privilege_id):
+        """
+        Raw insert without access control
+        :param requesting_id:
+        :param user_id:
+        :param group_id:
+        :return:
+        """
         if self._user_access_to_group_exists(requesting_id, user_id, group_id):
             self._share_group_user_update(requesting_id, user_id, group_id, privilege_id)
         else:
@@ -1383,10 +1732,50 @@ class HSAccess:
                           (user_id, group_id, privilege_id, requesting_id))
         self._conn.commit()
 
+    # CLI: hs group remove ...
+    def unshare_group_with_user(self, group_uuid, user_uuid=None):
+        """
+        Attempt to unshare a group with a user
+        :type self: HSAccess
+        :type group_uuid: str
+        :type user_uuid: str
+        :param group_uuid: group identifier of group to which privilege should be assigned
+        :param user_uuid: uuid of user for whom privilege should be removed
+        :return: None
+        There are three conditions under which one can unshare a group with a user
+        a) user has admin
+        b) user owns the group
+        c) user is the user in question and wishes to leave the group
+        """
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+
+        # these serve as argument checks
+        user_id = self._get_user_id_from_uuid(user_uuid)
+        group_id = self._get_group_id_from_uuid(group_uuid)
+        # requesting_id = self._get_user_id_from_uuid(self._user_uuid)
+
+        # access control logic:
+        if self.user_is_admin(self._user_uuid) \
+                or self.group_is_owned(group_uuid) \
+                or (user_uuid == self._user_uuid and self.user_in_group(group_uuid, user_uuid)):
+            if self.get_number_of_group_owners(group_uuid)>1 or not self.group_is_owned(group_uuid, user_uuid):
+                self._cur.execute("delete from user_access_to_group where group_id=%s and user_id=%s",
+                                  (group_id, user_id))
+                self._conn.commit()
+            else:
+                raise HSAException("cannot remove last group owner")
+            # self.retract_user_from_group(user_uuid, group_uuid)
+        else:
+            raise HSAException("insufficient privilege to unshare group '"
+                               + self.get_group_print_name(group_uuid)
+                               + "' with user '"
+                               + self.get_user_print_name(user_uuid))
+
     # ##########################################################
     # faceted information retrieval
     # ##########################################################
-    # CLI: hs_ls
+    # CLI: hs ls resources
     def resources_held_by_user(self, user_uuid=None):
         """
         Make a list of resources held by user, sorted by title
@@ -1417,9 +1806,23 @@ class HSAccess:
         :param group_uuid: uuid of the group to check
         :return: list: structure of resources
         """
+        group_id = self._get_group_id_from_uuid(group_uuid)
+        self._cur.execute("""select r.resource_title, r.resource_uuid, r.resource_path, q.privilege_code
+                          from resources r inner join group_resource_privilege p
+                          on r.resource_id = p.resource_id
+                          left join privileges q on p.privilege_id = q.privilege_id
+                          where p.group_id = %s""",
+                          (group_id,))
+        # map this into a dict structure
+        result = []
+        for row in self._cur:
+            result.append({'uuid': row['resource_uuid'],
+                           'title': row['resource_title'],
+                           'path': row['resource_path'],
+                           'privilege': row['privilege_code']})
         return {}
 
-    # CLI: hs_groups
+    # CLI: hs ls groups
     def groups_of_user(self, user_uuid=None):
         """
         Make a list of groups in which a user is a member.
@@ -1568,6 +1971,102 @@ class HSAccess:
         """
         return
 
+    ####################################################################
+    # statistics
+    ####################################################################
+
+    def get_number_of_resource_owners(self, resource_uuid):
+        if not self.resource_exists(resource_uuid):
+            raise HSAException("resource uuid '" + resource_uuid + "' does not exist")
+        resource_id = self._get_resource_id_from_uuid(resource_uuid)
+        self._cur.execute("""select count(distinct user_id) as count from user_resource_privilege
+                          where resource_id=%s and privilege_id=1""",
+                          (resource_id,))
+        return self._cur.fetchone()['count']
+
+    def get_number_of_group_owners(self, group_uuid):
+        if not self.group_exists(group_uuid):
+            raise HSAException("group uuid '" + group_uuid + "' does not exist")
+        resource_id = self._get_group_id_from_uuid(group_uuid)
+        self._cur.execute("""select count(distinct user_id) as count from user_group_privilege
+                          where group_id=%s and privilege_id=1""",
+                          (resource_id,))
+        return self._cur.fetchone()['count']
+
+    def get_number_of_resources_owned_by_user(self, user_uuid=None):
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+        if not self.user_exists(user_uuid):
+            raise HSAException("user uuid '" + user_uuid + "' does not exist")
+        user_id = self._get_user_id_from_uuid(user_uuid)
+        self._cur.execute("""select count(distinct resource_id) as count from user_resource_privilege
+                          where user_id=%s and privilege_id=1""",
+                          (user_id,))
+        return self._cur.fetchone()['count']
+
+    # get the number of groups the user owns
+    def get_number_of_groups_owned_by_user(self, user_uuid=None):
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+        if not self.user_exists(user_uuid):
+            raise HSAException("user uuid '" + user_uuid + "' does not exist")
+        user_id = self._get_user_id_from_uuid(user_uuid)
+        self._cur.execute("""select count(distinct group_id) as count from user_group_privilege
+                          where user_id=%s and privilege_id=1""",
+                          (user_id,))
+        return self._cur.fetchone()['count']
+
+    # measure the number of resources the user can access
+    def get_number_of_resources_held_by_user(self, user_uuid=None):
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+        if not self.user_exists(user_uuid):
+            raise HSAException("user uuid '" + user_uuid + "' does not exist")
+        user_id = self._get_user_id_from_uuid(user_uuid)
+        self._cur.execute("""select count(distinct resource_id) as count from user_resource_privilege
+                          where user_id=%s""",
+                          (user_id,))
+        return self._cur.fetchone()['count']
+
+    # measure the number of resources the user can access
+    # note: group membership and access are currently synonymous
+    # I am utilizing group access as the count.
+
+    def get_number_of_groups_of_user(self, user_uuid=None):
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+        if not self.user_exists(user_uuid):
+            raise HSAException("user uuid '" + user_uuid + "' does not exist")
+        user_id = self._get_user_id_from_uuid(user_uuid)
+        self._cur.execute("""select count(distinct group_id) as count from user_group_privilege
+                          where user_id=%s""",
+                          (user_id,))
+        return self._cur.fetchone()['count']
+
+    ##################################################################################
+    # quick utility routines for obtaining current user information
+    ##################################################################################
+
+    def get_uuid(self):
+        return self._user_uuid
+
+    def get_login(self):
+        return self._irods_user
+
+    def get_user_print_name(self, user_uuid=None):
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+        meta = self.get_user_metadata(user_uuid)
+        return meta['name'] + '(' + meta['uuid'] + ')'
+
+    def get_resource_print_name(self, resource_uuid):
+        meta = self.get_resource_metadata(resource_uuid)
+        return meta['title'] + '(' + meta['uuid'] + ')'
+
+    def get_group_print_name(self, group_uuid):
+        meta = self.get_group_metadata(group_uuid)
+        return meta['name'] + '(' + meta['uuid'] + ')'
+
     #################################################
     # reset everything for testing
     #################################################
@@ -1582,7 +2081,8 @@ class HSAccess:
                 self._cur.execute("delete from user_tags_of_resource")
                 self._cur.execute("delete from user_folder_of_resource")
                 self._cur.execute("delete from group_access_to_resource")
-                self._cur.execute("delete from user_membership_in_group")
+                # self._cur.execute("delete from user_membership_in_group")
+                self._cur.execute("delete from user_invitations_to_group")
                 self._cur.execute("delete from user_access_to_group")
                 self._cur.execute("delete from user_access_to_resource")
                 self._cur.execute("delete from user_folders")

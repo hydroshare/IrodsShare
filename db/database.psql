@@ -2,13 +2,26 @@
 -- MUST DROP IN REVERSE ORDER 
 -- in order to avoid dependencies. 
 
+DROP VIEW IF EXISTS group_resource_privilege; 
 DROP VIEW IF EXISTS user_resource_privilege;
 DROP TABLE IF EXISTS user_tags_of_resource; 
 DROP TABLE IF EXISTS user_folder_of_resource; 
 DROP VIEW IF EXISTS user_group_privilege_over_resource;
+
+-- obsolete table: replaced by group_resource_privilege
+DROP VIEW IF EXISTS group_privilege_over_resource; 
+
 DROP TABLE IF EXISTS group_access_to_resource; 
+DROP VIEW IF EXISTS user_membership_in_group; 
+
+-- obsolete table; replaced with view user_membership_in_group 
 DROP TABLE IF EXISTS user_membership_in_group; 
+
+-- obsolete table: replaced by user_group_privilege 
 DROP VIEW IF EXISTS user_privilege_over_group;
+
+DROP VIEW IF EXISTS user_group_privilege; 
+DROP TABLE IF EXISTS user_invitations_to_group; 
 DROP TABLE IF EXISTS user_access_to_group; 
 DROP VIEW IF EXISTS user_privilege_over_resource;
 DROP TABLE IF EXISTS user_access_to_resource; 
@@ -94,9 +107,8 @@ INSERT INTO users VALUES
 -- * primary key is GUID
 -- * no other disambiguations: group names can be identical and disambiguated
 --   through other means, e.g., owners. 
--- * assertion_user_id is creator, but a group can have no members and owners; 
---   - membership must be declared explicitly via user_membership_in_group
---   - ownership must be declared explicitly via user_access_to_group
+-- * as of this version, user membership and access are conflated. 
+--   It is not possible for a group member to have no access. 
 -------------------------------------------------
 
 CREATE TABLE groups (
@@ -228,35 +240,62 @@ create table user_access_to_group (
 ); 
 
 -------------------------------------------------
+-- invite/accept for groups 
+-- this is a simple invite/accept protocol for groups
+-- a user is invited by another user and then accepts 
+-- the invitation. 
+-------------------------------------------------
+create table user_invitations_to_group ( 
+   id SERIAL PRIMARY KEY, 
+   user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   group_id INTEGER REFERENCES groups(group_id) NOT NULL, 
+   privilege_id INTEGER REFERENCES privileges(privilege_id) NOT NULL, 
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),
+   -- one user can make at most one access control invitation for another user. 
+   CONSTRAINT user_group_invitation_unique 
+	UNIQUE(user_id, group_id, privilege_id, assertion_user_id)
+);
+
+-------------------------------------------------
 -- privileges over a group are the logical-or
 -- of privileges granted by individuals. 
 -------------------------------------------------
 
-CREATE VIEW user_privilege_over_group AS 
+CREATE VIEW user_group_privilege AS 
     SELECT user_id, group_id, MIN(privilege_id) as privilege_id
     FROM user_access_to_group 
     GROUP BY user_id, group_id; 
 
--------------------------------------------------
--- group membership 
--- Each record asserts that 
--- * the user designated by user_id 
--- * is a member of the group designated via group_id. 
--- This is subject to privilege level logic in the API.
--------------------------------------------------
+-- removed 02/28/2015 in favor of consistent membership/access
+-- -------------------------------------------------
+-- -- group membership 
+-- -- Each record asserts that 
+-- -- * the user designated by user_id 
+-- -- * is a member of the group designated via group_id. 
+-- -- This is subject to privilege level logic in the API.
+-- -------------------------------------------------
+-- 
+-- CREATE TABLE user_membership_in_group ( 
+--    id SERIAL PRIMARY KEY, 
+--    user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+--    group_id INTEGER REFERENCES groups(group_id) NOT NULL, 
+--    -- who put user into group, and when? 
+--    assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL,
+--    assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
+--    -- there can be at most one assertion that a user is in a group. 
+--    -- this is a performance issue, not a security issue. 
+--    CONSTRAINT user_membership_unique UNIQUE(user_id, group_id)
+-- );
 
-CREATE TABLE user_membership_in_group ( 
-   id SERIAL PRIMARY KEY, 
-   user_id INTEGER REFERENCES users(user_id) NOT NULL, 
-   group_id INTEGER REFERENCES groups(group_id) NOT NULL, 
-   -- who put user into group, and when? 
-   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL,
-   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP), 
-   -- there can be at most one assertion that a user is in a group. 
-   -- this is a performance issue, not a security issue. 
-   CONSTRAINT user_membership_unique UNIQUE(user_id, group_id)
-);
-
+------------------------------------------------------
+-- refactored so that user membership in group is 
+-- expressed through access control 
+------------------------------------------------------
+CREATE VIEW user_membership_in_group AS 
+SELECT user_id, group_id, privilege_id 
+from user_group_privilege; 
+ 
 -------------------------------------------------
 -- group access to resource 
 -- Each record asserts that 
@@ -282,6 +321,15 @@ CREATE TABLE group_access_to_resource (
    CONSTRAINT group_resource_access_unique 
 	UNIQUE(group_id, resource_id, privilege_id, assertion_user_id)
 ); 
+
+-- replaced by view group_resource_privilege 
+-- -------------------------------------------------
+-- -- raw group privileges over resource
+-- -------------------------------------------------
+-- CREATE VIEW group_privilege_over_resource AS 
+--     SELECT group_id, resource_id, MIN(privilege_id) as privilege_id 
+--     FROM group_access_to_resource 
+--     GROUP BY group_id, resource_id
 
 -------------------------------------------------
 -- user privileges determined by group membership
@@ -348,3 +396,13 @@ CREATE VIEW user_resource_privilege AS
   UNION 
   SELECT user_id, resource_id, privilege_id 
   FROM user_group_privilege_over_resource; 
+
+-------------------------------------------------
+-- determine the privileges specific to groups
+-- these become the user privileges of everyone
+-- in the group 
+-------------------------------------------------
+CREATE VIEW group_resource_privilege AS 
+  SELECT group_id, resource_id, min(privilege_id) as privilege_id 
+  from group_access_to_resource 
+  group by group_id, resource_id ;

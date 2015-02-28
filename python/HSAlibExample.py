@@ -28,7 +28,7 @@ guid01 = ha.assert_group("This is a group", True)
 guid02 = ha.assert_group("This is another group", True)
 ha.share_resource_with_group(ruid01, guid01, "ro")
 ha.share_group_with_user(guid02, uuuid02, "rw")
-ha.assert_user_in_group(uuuid02, guid02)
+ha.share_group_with_user(guid02, uuuid02)
 print "get groups for user", uuuid02, "is", ha.get_groups_for_user(uuuid02)
 
 print ha.resources_held_by_user(uuuid02)
