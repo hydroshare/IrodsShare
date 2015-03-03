@@ -54,11 +54,11 @@
             
   <div class="section" id="module-HSAlib">
 <span id="irodsshare-hsaccess-usage"></span><h1>IrodsShare HSAccess usage<a class="headerlink" href="#module-HSAlib" title="Permalink to this headline">¶</a></h1>
-<p><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt> implements a python interface to the iRODS access control system.
+<p><a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> implements a python interface to the iRODS access control system.
 This document describes usage of the python interface.</p>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>To use this class, one establishes a connection via the <tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt> constructor.
+<p>To use this class, one establishes a connection via the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> constructor.
 This class is a wrapper around native iRODS access control and does not create iRODS objects
 nor objects in HydroShare. Instead, it maintains a concept of access control for three kinds
 of objects:</p>
@@ -121,7 +121,7 @@ reused to change metadata after creating it.</li>
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>After utilizing the <tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt> constructor, one gains access as a specific user.
+<p>After utilizing the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> constructor, one gains access as a specific user.
 This user must be already created in iRODS and that user&#8217;s uuid is available by calling
 <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user()</span></tt>.</p>
 <p>When using HSAccess, every object is identified by a 32-byte Universal Unique Identifier (UUID).
@@ -129,10 +129,11 @@ There are UUID namespaces for users, groups, and resources. Other objects, inclu
 do not have UUIDs within the system. In general, when the system references a group, user, or resource,
 it requires that one knows the uuid. Listing functions allow one to easily recover the uuid for
 all relevant objects that one is allowed to access.</p>
-<p>For example, consider <a href="#id1"><span class="problematic" id="id2">:py:HSAccess:`share_resource_with_user`</span></a>. This requires two uuids: one identifying the
-user and another identifying the resource. A third uuid is that of the current user, which is contained
-inside the <tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt> object and need not be mentioned.</p>
-<p>Many methods in <tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt> have optional parameters. For example, whenever appropriate, the user
+<p>For example, consider <a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_user" title="HSAlib.HSAccess.share_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt></a>. This requires two uuids:
+one identifying the user and another identifying the resource. A third uuid is that of the
+current user, which is contained inside the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> object and need not be
+mentioned.</p>
+<p>Many methods in <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> have optional parameters. For example, whenever appropriate, the user
 uuid is optional and defaults to that of the current user as defined when creating the object.</p>
 </div>
 <div class="section" id="sharing-in-irodsshare">
@@ -178,20 +179,17 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li>Sharing of groups is <em>invited</em>; the invited user must approve group membership in a separate confirmation.</li>
 </ul>
 <p>The latter is a state-machine model of sharing, to wit:</p>
-<ol class="arabic">
-<li><p class="first">One user invites another to a group with <a class="reference internal" href="module.html#HSAlib.HSAccess.invite_user_to_group" title="HSAlib.HSAccess.invite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt></a>.</p>
+<ol class="arabic simple">
+<li>One user invites another to a group with <a class="reference internal" href="module.html#HSAlib.HSAccess.invite_user_to_group" title="HSAlib.HSAccess.invite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt></a>.</li>
+<li>The user can:<ol class="loweralpha">
+<li>List invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_for_user" title="HSAlib.HSAccess.get_group_invitations_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt></a>.</li>
+<li>Accept invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.accept_invitation_to_group" title="HSAlib.HSAccess.accept_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt></a>.</li>
+<li>Refuse invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.refuse_invitation_to_group" title="HSAlib.HSAccess.refuse_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.refuse_invitation_to_group()</span></tt></a>.</li>
+</ol>
 </li>
-<li><p class="first">The user can:
-a. List invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_for_user" title="HSAlib.HSAccess.get_group_invitations_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt></a>.
-b. Accept invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.accept_invitation_to_group" title="HSAlib.HSAccess.accept_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt></a>.
-c. Refuse invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.refuse_invitation_to_group" title="HSAlib.HSAccess.refuse_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.refuse_invitation_to_group()</span></tt></a>.</p>
-</li>
-<li><p class="first">Meanwhile, if too much time passes, the original inviter can:
-a. List unaccepted invitations through <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_from_user()</span></tt></p>
-<blockquote>
-<div><p>(not yet implemented)</p>
-</div></blockquote>
-<ol class="loweralpha simple" start="2">
+<li>Meanwhile, if too much time passes, the original inviter can:<ol class="loweralpha">
+<li>List unaccepted invitations through <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_from_user()</span></tt>
+(not yet implemented)</li>
 <li>Uninvite the invited user via <a class="reference internal" href="module.html#HSAlib.HSAccess.uninvite_user_to_group" title="HSAlib.HSAccess.uninvite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt></a>.</li>
 </ol>
 </li>

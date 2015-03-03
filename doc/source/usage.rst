@@ -89,9 +89,10 @@ do not have UUIDs within the system. In general, when the system references a gr
 it requires that one knows the uuid. Listing functions allow one to easily recover the uuid for 
 all relevant objects that one is allowed to access. 
 
-For example, consider :py:HSAccess:`share_resource_with_user`. This requires two uuids: one identifying the 
-user and another identifying the resource. A third uuid is that of the current user, which is contained 
-inside the :py:class:`HSAccess` object and need not be mentioned. 
+For example, consider :py:meth:`HSAccess.share_resource_with_user`. This requires two uuids: 
+one identifying the user and another identifying the resource. A third uuid is that of the 
+current user, which is contained inside the :py:class:`HSAccess` object and need not be 
+mentioned. 
 
 Many methods in :py:class:`HSAccess` have optional parameters. For example, whenever appropriate, the user 
 uuid is optional and defaults to that of the current user as defined when creating the object. 
@@ -145,10 +146,13 @@ The latter is a state-machine model of sharing, to wit:
 
 1. One user invites another to a group with :py:meth:`HSAccess.invite_user_to_group`. 
 2. The user can: 
+
    a. List invitations through :py:meth:`HSAccess.get_group_invitations_for_user`. 
    b. Accept invitations through :py:meth:`HSAccess.accept_invitation_to_group`. 
    c. Refuse invitations through :py:meth:`HSAccess.refuse_invitation_to_group`. 
+
 3. Meanwhile, if too much time passes, the original inviter can: 
+
    a. List unaccepted invitations through :py:meth:`HSAccess.get_group_invitations_from_user`
       (not yet implemented)
    b. Uninvite the invited user via :py:meth:`HSAccess.uninvite_user_to_group`. 
