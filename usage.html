@@ -1,0 +1,537 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>IrodsShare HSAccess usage &mdash; IrodsShare 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="IrodsShare 0.1 documentation" href="index.html" />
+    <link rel="next" title="IrodsShare module documentation" href="module.html" />
+    <link rel="prev" title="Welcome to IrodsShare’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="module.html" title="IrodsShare module documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to IrodsShare’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">IrodsShare 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-HSAlib">
+<span id="irodsshare-hsaccess-usage"></span><h1>IrodsShare HSAccess usage<a class="headerlink" href="#module-HSAlib" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> implements a python interface to the iRODS access control system.
+This document describes usage of the python interface.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>To use this class, one establishes a connection via the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> constructor.
+This class is a wrapper around native iRODS access control and does not create iRODS objects
+nor objects in HydroShare. Instead, it maintains a concept of access control for three kinds
+of objects:</p>
+<ol class="arabic simple">
+<li>Users in iRODS</li>
+<li>Resources stored in iRODS</li>
+<li>Groups of users defined in HydroShare in django.</li>
+</ol>
+<p>The first and second kinds of objects are physical entities. The third is contained solely inside
+the access control system.</p>
+<div class="section" id="rationale-and-need">
+<h3>Rationale and need<a class="headerlink" href="#rationale-and-need" title="Permalink to this headline">¶</a></h3>
+<p>This module was created in order to extend the concept of protection available in iRODS. Currently
+in iRODS, creation of a user group is a privileged action. We wanted to create unprivileged notions
+of:</p>
+<ul class="simple">
+<li>Creating a group.</li>
+<li>Sharing a file with another user or group.</li>
+</ul>
+<p>that can be used by any user and allows a very flexible and fluid form of data sharing similar to what
+is available in Dropbox, Google Drive, OneDrive, but acts at the filesystem level so that the
+resources under its control are usable as if they exist in a file system.</p>
+</div>
+<div class="section" id="architecture">
+<h3>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h3>
+<p>IrodsShare is based upon a PostgreSQL database that is deployed in parallel to the iRODS database iCAT.
+It was found early in the design process that iCAT extensions are not sufficiently expressive to be used as a security
+and access control model of this type. Thus, a separate database was created.
+This database stores access control information for iRODS &#8220;resources&#8221;.</p>
+<p>In order to accomplish this, the iRODS instance must be specially configured. All resources in iRODS must be group-writeable to
+a special iRODS group &#8216;HydroShare&#8217; that contains all users of IrodsShare. IrodsShare imposes its protections on top of iRODS
+protections, but at all levels of iRODS, so that access through the command line, iRODS API, and iRODS REST services are all
+subject to this access control.</p>
+</div>
+<div class="section" id="theory-of-operation">
+<h3>Theory of operation<a class="headerlink" href="#theory-of-operation" title="Permalink to this headline">¶</a></h3>
+<p>This module acts on two levels:</p>
+<ol class="arabic simple">
+<li>Controlling access to resources existing in iRODS.</li>
+<li>Controlling access through the django web interface.</li>
+</ol>
+<p>It exists as a separate entity because these access control mechanisms must be consistent.</p>
+<p>In iRODS, it is possible to define a method that is called before anything is done to a resource.
+This method allows one to deny access to unauthorized users. We utilize this method to
+invoke our own authorization system based upon our authorization database.</p>
+<p>In Django, this library serves as a definitive source of access control information.
+Access is registered by Django, and read from this source as necessary. The module API
+includes listing functions that allow one to list resources by access.</p>
+</div>
+</div>
+<div class="section" id="naming-conventions">
+<h2>Naming conventions<a class="headerlink" href="#naming-conventions" title="Permalink to this headline">¶</a></h2>
+<p>In this library, there are several strong naming conventions:</p>
+<ul class="simple">
+<li>Methods starting with <em>assert_</em> create and change records for an entity. These are idempotent and can be
+reused to change metadata after creating it.</li>
+<li>Methods starting with <em>share_</em> and <em>unshare_</em> grant and removing privileges to an object.</li>
+<li>Methods starting with <em>get_</em> report on the state of the access control system.</li>
+</ul>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>After utilizing the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> constructor, one gains access as a specific user.
+This user must be already created in iRODS and that user&#8217;s uuid is available by calling
+<tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user()</span></tt>.</p>
+<p>When using HSAccess, every object is identified by a 32-byte Universal Unique Identifier (UUID).
+There are UUID namespaces for users, groups, and resources. Other objects, including folders,
+do not have UUIDs within the system. In general, when the system references a group, user, or resource,
+it requires that one knows the uuid. Listing functions allow one to easily recover the uuid for
+all relevant objects that one is allowed to access.</p>
+<p>For example, consider <a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_user" title="HSAlib.HSAccess.share_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt></a>. This requires two uuids:
+one identifying the user and another identifying the resource. A third uuid is that of the
+current user, which is contained inside the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> object and need not be
+mentioned.</p>
+<p>Many methods in <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> have optional parameters. For example, whenever appropriate, the user
+uuid is optional and defaults to that of the current user as defined when creating the object.</p>
+</div>
+<div class="section" id="sharing-in-irodsshare">
+<h2>Sharing in IrodsShare<a class="headerlink" href="#sharing-in-irodsshare" title="Permalink to this headline">¶</a></h2>
+<p>The sharing interface is the reason for the existence of IrodsShare.
+It has several unique properties, including:</p>
+<ul class="simple">
+<li><em>Fluidity</em>: sharing privileges are unprivileged and based upon the idea that one can delegate any privilege one has.</li>
+<li><em>Cumulative privilege</em>: sharing privileges are cumulative over all intents to share from all users. If two people
+share the same object with different privileges, the higher privilege wins.</li>
+</ul>
+<div class="section" id="privileges">
+<h3>Privileges<a class="headerlink" href="#privileges" title="Permalink to this headline">¶</a></h3>
+<p>The privilege system in IrodsShare is based upon four distinct levels of privilege, including:
+* <em>Owner</em>: can do anything to an object, and can unshare it with a user as necessary.
+* <em>Read/Write</em>: can read or update an object, but cannot delete it or override other users&#8217; sharing of it.
+* <em>Read-Only</em>: can read but not write the object.
+* <em>Read-Only without sharing privilege</em>: can read the object but cannot share the object with others.</p>
+<p>The privilege system is based upon several policy rules:</p>
+<ul class="simple">
+<li>Every object (resource and group) must have an owner. The initial owner is the creator.</li>
+<li>The last owner cannot be removed from an object. But new owners can be assigned before removing the
+original creator as owner.</li>
+<li>There can be multiple owners.</li>
+<li>A user of the system can share an object only at the user&#8217;s own privilege level or below. E.g., a person with read/write
+privilege cannot share an object as owner, but can share with &#8220;read/write&#8221;, &#8220;read-only&#8221;, or &#8220;read-only without sharing&#8221; access.
+Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the object.</li>
+<li>A user can change the privilege on a share without notice, within these bounds.</li>
+<li>A user that is a member of a group can share an object with the group. Group privilege applies to all members of the group.</li>
+</ul>
+<p>For groups, there are extra meanings to the protections</p>
+<ul class="simple">
+<li><em>Owner</em> means that one can destroy the group and remove members.</li>
+<li><em>Read/Write</em> means that one can add members to the group.</li>
+<li><em>Read-only</em> means that one can only list members. There is no lower level of group access.</li>
+</ul>
+</div>
+<div class="section" id="instantaneous-and-invited-privilege">
+<h3>Instantaneous and invited privilege<a class="headerlink" href="#instantaneous-and-invited-privilege" title="Permalink to this headline">¶</a></h3>
+<p>There are two kinds of sharing in IrodsShare: instantaneous and invited.</p>
+<ul class="simple">
+<li>Sharing of resources with either users or groups is <em>instantaneous</em>; the privilege appears immediately.</li>
+<li>Sharing of groups is <em>invited</em>; the invited user must approve group membership in a separate confirmation.</li>
+</ul>
+<p>The latter is a state-machine model of sharing, to wit:</p>
+<ol class="arabic simple">
+<li>One user invites another to a group with <a class="reference internal" href="module.html#HSAlib.HSAccess.invite_user_to_group" title="HSAlib.HSAccess.invite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt></a>.</li>
+<li>The user can:<ol class="loweralpha">
+<li>List invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_for_user" title="HSAlib.HSAccess.get_group_invitations_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt></a>.</li>
+<li>Accept invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.accept_invitation_to_group" title="HSAlib.HSAccess.accept_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt></a>.</li>
+<li>Refuse invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.refuse_invitation_to_group" title="HSAlib.HSAccess.refuse_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.refuse_invitation_to_group()</span></tt></a>.</li>
+</ol>
+</li>
+<li>Meanwhile, if too much time passes, the original inviter can:<ol class="loweralpha">
+<li>List unaccepted invitations through <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_from_user()</span></tt>
+(not yet implemented)</li>
+<li>Uninvite the invited user via <a class="reference internal" href="module.html#HSAlib.HSAccess.uninvite_user_to_group" title="HSAlib.HSAccess.uninvite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt></a>.</li>
+</ol>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="list-of-methods-and-categories">
+<h2>List of methods and categories<a class="headerlink" href="#list-of-methods-and-categories" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><dl class="first docutils">
+<dt>Managing users</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>User creation and management:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_user" title="HSAlib.HSAccess.assert_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_user()</span></tt></a>: create a user and update user metadata.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_user_metadata" title="HSAlib.HSAccess.get_user_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_metadata()</span></tt></a>: get a user record.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_user_metadata" title="HSAlib.HSAccess.assert_user_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_user_metadata()</span></tt></a>: push a user record with changes.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_user_print_name" title="HSAlib.HSAccess.get_user_print_name"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_print_name()</span></tt></a>: get the print name of a user.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>User status</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.user_exists" title="HSAlib.HSAccess.user_exists"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_exists()</span></tt></a>: True if user is valid.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.user_is_active" title="HSAlib.HSAccess.user_is_active"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_is_active()</span></tt></a>: True if the user is active and enabled.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.user_is_admin" title="HSAlib.HSAccess.user_is_admin"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_is_admin()</span></tt></a>: True if the user is an administrator.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Miscellaneous:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_users" title="HSAlib.HSAccess.get_users"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_users()</span></tt></a>: a list of all active users.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Managing groups</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Creation and management:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_group" title="HSAlib.HSAccess.assert_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_group()</span></tt></a>: register a group.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_metadata" title="HSAlib.HSAccess.get_group_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_metadata()</span></tt></a>: read a group registration record.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_group_metadata" title="HSAlib.HSAccess.assert_group_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_group_metadata()</span></tt></a>: make changes in a group registration record.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_group" title="HSAlib.HSAccess.retract_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_group()</span></tt></a>: remove a group (not recommended).</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_print_name" title="HSAlib.HSAccess.get_group_print_name"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_print_name()</span></tt></a>: get the print name for a group.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Views of group membership</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_groups" title="HSAlib.HSAccess.get_groups"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_groups()</span></tt></a>: a list of all valid groups.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_groups_for_user" title="HSAlib.HSAccess.get_groups_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_groups_for_user()</span></tt></a>: a list of groups to which a user belongs.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Status of a group</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_exists" title="HSAlib.HSAccess.group_exists"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_exists()</span></tt></a>: whether group is valid</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Managing resources</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Creation and update:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_resource" title="HSAlib.HSAccess.assert_resource"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource()</span></tt></a>: register a resource or update resource registration.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resource_metadata" title="HSAlib.HSAccess.get_resource_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resource_metadata()</span></tt></a>: get a registration record.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_resource_metadata" title="HSAlib.HSAccess.assert_resource_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_metadata()</span></tt></a>: post changes to a registration record.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resource_print_name" title="HSAlib.HSAccess.get_resource_print_name"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resource_print_name()</span></tt></a>: get the print name of a resource.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Status of a resource</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_exists" title="HSAlib.HSAccess.resource_exists"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_exists()</span></tt></a>: whether resource is valid.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_accessible" title="HSAlib.HSAccess.resource_accessible"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_accessible()</span></tt></a>: whether a resource is accessible to a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_immutable" title="HSAlib.HSAccess.resource_is_immutable"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_immutable()</span></tt></a>: whether a resource is immutable and thus archival.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Access control</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>For resources:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Access status:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_owned" title="HSAlib.HSAccess.resource_is_owned"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_owned()</span></tt></a>: True if resource is owned by a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_readwrite" title="HSAlib.HSAccess.resource_is_readwrite"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readwrite()</span></tt></a>: True of resource is read/write to a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_readable" title="HSAlib.HSAccess.resource_is_readable"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readable()</span></tt></a>: True if resource is readable to a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_readable_without_sharing" title="HSAlib.HSAccess.resource_is_readable_without_sharing"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readable_without_sharing()</span></tt></a>: True if resource is readable without sharing for a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_user_privilege_over_resource" title="HSAlib.HSAccess.get_user_privilege_over_resource"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_privilege_over_resource()</span></tt></a>: return numeric privilege 1-4 for a user.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>User access to resources:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_user" title="HSAlib.HSAccess.share_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt></a>: make a resource accessible to a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.unshare_resource_with_user" title="HSAlib.HSAccess.unshare_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_resource_with_user()</span></tt></a>: remove access to a resource for a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resources_held_by_user" title="HSAlib.HSAccess.resources_held_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resources_held_by_user()</span></tt></a>: list the resources accessible to a user (by any means).</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Group access to resources:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_group" title="HSAlib.HSAccess.share_resource_with_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_group()</span></tt></a>: make a resource accessible to a group.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.unshare_resource_with_group" title="HSAlib.HSAccess.unshare_resource_with_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_resource_with_group()</span></tt></a>: remove access to a resource for a group.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resources_held_by_group" title="HSAlib.HSAccess.resources_held_by_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resources_held_by_group()</span></tt></a>: list the resources available to a group.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>For groups:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Access status:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_exists" title="HSAlib.HSAccess.group_exists"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_exists()</span></tt></a>: whether group is valid</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_owned" title="HSAlib.HSAccess.group_is_owned"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_owned()</span></tt></a>: whether group is owned by a specified user</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_readwrite" title="HSAlib.HSAccess.group_is_readwrite"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readwrite()</span></tt></a>: whether group is read/write to a specified user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_readable" title="HSAlib.HSAccess.group_is_readable"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readable()</span></tt></a>: whether group is readable to a user; minimum privilege.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_user_privilege_over_group" title="HSAlib.HSAccess.get_user_privilege_over_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_privilege_over_group()</span></tt></a>: get numeric privilege 1-3 for a group.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>User access to groups:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_owned" title="HSAlib.HSAccess.group_is_owned"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_owned()</span></tt></a>: whether group is owned by a specified user</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_readwrite" title="HSAlib.HSAccess.group_is_readwrite"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readwrite()</span></tt></a>: whether group is read/write to a specified user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_readable" title="HSAlib.HSAccess.group_is_readable"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readable()</span></tt></a>: whether group is readable to a user; minimum privilege.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Membership reporting</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.user_in_group" title="HSAlib.HSAccess.user_in_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_in_group()</span></tt></a>: True if user is in a given group.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.groups_of_user" title="HSAlib.HSAccess.groups_of_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.groups_of_user()</span></tt></a>: a list of groups in which the user is a member.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>New members</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.invite_user_to_group" title="HSAlib.HSAccess.invite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt></a>: invite a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.uninvite_user_to_group" title="HSAlib.HSAccess.uninvite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt></a>: retract an invitation.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_for_user" title="HSAlib.HSAccess.get_group_invitations_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt></a>: get all invitations.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.accept_invitation_to_group" title="HSAlib.HSAccess.accept_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt></a>: accept an invitation.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.refuse_invitation_to_group" title="HSAlib.HSAccess.refuse_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.refuse_invitation_to_group()</span></tt></a>: refuse an invitation.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.share_group_with_user" title="HSAlib.HSAccess.share_group_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_group_with_user()</span></tt></a>: DEPRECATED: group membership without invitation.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.unshare_group_with_user" title="HSAlib.HSAccess.unshare_group_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_group_with_user()</span></tt></a>: remove all access to a group for a user.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Resource organization (not yet implemented)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Tagging of resources</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_tag" title="HSAlib.HSAccess.assert_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_tag()</span></tt></a>: make a new tag.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_tag" title="HSAlib.HSAccess.retract_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_tag()</span></tt></a>: destroy a tag and delete all uses.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_resource_has_tag" title="HSAlib.HSAccess.assert_resource_has_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_has_tag()</span></tt></a>: tag a resource.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_resource_has_tag" title="HSAlib.HSAccess.retract_resource_has_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_resource_has_tag()</span></tt></a>: untag a resource.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_tags" title="HSAlib.HSAccess.get_tags"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_tags()</span></tt></a>: get a list of all active tags.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resources_by_tag" title="HSAlib.HSAccess.get_resources_by_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_by_tag()</span></tt></a>: get a structure of resources, filed by tag.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Folders for resources</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_folder" title="HSAlib.HSAccess.assert_folder"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_folder()</span></tt></a>: make a new folder.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_folder" title="HSAlib.HSAccess.retract_folder"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_folder()</span></tt></a>: destroy a folder and remove all links in the folder.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_folders" title="HSAlib.HSAccess.get_folders"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_folders()</span></tt></a>: get a list of all folders.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_resource_in_folder" title="HSAlib.HSAccess.assert_resource_in_folder"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_in_folder()</span></tt></a>: put a resource into a folder.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_resource_in_folder" title="HSAlib.HSAccess.retract_resource_in_folder"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_resource_in_folder()</span></tt></a>: remove a resource from a folder.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resources_in_folders" title="HSAlib.HSAccess.get_resources_in_folders"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_in_folders()</span></tt></a>: list resources by folder.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Statistics</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_group_owners" title="HSAlib.HSAccess.get_number_of_group_owners"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_group_owners()</span></tt></a></li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_groups_of_user" title="HSAlib.HSAccess.get_number_of_groups_of_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_groups_of_user()</span></tt></a></li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_groups_owned_by_user" title="HSAlib.HSAccess.get_number_of_groups_owned_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_groups_owned_by_user()</span></tt></a></li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_resource_owners" title="HSAlib.HSAccess.get_number_of_resource_owners"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resource_owners()</span></tt></a></li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_resources_held_by_user" title="HSAlib.HSAccess.get_number_of_resources_held_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resources_held_by_user()</span></tt></a></li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_resources_owned_by_user" title="HSAlib.HSAccess.get_number_of_resources_owned_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resources_owned_by_user()</span></tt></a></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Current user</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_uuid" title="HSAlib.HSAccess.get_uuid"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_uuid()</span></tt></a></li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_login" title="HSAlib.HSAccess.get_login"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_login()</span></tt></a></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">IrodsShare HSAccess usage</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a><ul>
+<li><a class="reference internal" href="#rationale-and-need">Rationale and need</a></li>
+<li><a class="reference internal" href="#architecture">Architecture</a></li>
+<li><a class="reference internal" href="#theory-of-operation">Theory of operation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#naming-conventions">Naming conventions</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#sharing-in-irodsshare">Sharing in IrodsShare</a><ul>
+<li><a class="reference internal" href="#privileges">Privileges</a></li>
+<li><a class="reference internal" href="#instantaneous-and-invited-privilege">Instantaneous and invited privilege</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#list-of-methods-and-categories">List of methods and categories</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to IrodsShare&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="module.html"
+                        title="next chapter">IrodsShare module documentation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/usage.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="module.html" title="IrodsShare module documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to IrodsShare’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">IrodsShare 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Alva Couch et al..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
