@@ -115,7 +115,7 @@ includes listing functions that allow one to list resources by access.</p>
 <ul class="simple">
 <li>Methods starting with <em>assert_</em> create and change records for an entity. These are idempotent and can be
 reused to change metadata after creating it.</li>
-<li>Methods starting with <em>share_</em> and <em>unshare_</em> grant and removing privileges to an object.</li>
+<li>Methods starting with <em>share_</em> and <em>unshare_</em> grant and remove privileges to an object.</li>
 <li>Methods starting with <em>get_</em> report on the state of the access control system.</li>
 </ul>
 </div>
@@ -127,8 +127,10 @@ This user must be already created in iRODS and that user&#8217;s uuid is availab
 <p>When using HSAccess, every object is identified by a 32-byte Universal Unique Identifier (UUID).
 There are UUID namespaces for users, groups, and resources. Other objects, including folders,
 do not have UUIDs within the system. In general, when the system references a group, user, or resource,
-it requires that one knows the uuid. Listing functions allow one to easily recover the uuid for
+one must know the uuid. Listing functions allow one to easily recover the uuid for
 all relevant objects that one is allowed to access.</p>
+<p>The use of UUIDs allows us to be quite flexible on naming of objects. For example, in IrodsShare, it is not
+an error for two groups or resources to have the exact same name. The UUIDs disambiguate between these.</p>
 <p>For example, consider <a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_user" title="HSAlib.HSAccess.share_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt></a>. This requires two uuids:
 one identifying the user and another identifying the resource. A third uuid is that of the
 current user, which is contained inside the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> object and need not be
@@ -147,11 +149,13 @@ share the same object with different privileges, the higher privilege wins.</li>
 </ul>
 <div class="section" id="privileges">
 <h3>Privileges<a class="headerlink" href="#privileges" title="Permalink to this headline">¶</a></h3>
-<p>The privilege system in IrodsShare is based upon four distinct levels of privilege, including:
-* <em>Owner</em>: can do anything to an object, and can unshare it with a user as necessary.
-* <em>Read/Write</em>: can read or update an object, but cannot delete it or override other users&#8217; sharing of it.
-* <em>Read-Only</em>: can read but not write the object.
-* <em>Read-Only without sharing privilege</em>: can read the object but cannot share the object with others.</p>
+<p>The privilege system in IrodsShare is based upon four distinct levels of privilege, including:</p>
+<ul class="simple">
+<li><em>Owner</em>: can do anything to an object, and can unshare it with a user as necessary.</li>
+<li><em>Read/Write</em>: can read or update an object, but cannot delete it or override other users&#8217; sharing of it.</li>
+<li><em>Read-Only</em>: can read but not write the object.</li>
+<li><em>Read-Only without sharing privilege</em>: can read the object but cannot share the object with others.</li>
+</ul>
 <p>The privilege system is based upon several policy rules:</p>
 <ul class="simple">
 <li>Every object (resource and group) must have an owner. The initial owner is the creator.</li>
