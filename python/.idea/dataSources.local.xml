@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="PostgreSQL - alva@localhost" uuid="e6858613-ca99-4b70-b14d-6570da0f285a">
-      <secret-storage>master_key</secret-storage>
-      <user-name>alva</user-name>
-      <schema-pattern>alva.pg_catalog alva.public</schema-pattern>
-      <default-schemas>alva.pg_catalog alva.public</default-schemas>
-    </data-source>
     <data-source name="PostgreSQL on ww2.cuahsi.org" uuid="9c1cc13d-d423-44fe-9b5b-b34f571ea27c">
       <secret-storage>master_key</secret-storage>
       <user-name>acouch</user-name>

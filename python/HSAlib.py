@@ -2018,6 +2018,7 @@ class HSAccess:
         :param user_uuid: uuid of user; omit for current user. 
         :return:
 
+        This is from the point of view of the invited user.
         List group invitations in the form::
 
             {'group': 
@@ -2031,7 +2032,6 @@ class HSAccess:
             }
 
         Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users
-
         """
         if user_uuid is None:
             user_uuid = self._user_uuid
@@ -2051,6 +2051,52 @@ class HSAccess:
                                   'name': row['group_name'],
                                   'privilege': row['privilege_code']},
                         'host': { 'uuid': row['user_uuid'],
+                                  'name': row['user_name'],
+                                  'login': row['user_login']}}]
+        return result
+
+    # CLI hs ls invitations
+    def get_group_invitations_sent_by_user(self, user_uuid=None):
+        """
+        Get a list of invitations to join groups that can be uninvited
+
+        :type user_uuid: str
+        :param user_uuid: uuid of user; omit for current user.
+        :return:
+
+            This is from the point of view of the inviting user. List group invitations in the form::
+
+            {'group':
+                {'uuid': {uuid of group},
+                 'name': {name of group},
+                 'privilege': {privilege_code}},
+             'user':
+                { 'uuid': {uuid of inviting user},
+                  'name': {name of inviting user},
+                  'login': {login of inviting user}}
+            }
+
+        Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users
+
+        """
+        if user_uuid is None:
+            user_uuid = self._user_uuid
+        self._cur.execute("""select g.group_uuid, g.group_name, p.privilege_code, u.user_uuid, u.user_name, u.user_login
+                          from user_invitations_to_group i
+                          left join groups g on i.group_id=g.group_id
+                          left join users u on u.user_id = i.user_id
+                          left join users a on a.user_id = i.assertion_user_id
+                          left join privileges p on p.privilege_id=i.privilege_id
+                          where i.assertion_user_id=%s
+                          order by i.assertion_time desc""",
+                          (user_uuid,))
+        rows = self._cur.fetchall()
+        result = []
+        for row in rows:
+            result += [{'group': {'uuid': row['group_uuid'],
+                                  'name': row['group_name'],
+                                  'privilege': row['privilege_code']},
+                        'user': { 'uuid': row['user_uuid'],
                                   'name': row['user_name'],
                                   'login': row['user_login']}}]
         return result
@@ -2291,7 +2337,7 @@ class HSAccess:
     # faceted information retrieval
     ###########################################################
     # CLI: hs ls resources
-    def resources_held_by_user(self, user_uuid=None):
+    def get_resources_held_by_user(self, user_uuid=None):
         """
         Make a list of resources held by user, sorted by title
 
@@ -2326,7 +2372,7 @@ class HSAccess:
                            'privilege': row['privilege_code']})
         return result
 
-    def resources_held_by_group(self, group_uuid):
+    def get_resources_held_by_group(self, group_uuid):
         """
         Retrieve resources accessible to a specific group
 

@@ -153,8 +153,7 @@ The latter is a state-machine model of sharing, to wit:
 
 3. Meanwhile, if too much time passes, the original inviter can: 
 
-   a. List unaccepted invitations through :py:meth:`HSAccess.get_group_invitations_from_user`
-      (not yet implemented)
+   a. List unaccepted invitations through :py:meth:`HSAccess.get_group_invitations_sent_by_user`
    b. Uninvite the invited user via :py:meth:`HSAccess.uninvite_user_to_group`. 
 
 List of methods and categories 
@@ -205,11 +204,11 @@ List of methods and categories
         * User access to resources: 
             * :py:meth:`HSAccess.share_resource_with_user`: make a resource accessible to a user. 
             * :py:meth:`HSAccess.unshare_resource_with_user`: remove access to a resource for a user. 
-            * :py:meth:`HSAccess.resources_held_by_user`: list the resources accessible to a user (by any means). 
+            * :py:meth:`HSAccess.get_resources_held_by_user`: list the resources accessible to a user (by any means). 
         * Group access to resources: 
             * :py:meth:`HSAccess.share_resource_with_group`: make a resource accessible to a group. 
             * :py:meth:`HSAccess.unshare_resource_with_group`: remove access to a resource for a group. 
-            * :py:meth:`HSAccess.resources_held_by_group`: list the resources available to a group. 
+            * :py:meth:`HSAccess.get_resources_held_by_group`: list the resources available to a group. 
     * For groups: 
         * Access status: 
             * :py:meth:`HSAccess.group_exists`: whether group is valid

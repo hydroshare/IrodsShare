@@ -31,7 +31,7 @@ ha.share_group_with_user(guid02, uuuid02, "rw")
 ha.share_group_with_user(guid02, uuuid02)
 print "get groups for user", uuuid02, "is", ha.get_groups_for_user(uuuid02)
 
-print ha.resources_held_by_user(uuuid02)
+print ha.get_resources_held_by_user(uuuid02)
 print ha.groups_of_user(uuuid02)
 print ha.get_groups()
 print ha.get_group_metadata(guid01)
