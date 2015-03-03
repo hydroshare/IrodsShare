@@ -11,7 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   usage
    module
+   ui
 
 
 Indices and tables
