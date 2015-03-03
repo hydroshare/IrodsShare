@@ -2064,7 +2064,7 @@ class HSAccess:
         :param user_uuid: uuid of user; omit for current user.
         :return:
 
-            This is from the point of view of the inviting user. List group invitations in the form::
+        This is from the point of view of the inviting user. List group invitations in the form::
 
             {'group':
                 {'uuid': {uuid of group},

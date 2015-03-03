@@ -54,6 +54,12 @@
             
   <div class="section" id="module-HSAlib">
 <span id="irodsshare-module-documentation"></span><h1>IrodsShare module documentation<a class="headerlink" href="#module-HSAlib" title="Permalink to this headline">¶</a></h1>
+<p>The HSAccess library implements access control logic for scientific data sharing. It includes</p>
+<ol class="arabic simple">
+<li>user registration and privilege handling</li>
+<li>group creation and management</li>
+<li>resource registration and access control.</li>
+</ol>
 <dl class="class">
 <dt id="HSAlib.HSAccess">
 <em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccess</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess" title="Permalink to this definition">¶</a></dt>
@@ -380,12 +386,42 @@ login is found, that is utilized as a unique key and that record is updated inst
 </tr>
 </tbody>
 </table>
-<p>List group invitations in the form:</p>
+<p>This is from the point of view of the invited user.
+List group invitations in the form:</p>
 <div class="highlight-python"><div class="highlight"><pre>{&#39;group&#39;: 
     {&#39;uuid&#39;: {uuid of group},
      &#39;name&#39;: {name of group},
      &#39;privilege&#39;: {privilege_code}},
  &#39;host&#39;: 
+    { &#39;uuid&#39;: {uuid of inviting user},
+      &#39;name&#39;: {name of inviting user},
+      &#39;login&#39;: {login of inviting user}}
+}
+</pre></div>
+</div>
+<p>Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccess.get_group_invitations_sent_by_user">
+<tt class="descname">get_group_invitations_sent_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_group_invitations_sent_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_group_invitations_sent_by_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of invitations to join groups that can be uninvited</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>This is from the point of view of the inviting user. List group invitations in the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>{&#39;group&#39;:
+    {&#39;uuid&#39;: {uuid of group},
+     &#39;name&#39;: {name of group},
+     &#39;privilege&#39;: {privilege_code}},
+ &#39;user&#39;:
     { &#39;uuid&#39;: {uuid of inviting user},
       &#39;name&#39;: {name of inviting user},
       &#39;login&#39;: {login of inviting user}}
@@ -663,6 +699,58 @@ This returns a dictionary structure of the form:</p>
 </pre></div>
 </div>
 <p>If tag argument is not None, report on only one tag.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccess.get_resources_held_by_group">
+<tt class="descname">get_resources_held_by_group</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resources_held_by_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resources_held_by_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve resources accessible to a specific group</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of the group to check</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list: structure of resources</td>
+</tr>
+</tbody>
+</table>
+<p>This returns a list of resources accessible to a specific group, in the format:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+&#39;uuid&#39;: *uuid of resource*,
+&#39;title&#39;: *title of resource*,
+&#39;path&#39;: *path of resource*,
+&#39;privilege&#39;: *privilege code*
+}
+</pre></div>
+</div>
+<p>Note: this is not subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccess.get_resources_held_by_user">
+<tt class="descname">get_resources_held_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resources_held_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resources_held_by_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a list of resources held by user, sorted by title</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of resources containing dict items</td>
+</tr>
+</tbody>
+</table>
+<p>This returns a list of resource dict records, in the format:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+&#39;uuid&#39;: *uuid of resource*,
+&#39;title&#39;: *title of resource*,
+&#39;path&#39;: *path of resource*,
+&#39;privilege&#39;: *privilege code*
+}
+</pre></div>
+</div>
+<p>Note: this is not subject to access control.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1085,58 +1173,6 @@ issued a data citation.</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="HSAlib.HSAccess.resources_held_by_group">
-<tt class="descname">resources_held_by_group</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resources_held_by_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resources_held_by_group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve resources accessible to a specific group</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of the group to check</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list: structure of resources</td>
-</tr>
-</tbody>
-</table>
-<p>This returns a list of resources accessible to a specific group, in the format:</p>
-<div class="highlight-python"><div class="highlight"><pre>{
-&#39;uuid&#39;: *uuid of resource*,
-&#39;title&#39;: *title of resource*,
-&#39;path&#39;: *path of resource*,
-&#39;privilege&#39;: *privilege code*
-}
-</pre></div>
-</div>
-<p>Note: this is not subject to access control.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="HSAlib.HSAccess.resources_held_by_user">
-<tt class="descname">resources_held_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resources_held_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resources_held_by_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a list of resources held by user, sorted by title</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of resources containing dict items</td>
-</tr>
-</tbody>
-</table>
-<p>This returns a list of resource dict records, in the format:</p>
-<div class="highlight-python"><div class="highlight"><pre>{
-&#39;uuid&#39;: *uuid of resource*,
-&#39;title&#39;: *title of resource*,
-&#39;path&#39;: *path of resource*,
-&#39;privilege&#39;: *privilege code*
-}
-</pre></div>
-</div>
-<p>Note: this is not subject to access control.</p>
 </dd></dl>
 
 <dl class="method">

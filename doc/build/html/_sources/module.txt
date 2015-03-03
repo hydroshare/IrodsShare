@@ -1,9 +1,7 @@
 IrodsShare module documentation
 ======================================
 
-.. module:: HSAlib
-
-.. automodule::
+.. automodule:: HSAlib
 
 .. autoclass:: HSAccess
    :members:
