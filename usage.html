@@ -188,8 +188,7 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 </ol>
 </li>
 <li>Meanwhile, if too much time passes, the original inviter can:<ol class="loweralpha">
-<li>List unaccepted invitations through <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_from_user()</span></tt>
-(not yet implemented)</li>
+<li>List unaccepted invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_sent_by_user" title="HSAlib.HSAccess.get_group_invitations_sent_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_sent_by_user()</span></tt></a></li>
 <li>Uninvite the invited user via <a class="reference internal" href="module.html#HSAlib.HSAccess.uninvite_user_to_group" title="HSAlib.HSAccess.uninvite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt></a>.</li>
 </ol>
 </li>
@@ -322,7 +321,7 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <dd><ul class="first last simple">
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_user" title="HSAlib.HSAccess.share_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt></a>: make a resource accessible to a user.</li>
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.unshare_resource_with_user" title="HSAlib.HSAccess.unshare_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_resource_with_user()</span></tt></a>: remove access to a resource for a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resources_held_by_user" title="HSAlib.HSAccess.resources_held_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resources_held_by_user()</span></tt></a>: list the resources accessible to a user (by any means).</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resources_held_by_user" title="HSAlib.HSAccess.get_resources_held_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_held_by_user()</span></tt></a>: list the resources accessible to a user (by any means).</li>
 </ul>
 </dd>
 </dl>
@@ -332,7 +331,7 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <dd><ul class="first last simple">
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_group" title="HSAlib.HSAccess.share_resource_with_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_group()</span></tt></a>: make a resource accessible to a group.</li>
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.unshare_resource_with_group" title="HSAlib.HSAccess.unshare_resource_with_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_resource_with_group()</span></tt></a>: remove access to a resource for a group.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resources_held_by_group" title="HSAlib.HSAccess.resources_held_by_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resources_held_by_group()</span></tt></a>: list the resources available to a group.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resources_held_by_group" title="HSAlib.HSAccess.get_resources_held_by_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_held_by_group()</span></tt></a>: list the resources available to a group.</li>
 </ul>
 </dd>
 </dl>
@@ -379,6 +378,7 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <dt>New members</dt>
 <dd><ul class="first last simple">
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.invite_user_to_group" title="HSAlib.HSAccess.invite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt></a>: invite a user.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_sent_by_user" title="HSAlib.HSAccess.get_group_invitations_sent_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_sent_by_user()</span></tt></a>: get all invitations.</li>
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.uninvite_user_to_group" title="HSAlib.HSAccess.uninvite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt></a>: retract an invitation.</li>
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_for_user" title="HSAlib.HSAccess.get_group_invitations_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt></a>: get all invitations.</li>
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.accept_invitation_to_group" title="HSAlib.HSAccess.accept_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt></a>: accept an invitation.</li>

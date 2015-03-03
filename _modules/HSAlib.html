@@ -2067,6 +2067,7 @@
 <span class="sd">        :param user_uuid: uuid of user; omit for current user. </span>
 <span class="sd">        :return:</span>
 
+<span class="sd">        This is from the point of view of the invited user.</span>
 <span class="sd">        List group invitations in the form::</span>
 
 <span class="sd">            {&#39;group&#39;: </span>
@@ -2080,7 +2081,6 @@
 <span class="sd">            }</span>
 
 <span class="sd">        Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_uuid</span>
@@ -2100,6 +2100,52 @@
                                   <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;group_name&#39;</span><span class="p">],</span>
                                   <span class="s">&#39;privilege&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;privilege_code&#39;</span><span class="p">]},</span>
                         <span class="s">&#39;host&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;uuid&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;user_uuid&#39;</span><span class="p">],</span>
+                                  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;user_name&#39;</span><span class="p">],</span>
+                                  <span class="s">&#39;login&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;user_login&#39;</span><span class="p">]}}]</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="c"># CLI hs ls invitations</span></div>
+<div class="viewcode-block" id="HSAccess.get_group_invitations_sent_by_user"><a class="viewcode-back" href="../module.html#HSAlib.HSAccess.get_group_invitations_sent_by_user">[docs]</a>    <span class="k">def</span> <span class="nf">get_group_invitations_sent_by_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_uuid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of invitations to join groups that can be uninvited</span>
+
+<span class="sd">        :type user_uuid: str</span>
+<span class="sd">        :param user_uuid: uuid of user; omit for current user.</span>
+<span class="sd">        :return:</span>
+
+<span class="sd">        This is from the point of view of the inviting user. List group invitations in the form::</span>
+
+<span class="sd">            {&#39;group&#39;:</span>
+<span class="sd">                {&#39;uuid&#39;: {uuid of group},</span>
+<span class="sd">                 &#39;name&#39;: {name of group},</span>
+<span class="sd">                 &#39;privilege&#39;: {privilege_code}},</span>
+<span class="sd">             &#39;user&#39;:</span>
+<span class="sd">                { &#39;uuid&#39;: {uuid of inviting user},</span>
+<span class="sd">                  &#39;name&#39;: {name of inviting user},</span>
+<span class="sd">                  &#39;login&#39;: {login of inviting user}}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_uuid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select g.group_uuid, g.group_name, p.privilege_code, u.user_uuid, u.user_name, u.user_login</span>
+<span class="s">                          from user_invitations_to_group i</span>
+<span class="s">                          left join groups g on i.group_id=g.group_id</span>
+<span class="s">                          left join users u on u.user_id = i.user_id</span>
+<span class="s">                          left join users a on a.user_id = i.assertion_user_id</span>
+<span class="s">                          left join privileges p on p.privilege_id=i.privilege_id</span>
+<span class="s">                          where i.assertion_user_id=</span><span class="si">%s</span><span class="s"></span>
+<span class="s">                          order by i.assertion_time desc&quot;&quot;&quot;</span><span class="p">,</span>
+                          <span class="p">(</span><span class="n">user_uuid</span><span class="p">,))</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="p">[{</span><span class="s">&#39;group&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;uuid&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;group_uuid&#39;</span><span class="p">],</span>
+                                  <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;group_name&#39;</span><span class="p">],</span>
+                                  <span class="s">&#39;privilege&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;privilege_code&#39;</span><span class="p">]},</span>
+                        <span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;uuid&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;user_uuid&#39;</span><span class="p">],</span>
                                   <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;user_name&#39;</span><span class="p">],</span>
                                   <span class="s">&#39;login&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;user_login&#39;</span><span class="p">]}}]</span>
         <span class="k">return</span> <span class="n">result</span>
@@ -2340,7 +2386,7 @@
     <span class="c"># faceted information retrieval</span>
     <span class="c">###########################################################</span>
     <span class="c"># CLI: hs ls resources</span></div>
-<div class="viewcode-block" id="HSAccess.resources_held_by_user"><a class="viewcode-back" href="../module.html#HSAlib.HSAccess.resources_held_by_user">[docs]</a>    <span class="k">def</span> <span class="nf">resources_held_by_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_uuid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccess.get_resources_held_by_user"><a class="viewcode-back" href="../module.html#HSAlib.HSAccess.get_resources_held_by_user">[docs]</a>    <span class="k">def</span> <span class="nf">get_resources_held_by_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_uuid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a list of resources held by user, sorted by title</span>
 
@@ -2375,7 +2421,7 @@
                            <span class="s">&#39;privilege&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;privilege_code&#39;</span><span class="p">]})</span>
         <span class="k">return</span> <span class="n">result</span>
 </div>
-<div class="viewcode-block" id="HSAccess.resources_held_by_group"><a class="viewcode-back" href="../module.html#HSAlib.HSAccess.resources_held_by_group">[docs]</a>    <span class="k">def</span> <span class="nf">resources_held_by_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccess.get_resources_held_by_group"><a class="viewcode-back" href="../module.html#HSAlib.HSAccess.get_resources_held_by_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_resources_held_by_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve resources accessible to a specific group</span>
 
