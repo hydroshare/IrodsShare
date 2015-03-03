@@ -73,7 +73,7 @@ In this library, there are several strong naming conventions:
 
 * Methods starting with *assert_* create and change records for an entity. These are idempotent and can be 
   reused to change metadata after creating it. 
-* Methods starting with *share_* and *unshare_* grant and removing privileges to an object. 
+* Methods starting with *share_* and *unshare_* grant and remove privileges to an object. 
 * Methods starting with *get_* report on the state of the access control system. 
 
 Usage
@@ -86,8 +86,11 @@ This user must be already created in iRODS and that user's uuid is available by 
 When using HSAccess, every object is identified by a 32-byte Universal Unique Identifier (UUID). 
 There are UUID namespaces for users, groups, and resources. Other objects, including folders, 
 do not have UUIDs within the system. In general, when the system references a group, user, or resource, 
-it requires that one knows the uuid. Listing functions allow one to easily recover the uuid for 
+one must know the uuid. Listing functions allow one to easily recover the uuid for 
 all relevant objects that one is allowed to access. 
+
+The use of UUIDs allows us to be quite flexible on naming of objects. For example, in IrodsShare, it is not
+an error for two groups or resources to have the exact same name. The UUIDs disambiguate between these. 
 
 For example, consider :py:meth:`HSAccess.share_resource_with_user`. This requires two uuids: 
 one identifying the user and another identifying the resource. A third uuid is that of the 
@@ -111,6 +114,7 @@ Privileges
 ~~~~~~~~~~
 
 The privilege system in IrodsShare is based upon four distinct levels of privilege, including: 
+
 * *Owner*: can do anything to an object, and can unshare it with a user as necessary. 
 * *Read/Write*: can read or update an object, but cannot delete it or override other users' sharing of it. 
 * *Read-Only*: can read but not write the object. 
