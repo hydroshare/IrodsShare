@@ -225,6 +225,7 @@ List of methods and categories
             * :py:meth:`HSAccess.groups_of_user`: a list of groups in which the user is a member. 
         * New members 
             * :py:meth:`HSAccess.invite_user_to_group`: invite a user. 
+            * :py:meth:`HSAccess.get_group_invitations_sent_by_user`: get all invitations. 
             * :py:meth:`HSAccess.uninvite_user_to_group`: retract an invitation. 
             * :py:meth:`HSAccess.get_group_invitations_for_user`: get all invitations. 
             * :py:meth:`HSAccess.accept_invitation_to_group`: accept an invitation. 
