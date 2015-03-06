@@ -1198,6 +1198,13 @@ class HSAccess:
         resource_id = self._get_resource_id_from_uuid(resource_uuid)
         # user_resource_privilege is a UNION of user and group privileges and contains duplicates
         # collapse the duplicates with a MIN function
+        
+        # THIS IS THE QUERY THAT DETERMINES RESOURCE ACCESS
+        # It returns
+        # 1 for owner
+        # 2 for read/write
+        # 3 for read-only
+        # 4 for read-only without sharing
         self._cur.execute("""select min(privilege_id) as privilege_id from user_resource_privilege
                           where user_id=%s and resource_id=%s
                           group by user_id, resource_id""",
@@ -1791,6 +1798,8 @@ class HSAccess:
             user_uuid = self._user_uuid
         user_id = self._get_user_id_from_uuid(user_uuid)
         group_id = self._get_group_id_from_uuid(group_uuid)
+        # THIS IS THE QUERY THAT DETERMINES GROUP ACCESS
+        # SAME CODES AS FOR USER PRIVILEGE
         self._cur.execute("""select privilege_id from user_group_privilege where user_id=%s and group_id=%s""",
                           (user_id, group_id))
         if self._cur.rowcount > 1:

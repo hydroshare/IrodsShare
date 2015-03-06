@@ -4,11 +4,11 @@ import HSAlib
 
 class request():
     def __init__(self, uuid):
-        self.resource_uuid = uuid
-    def uuid(self): return self.resource_uuid
+        self.user_uuid = uuid
+    def uuid(self): return self.user_uuid
 
 def get_user(r):
-    return r.resource_uuid
+    return r.user_uuid
 
 ha = HSAlib.HSAccess("admin", 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
 
