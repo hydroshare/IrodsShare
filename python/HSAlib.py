@@ -2395,9 +2395,95 @@ class HSAccess:
     # ##########################################################
     # stubs for folder subsystem
     # ##########################################################
+    #TODO: question for couch:::: do we create a new table user_access_to_folder AND user_access_to_tag? The same way we handle permissions for resources?
+        #if so, much of this code will need refactoring
+    #TODO: update all the documentation to reflect that we are using _self.user_id instead of _self.user_uuid
+
+    #TODO: write this documentation before merging with master
+    def _user_owns_folder(self, folder_name):
+        """
+        TODO: write this documentation
+
+        :type TODO WRITE THIS
+        :param folder_name: The name of the folder
+        :return: True if a folder exists in user_folders with given folder_name. Return False otherwise
+        """
+        self._cur.execute("""select assertion_user_id from user_folders where user_folder_name = %s""",
+            (folder_name,))
+
+        result = self._cur.fetchone()
+
+        return result[0] == self._user_id
+
+    def _get_folder_id_from_name(self, folder_name):
+        """
+        PRIVATE: get folder_id from folder name
+
+        :type folder_name: str
+        :param folder_name:  folder name
+        :return: int: private folder_id in HSAccess database
+
+        This returns the private and internal unique identifier of the folder object. 
+        This id is never exposed to users. 
+
+        Note: this method is not subject to access control. 
+        """
+        self._cur.execute("select user_folder_id from user_folders where user_folder_name=%s", (folder_name,))
+        if self._cur.rowcount > 1:
+            raise HSAException("Database integrity violation: more than one record for a specific folder name")
+        if self._cur.rowcount > 0:
+            return self._cur.fetchone()['user_folder_id']
+        else:
+            raise HSAException("Folder name '" + folder_name + "' does not exist")
+
+    def _check_user_permissions_for_folder_and_resource(self, resource_uuid, folder_name):
+        if resource_uuid:
+            if folder_name:
+                folder_exists = self.folder_exists(folder_name)
+                resource_exists = self.resource_exists(resource_uuid)
+
+                if folder_exists:
+                    if resource_exists:
+                        #TODO: review folder and resource permissions before merging with master
+                        if self._user_owns_folder(folder_name):
+                            if self.resource_is_readwrite(resource_uuid) or self.resource_is_owned(resource_uuid):
+                                pass
+                            else:
+                                raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to add resource_uuid=" + resource_uuid + " to folder_name=" + folder_name)
+                        else:
+                            raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove folder_name=" + folder_name)
+                    else:
+                        raise HSAException("no resouces exist with resource_uuid=" + resource_uuid)
+                else:
+                    raise HSAException("no folders exist with folder_name=" + folder_name)
+            else:
+                raise HSAException("folder_name is required")
+        else:
+            raise HSAException("resource_uuid is required")
+
+        return
+
+    def folder_exists(self, folder_name):
+        """
+        Determine whether a folder is registered in the database
+
+        :type folder_name: str
+        :param folder_name: folder name
+        :return: bool: whether folder is registered
+
+        This determines whether a given folder name corresponds to an existing folder. 
+        """
+        self._cur.execute("select user_folder_id from user_folders where user_folder_name=%s", (folder_name,))
+        if self._cur.rowcount > 1:
+            raise HSAException("Database integrity violation: more than one record for a specific folder name")
+        if self._cur.rowcount > 0:
+            return True
+        else:
+            return False
+
     def assert_folder(self, folder_name):
         """
-        STUB: Create a folder in the user_folders relation
+        Create a folder in the user_folders relation
 
         :type folder_name: str
         :param folder_name: The name of the folder
@@ -2406,24 +2492,57 @@ class HSAccess:
         Uses self._user_uuid: the identity of the current user.
         Folders are local to the current user.
         """
+        if folder_name:
+            folder_exists = self.folder_exists(folder_name)
+
+            if not folder_exists:
+                self._cur.execute("""insert into user_folders (user_folder_id, user_folder_name,
+                assertion_user_id, assertion_time) values (DEFAULT, %s, %s, DEFAULT)""",
+                (folder_name, self._user_id,))
+                self._conn.commit()
+            else:
+                raise HSAException("folder already exists with folder_name=" + folder_name)
+        else:
+            raise HSAException("folder_name is required for assert_folder")
+
         return
 
+    #TODO: remove resources from folders as well. retract_resource_in_folder(ALL_RESOURCE_IDS, folder_name)
     def retract_folder(self, folder_name):
         """
-        STUB: Remove a folder; things in the folder become "unfiled"
+        Remove a folder; things in the folder become "unfiled"
 
         :type folder_name: str
         :param folder_name: The name of the folder
         :return: None
 
-        Uses: self._user_uuid: the identity of the current user.
+        Uses: self._user_uuid: the identity of the current user.    
         Folders are local to the current user.
         """
+        if folder_name:
+            folder_exists = self.folder_exists(folder_name)
+
+            if folder_exists:
+                #TODO: are we removing any subfolders?
+                if self._user_owns_folder(folder_name):
+                    self._cur.execute("""delete from user_folders where user_folder_name = %s""",
+                    (folder_name,))
+                    self._conn.commit()
+                else:
+                    raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove folder_name=" + folder_name)
+
+            else:
+                raise HSAException("no folder exists with folder_name=" + folder_name)
+
+            
+        else:
+            raise HSAException("folder_name is required for retract_folder")
+
         return
 
     def assert_resource_in_folder(self, resource_uuid, folder_name):
         """
-        STUB: Put a resource into a previously created folder
+        Put a resource into a previously created folder
 
         :type resource_uuid: str
         :type folder_name: str
@@ -2434,11 +2553,17 @@ class HSAccess:
         Uses self._user_uuid: the identity of the current user.
         Folders are local to the current user.
         """
+        self._check_user_permissions_for_folder_and_resource(resource_uuid, folder_name)
+        
+        self._cur.execute("""insert into user_folder_of_resource (id, user_id, user_folder_id, resource_id, assertion_time) values (DEFAULT, %s, %s, %s, DEFAULT)""",
+        (self._user_id, self._get_folder_id_from_name(folder_name), self._get_resource_id_from_uuid(resource_uuid),))
+        self._conn.commit()
+
         return
 
     def retract_resource_in_folder(self, resource_uuid, folder_name):
         """
-        STUB: Remove a resource from a folder; it becomes unfiled.
+        Remove a resource from a folder; it becomes unfiled.
 
         :type resource_uuid: str
         :type folder_name: str
@@ -2446,18 +2571,32 @@ class HSAccess:
         :param folder_name: name of the folder
         :return: None
         """
+        self._check_user_permissions_for_folder_and_resource(resource_uuid, folder_name)
+
+        self._cur.execute("""delete from user_folder_of_resource where user_folder_id = %s and resource_id = %s""",
+        (self._get_folder_id_from_name(folder_name), self._get_resource_id_from_uuid(resource_uuid),))
+        self._conn.commit()
+
         return
 
     def get_folders(self):
         """
-        STUB: Return a list of folders for this user
+        Return a list of folders for this user
 
         :return: A list of folder names
 
         Uses self._user_uuid: current user identity
         """
-        return
+        self._cur.execute("""select user_folder_name from user_folders where assertion_user_id = %s""",
+        (self._user_id,))
 
+        result = []
+        rows = self._cur.fetchall()
+        for row in rows:
+            result += [row['user_folder_name']]
+        return result
+
+    #TODO: implement this second to last, after finishing the tagging
     def get_resources_in_folders(self, folder=None):
         """
         STUB: Get a structured dictionary of folders and their contents
@@ -2482,9 +2621,92 @@ class HSAccess:
     # ##########################################################
     # stubs for tag subsystem
     # ##########################################################
+    #QUESTIONS FOR COUCH: can we only tag resources? Or can we tag folders? If we tag a folder, do all subresources get that tag as well?
+    #TODO: write this documentation before merging with master
+    def _user_owns_tag(self, tag_name):
+        """
+        TODO: write this documentation
+
+        :type TODO WRITE THIS
+        :param tag_name: The name of the folder
+        :return: True if a folder exists in user_folders with given tag_name. Return False otherwise
+        """
+        self._cur.execute("""select assertion_user_id from user_tags where user_tag_name = %s""",
+            (tag_name,))
+
+        result = self._cur.fetchone()
+
+        return result[0] == self._user_id
+
+    def _check_user_permissions_for_tag_and_resource(self, resource_uuid, tag_name):
+        if resource_uuid:
+            if tag_name:
+                tag_exists = self.tag_exists(tag_name)
+                resource_exists = self.resource_exists(resource_uuid)
+
+                if tag_exists:
+                    if resource_exists:
+                        #TODO: review folder and resource permissions before merging with master
+                        if self._user_owns_tag(tag_name):
+                            if self.resource_is_readwrite(resource_uuid) or self.resource_is_owned(resource_uuid):
+                                pass
+                            else:
+                                raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to add tag_name=" + tag_name + " to resource_uuid=" + resource_uuid)
+                        else:
+                            raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove tag_name=" + tag_name)
+                    else:
+                        raise HSAException("no resouces exist with resource_uuid=" + resource_uuid)
+                else:
+                    raise HSAException("no tags exist with tag_name=" + tag_name)
+            else:
+                raise HSAException("tag_name is required")
+        else:
+            raise HSAException("resource_uuid is required")
+
+        return
+
+    def _get_tag_id_from_name(self, tag_name):
+        """
+        PRIVATE: get tag_id from tag name
+
+        :type tag_name: str
+        :param tag_name:  tag name
+        :return: int: private tag_id in HSAccess database
+
+        This returns the private and internal unique identifier of the tag object. 
+        This id is never exposed to users. 
+
+        Note: this method is not subject to access control. 
+        """
+        self._cur.execute("select user_tag_id from user_tags where user_tag_name=%s", (tag_name,))
+        if self._cur.rowcount > 1:
+            raise HSAException("Database integrity violation: more than one record for a specific tag name")
+        if self._cur.rowcount > 0:
+            return self._cur.fetchone()['user_tag_id']
+        else:
+            raise HSAException("Tag name '" + tag_name + "' does not exist")
+
+    def tag_exists(self, tag_name):
+        """
+        Determine whether a tag is registered in the database
+
+        :type tag_name: str
+        :param tag_name: tag name
+        :return: bool: whether tag is registered
+
+        This determines whether a given tag name corresponds to an existing tag. 
+        """
+        self._cur.execute("select user_tag_id from user_tags where user_tag_name=%s", (tag_name,))
+        if self._cur.rowcount > 1:
+            raise HSAException("Database integrity violation: more than one record for a specific tag name")
+        if self._cur.rowcount > 0:
+            return True
+        else:
+            return False
+
     def assert_tag(self, tag_name):
         """
-        STUB: Create a tag in the user_tags relation
+        Create a tag in the user_tags relation
 
         :type tag_name: str
         :param tag_name: The name of the tag
@@ -2495,11 +2717,24 @@ class HSAccess:
         Registers a tag for later uses. This assures that tags are unambiguous when applied. 
         Folders are local to the current user.
         """
+        if tag_name:
+            tag_exists = self.tag_exists(tag_name)
+
+            if not tag_exists:
+                self._cur.execute("""insert into user_tags values (DEFAULT, %s, %s, DEFAULT)""",
+                (tag_name, self._user_id,))
+                self._conn.commit()
+            else:
+                raise HSAException("tag already exists with tag_name=" + tag_name)
+        else:
+            raise HSAException("tag_name is required for assert_tag")
+
         return
 
+    #TODO: remove folder to tag relations also
     def retract_tag(self, tag_name):
         """
-        STUB: Remove a tag; things in the tag become "untagged"
+        Remove a tag; things in the tag become "untagged"
 
         :type tag_name: str
         :param tag_name: The name of the tag
@@ -2510,11 +2745,30 @@ class HSAccess:
         Unregisters a tag along with all of uses of that tag on resources. 
         Folders are local to the current user.
         """
+        if tag_name:
+            tag_exists = self.tag_exists(tag_name)
+
+            if tag_exists:
+                #TODO: are we removing any subfolders?
+                if self._user_owns_tag(tag_name):
+                    self._cur.execute("""delete from user_tags where user_tag_name = %s""",
+                    (tag_name,))
+                    self._conn.commit()
+                else:
+                    raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove tag_name=" + tag_name)
+
+            else:
+                raise HSAException("no tag exists with tag_name=" + tag_name)
+
+            
+        else:
+            raise HSAException("tag_name is required for retract_tag")
+
         return
 
     def assert_resource_has_tag(self, resource_uuid, tag_name):
         """
-        STUB: Assign a resource a previously created tag
+        Assign a resource a previously created tag
 
         :type resource_uuid: str
         :type tag_name: str
@@ -2526,11 +2780,17 @@ class HSAccess:
         Tags are local to the current user.
         Multiple asserts with different tags apply all of them
         """
+        self._check_user_permissions_for_tag_and_resource(resource_uuid, tag_name)
+        
+        self._cur.execute("""insert into user_tags_of_resource (id, user_id, user_tag_id, resource_id, assertion_time) values (DEFAULT, %s, %s, %s, DEFAULT)""",
+        (self._user_id, self._get_tag_id_from_name(tag_name), self._get_resource_id_from_uuid(resource_uuid),))
+        self._conn.commit()
+
         return
 
     def retract_resource_has_tag(self, resource_uuid, tag_name):
         """
-        STUB: Remove a tag from a resource; it becomes untagged.
+        Remove a tag from a resource; it becomes untagged.
 
         :type resource_uuid: str
         :type tag_name: str
@@ -2542,18 +2802,32 @@ class HSAccess:
         Tags are local to the current user.
         This removes an assertion of one tag while leaving the others alone. 
         """
+        self._check_user_permissions_for_tag_and_resource(resource_uuid, tag_name)
+
+        self._cur.execute("""delete from user_tags_of_resource where user_tag_id = %s and resource_id = %s""",
+        (self._get_tag_id_from_name(tag_name), self._get_resource_id_from_uuid(resource_uuid),))
+        self._conn.commit()
+
         return
 
     def get_tags(self):
         """
-        STUB: Return a list of tags for this user
+        Return a list of tags for this user
 
         :return: A list of tag names
 
         Uses self._user_uuid: current user identity
         """
-        return
+        self._cur.execute("""select user_tag_name from user_tags where assertion_user_id = %s""",
+        (self._user_id,))
 
+        result = []
+        rows = self._cur.fetchall()
+        for row in rows:
+            result += [row['user_tag_name']]
+        return result
+
+    #TODO: implement this last, after get_resouces_in_folder
     def get_resources_by_tag(self, tag=None):
         """
         STUB: Get a structured dictionary of tags and their contents

@@ -352,7 +352,7 @@ CREATE VIEW user_group_privilege_over_resource AS
 -------------------------------------------------
 
 CREATE TABLE user_folder_of_resource (
-   id INTEGER PRIMARY KEY, 
+   id SERIAL PRIMARY KEY, 
    user_id INTEGER REFERENCES users(user_id) NOT NULL, 
    user_folder_id INTEGER REFERENCES user_folders(user_folder_id) NOT NULL, 
    resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
