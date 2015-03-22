@@ -141,7 +141,7 @@ def setup(login):
 
 # set up some interesting stuff
 ha = setup('admin')
-ha._global_reset("yes, I'm sure")
+ha.__global_reset("yes, I'm sure")
 ha.assert_user('foo', 'foo', True, False, 'foo')
 ha.assert_user('bar', 'bar', True, False, 'bar')
 
