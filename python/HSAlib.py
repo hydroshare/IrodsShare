@@ -30,16 +30,9 @@ import uuid
 ##################################################################
 # to be done:
 # deep logic for ownership: do not allow the last owner to disown
-# - for groups
-# - for resources
-# turn off privileges for
-# - inactive groups -- DONE
-# - inactive users -- DONE
-# invite/accept logic for groups -- DONE
-#
-# group metadata protection
-# - public, discoverable, shareable
-#
+# - for groups (not tested)
+# - for resources (not tested)
+# invite/accept logic for resources
 ##################################################################
 
 # exception class specifically for access control exceptions
@@ -93,13 +86,15 @@ class HSAIntegrityException(HSAException):
 class HSAccessCore(object):
     """
     This class consists of the core methods that contact iRODS
-    Unlike HSAccess, it does not contain helper functions.
+
+    Unlike HSAccess, it does not contain helper functions;
+    only the functions necessary to the core logic.
     """
-    __PRIVILEGE_NONE = 100          # code that no privilege is asserted
+    __PRIVILEGE_NONE = 4          # code that no privilege is asserted
     __PRIVILEGE_OWN = 1             # owner of thing
     __PRIVILEGE_RW = 2              # can read and write thing
     __PRIVILEGE_RO = 3              # can read thing
-
+    __PRIVILEGE_CODES = ['own', 'rw', 'ro', 'none']
     def __init__(self, irods_user, irods_password,
                  db_database, db_user, db_password, db_host, db_port):
         try:
@@ -1396,6 +1391,39 @@ class HSAccessCore(object):
     # primitive resource privilege interface does not include the resource-local
     # flags that override user flags for data access. Thus it is a lower-level interface.
     ###########################################################
+    def get_user_privilege_over_resource(self, resource_uuid):
+        """
+        Get privilege code for user over a resource
+
+        :param resource_uuid:
+        :type resource_uuid: str
+        :param resource_uuid: uuid of resource
+        :param user_uuid: uuid of user; omit to report on current user
+        :return: str
+
+        This returns one of the following strings:
+
+            'own'
+
+                User owns this resource
+
+            'rw'
+
+                User can change thsi resource
+
+            'ro'
+
+                User can read but not change this resource
+
+            'none'
+
+                No privilege over resource
+        """
+        pnum = self.__get_user_privilege_over_resource(resource_uuid)
+        if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
+            return self.__PRIVILEGE_CODES[pnum-1]
+        else:
+            raise HSAIntegrityException("Invalid privilege number")
 
     def __get_user_privilege_over_resource(self, resource_uuid, user_uuid=None):
         """
@@ -1405,7 +1433,7 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param resource_uuid: uuid of resource
         :param user_uuid: uuid of user; omit to report on current user
-        :return: int: privilege number 1-100
+        :return: int: privilege number 1-4
 
         The access privileges are the minimum (most powerful) privilege granted by any one user.
         These include:
@@ -1442,6 +1470,40 @@ class HSAccessCore(object):
     # cumulative resource privilege interface includes resource-local
     # flags that override user flags for data access.
     ###########################################################
+    def get_cumulative_user_privilege_over_resource(self, resource_uuid):
+        """
+        Get privilege code for user over a resource
+
+        :param resource_uuid:
+        :type resource_uuid: str
+        :param resource_uuid: uuid of resource
+        :param user_uuid: uuid of user; omit to report on current user
+        :return: str
+
+        This checks for both user resource permissions and resource flags.
+        This returns one of the following strings:
+
+            'own'
+
+                User owns this resource
+
+            'rw'
+
+                User can change thsi resource
+
+            'ro'
+
+                User can read but not change this resource
+
+            'none'
+
+                No privilege over resource
+        """
+        pnum = self.__get_cumulative_user_privilege_over_resource(resource_uuid)
+        if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
+            return self.__PRIVILEGE_CODES[pnum-1]
+        else:
+            raise HSAIntegrityException("Invalid privilege number")
 
     def __get_cumulative_user_privilege_over_resource(self, resource_uuid, user_uuid=None):
         """
@@ -1451,7 +1513,7 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param resource_uuid: uuid of resource
         :param user_uuid: uuid of user; omit to report on current user
-        :returns: int: privilege number 1-100
+        :returns: int: privilege number 1-4
 
         The access privileges are the minimum (most powerful) privilege granted by any one user.
         These include:
@@ -2091,6 +2153,44 @@ class HSAccessCore(object):
     # group access
     # in current version this is synonymous with membership
     ###########################################################
+    ###########################################################
+    # cumulative resource privilege interface includes resource-local
+    # flags that override user flags for data access.
+    ###########################################################
+    def get_cumulative_user_privilege_over_group(self, group_uuid):
+        """
+        Get privilege code for user over a group
+
+        :param resource_uuid:
+        :type resource_uuid: str
+        :param resource_uuid: uuid of group
+        :param user_uuid: uuid of user; omit to report on current user
+        :return: str
+
+        This checks for both user group permissions and group flags.
+        This returns one of the following strings:
+
+            'own'
+
+                User owns this resource
+
+            'rw'
+
+                User can change thsi resource
+
+            'ro'
+
+                User can read but not change this resource
+
+            'none'
+
+                No privilege over resource
+        """
+        pnum = self.__get_cumulative_user_privilege_over_group(group_uuid)
+        if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
+            return self.__PRIVILEGE_CODES[pnum-1]
+        else:
+            raise HSAIntegrityException("Invalid privilege number")
 
     # utilize a join view to summarize user privilege
     def __get_cumulative_user_privilege_over_group(self, group_uuid, user_uuid=None):
@@ -2100,7 +2200,7 @@ class HSAccessCore(object):
         :type group_uuid: str
         :param user_uuid: uuid of user for which to obtain privilege
         :param group_uuid: group to which to allow access
-        :return: int: privilege code 1-100
+        :return: int: privilege code 1-4
 
         This returns the cumulative user privilege over a group, including whether the group is public if the
         user is not a member. This is a union of privileges from membership and the group public flag.
