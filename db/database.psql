@@ -1,6 +1,32 @@
+------------------------------------------------
+-- issues
+-- a] inactive users should not have privilege -- DONE
+-- b] inactive groups should not have privilege -- DONE
+-- c] immutable should override privilege -- DONE
+-- d] public should override privilege -- DONE
+------------------------------------------------
 
 -- MUST DROP IN REVERSE ORDER 
 -- in order to avoid dependencies. 
+
+DROP VIEW IF EXISTS debug_cumulative_user_resource_privilege; 
+DROP VIEW IF EXISTS debug_cumulative_group_resource_privilege; 
+DROP VIEW IF EXISTS debug_user_access_to_resource; 
+DROP VIEW IF EXISTS debug_group_access_to_resource; 
+DROP VIEW IF EXISTS debug_user_access_to_group; 
+DROP VIEW IF EXISTS debug_membership_in_group; 
+
+DROP VIEW IF EXISTS cumulative_user_group_privilege; 
+DROP VIEW IF EXISTS total_user_group_privilege; 
+DROP VIEW IF EXISTS public_user_group_privilege; 
+DROP VIEW IF EXISTS cumulative_user_resource_privilege;
+DROP VIEW IF EXISTS total_user_resource_privilege; 
+DROP VIEW IF EXISTS filtered_user_resource_privilege; 
+DROP VIEW IF EXISTS cumulative_group_resource_privilege;
+DROP VIEW IF EXISTS total_group_resource_privilege;
+DROP VIEW IF EXISTS filtered_group_resource_privilege;
+DROP VIEW IF EXISTS public_user_resource_privilege; 
+DROP VIEW IF EXISTS public_group_resource_privilege; 
 
 DROP VIEW IF EXISTS group_resource_privilege; 
 DROP VIEW IF EXISTS user_resource_privilege;
@@ -52,9 +78,10 @@ INSERT INTO privileges VALUES
     (2, 'rw', 'read/write', 		-- regular access 
      'can read, write, and share read/write privileges' ),
     (3, 'ro', 'read only',		-- limited access 
-     'can read but not write; can share read privileges with others'),
-    (4, 'ns', 'read without sharing', 	-- do not redistribute
-     'can read but cannot share with others' ) ; 
+     'can read but not write; can share read privileges with others');
+ -- "no sharing" is now an attribute of the resource
+ --   (4, 'ns', 'read without sharing', 	-- do not redistribute
+ --     'can read but cannot share with others' ) ; 
 
 -------------------------------------------------
 -- GENERAL DATABASE STRUCTURE 
@@ -79,10 +106,10 @@ INSERT INTO privileges VALUES
 --   cannot login or make changes. 
 -- limitations: 
 -- * it is not possible to delete a user login. This creates provenance
---   ambiguities. 
+--   ambiguities. Instead, user logins can be deactivated.
 -- * it is possible to retire one login and then use another. User GUIDS 
---   disambiguate this situation
--- * there must be one administrative user with a NULL provenance. Thus
+--   disambiguate this situation.
+-- * There must be one administrative user with a NULL provenance. Thus
 --   provenance cannot be declared NON-NULL. 
 -------------------------------------------------
 
@@ -115,7 +142,11 @@ CREATE TABLE groups (
    group_id SERIAL PRIMARY KEY,
    group_uuid VARCHAR(40) UNIQUE NOT NULL, 
    group_name VARCHAR(40) NOT NULL,
-   group_active bool NOT NULL, 		-- whether group is active 
+   group_active bool NOT NULL, 		-- whether group is active
+   group_shareable bool NOT NULL, 	-- whether group members can be added 
+					-- by non-owners
+   group_discoverable BOOL NOT NULL, 	-- whether group is discoverable
+   group_public BOOL NOT NULL, 		-- whether group members are listable
    assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
    assertion_time time NOT NULL DEFAULT(CURRENT_TIMESTAMP)
 );
@@ -132,8 +163,16 @@ CREATE TABLE resources (
    resource_uuid VARCHAR(40) UNIQUE NOT NULL, 	-- uuid of landing page 
    resource_path VARCHAR(1000) UNIQUE NOT NULL, -- pathname in iRODS
    resource_title VARCHAR(200) NOT NULL,	-- resource print title 
+   resource_discoverable BOOL NOT NULL, 
+	-- whether resource is discoverable by others with whom it isn't shared
+   resource_public BOOL NOT NULL, 
+	-- whether resource is public, which implies discoverable.  
    resource_immutable BOOL NOT NULL,		
-	-- whether resource has been declared to be immutable/published.  
+	-- whether resource has been declared to be immutable.  
+   resource_published BOOL NOT NULL, 
+	-- whether resource has been published, which implies immutable. 
+   resource_shareable BOOL NOT NULL, 
+	-- whether the resource can be shared with others by non-owners. 
    assertion_user_id integer REFERENCES users(user_id) NOT NULL, 
    assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP)
 );
@@ -195,7 +234,7 @@ CREATE TABLE user_access_to_resource (
    -- access control privileges are cumulative over all grants. 
    -- this is a performance issue 
    CONSTRAINT user_resource_access_unique 
-	UNIQUE (user_id, resource_id, privilege_id, assertion_user_id) 
+	UNIQUE (user_id, resource_id, assertion_user_id) 
 ); 
 
 -------------------------------------------------
@@ -204,9 +243,11 @@ CREATE TABLE user_access_to_resource (
 -------------------------------------------------
 
 CREATE VIEW user_privilege_over_resource AS 
-    SELECT user_id, resource_id, MIN(privilege_id) as privilege_id
-    FROM user_access_to_resource 
-    GROUP BY user_id, resource_id; 
+    SELECT a.user_id, a.resource_id, MIN(a.privilege_id) as privilege_id
+    FROM user_access_to_resource a
+	LEFT JOIN users u on u.user_id=a.user_id 
+    WHERE u.user_active=TRUE
+    GROUP BY a.user_id, a.resource_id; 
 
 -------------------------------------------------
 -- access control for groups 
@@ -236,7 +277,7 @@ create table user_access_to_group (
    -- access control is cumulative over all grants. 
    -- this is a performance issue 
    CONSTRAINT user_group_access_unique 
-	UNIQUE(user_id, group_id, privilege_id, assertion_user_id)
+	UNIQUE(user_id, group_id, assertion_user_id)
 ); 
 
 -------------------------------------------------
@@ -254,7 +295,7 @@ create table user_invitations_to_group (
    assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),
    -- one user can make at most one access control invitation for another user. 
    CONSTRAINT user_group_invitation_unique 
-	UNIQUE(user_id, group_id, privilege_id, assertion_user_id)
+	UNIQUE(user_id, group_id, assertion_user_id)
 );
 
 -------------------------------------------------
@@ -263,9 +304,37 @@ create table user_invitations_to_group (
 -------------------------------------------------
 
 CREATE VIEW user_group_privilege AS 
-    SELECT user_id, group_id, MIN(privilege_id) as privilege_id
-    FROM user_access_to_group 
-    GROUP BY user_id, group_id; 
+    SELECT a.user_id, a.group_id, MIN(a.privilege_id) as privilege_id
+    FROM user_access_to_group a
+	LEFT JOIN users u ON u.user_id=a.user_id
+	LEFT JOIN groups g ON g.group_id=a.group_id
+    WHERE u.user_active=TRUE AND g.group_active=TRUE
+    GROUP BY a.user_id, a.group_id; 
+
+-------------------------------------------------
+-- add public groups 
+-------------------------------------------------
+
+CREATE VIEW public_user_group_privilege AS 
+SELECT u.user_id, g.group_id, 3 as privilege_id 
+from users u, groups g
+where g.group_public = TRUE; 
+
+---------------------------------------------------
+-- union of regular group protection and public groups
+---------------------------------------------------
+CREATE VIEW total_user_group_privilege AS
+  (select * from user_group_privilege)
+UNION
+  (select * from public_user_group_privilege) ;
+
+---------------------------------------------------
+-- fuse these together into one unified protection model
+---------------------------------------------------
+CREATE VIEW cumulative_user_group_privilege AS
+SELECT user_id, group_id, MIN(privilege_id) AS privilege_id
+FROM total_user_group_privilege 
+GROUP BY user_id, group_id; 
 
 -- removed 02/28/2015 in favor of consistent membership/access
 -- -------------------------------------------------
@@ -293,9 +362,12 @@ CREATE VIEW user_group_privilege AS
 -- expressed through access control 
 ------------------------------------------------------
 CREATE VIEW user_membership_in_group AS 
-SELECT user_id, group_id, privilege_id 
-from user_group_privilege; 
- 
+SELECT p.user_id, p.group_id, p.privilege_id 
+FROM user_group_privilege p
+  LEFT JOIN users u on u.user_id=p.user_id 
+  LEFT JOIN groups g ON g.group_id=p.group_id
+WHERE u.user_active=TRUE AND g.group_active=TRUE;
+
 -------------------------------------------------
 -- group access to resource 
 -- Each record asserts that 
@@ -319,7 +391,7 @@ CREATE TABLE group_access_to_resource (
    -- access a resource. 
    -- this is a performance issue, not a security issue. 
    CONSTRAINT group_resource_access_unique 
-	UNIQUE(group_id, resource_id, privilege_id, assertion_user_id)
+	UNIQUE(group_id, resource_id, assertion_user_id)
 ); 
 
 -- replaced by view group_resource_privilege 
@@ -339,8 +411,11 @@ CREATE TABLE group_access_to_resource (
 CREATE VIEW user_group_privilege_over_resource AS 
     SELECT um.user_id, ga.resource_id, MIN(ga.privilege_id) as privilege_id
     FROM group_access_to_resource as ga
-       LEFT JOIN user_membership_in_group AS um 
+       	LEFT JOIN user_membership_in_group AS um 
 	    ON ga.group_id=um.group_id 
+	LEFT JOIN users u ON u.user_id=um.user_id 
+	LEFT JOIN groups g ON g.group_id=ga.group_id
+    WHERE u.user_active=TRUE AND g.group_active=TRUE
     GROUP BY um.user_id, ga.resource_id; 
 
 -------------------------------------------------
@@ -388,21 +463,179 @@ CREATE TABLE user_tags_of_resource (
 -------------------------------------------------
 -- make a union of the two kinds of privilege 
 -- over a resource, so that we can query privilege 
--- via a single query.
+-- via a single query. This includes user and 
+-- group privilege but not resource privilege. 
+-- See cumulative_user_resource_privilege for that. 
 -------------------------------------------------
 CREATE VIEW user_resource_privilege AS 
-  SELECT user_id, resource_id, privilege_id 
+select allp.user_id, allp.resource_id, MIN(allp.privilege_id) AS privilege_id
+FROM
+  (SELECT user_id, resource_id, privilege_id 
   FROM user_privilege_over_resource
   UNION 
   SELECT user_id, resource_id, privilege_id 
-  FROM user_group_privilege_over_resource; 
+  FROM user_group_privilege_over_resource) AS allp
+GROUP BY allp.user_id, allp.resource_id; 
 
 -------------------------------------------------
 -- determine the privileges specific to groups
 -- these become the user privileges of everyone
--- in the group 
+-- in the group in the view user_resource_privilege
+-- This view is mainly a bookkeeping view that 
+-- helps one depict the privileges accorded to a group.  
 -------------------------------------------------
 CREATE VIEW group_resource_privilege AS 
-  SELECT group_id, resource_id, min(privilege_id) as privilege_id 
-  from group_access_to_resource 
-  group by group_id, resource_id ;
+  SELECT a.group_id, a.resource_id, min(a.privilege_id) as privilege_id 
+  from group_access_to_resource a 
+	-- LEFT rather than INNER because we know the match 
+	-- exists due to Foreign Key relationships
+	LEFT JOIN groups g ON g.group_id=a.group_id
+  WHERE g.group_active=TRUE
+  group by a.group_id, a.resource_id ;
+
+---------------------------------------------------
+-- create lists of public resources, which 
+-- are cross products over user and group space.  
+---------------------------------------------------
+CREATE VIEW public_user_resource_privilege AS 
+SELECT u.user_id, r.resource_id, 3 as privilege_id 
+from users u, resources r
+where r.resource_public = TRUE; 
+
+CREATE VIEW public_group_resource_privilege AS 
+SELECT g.group_id, r.resource_id, 3 as privilege_id 
+from groups g, resources r
+where r.resource_public = TRUE; 
+
+---------------------------------------------------
+-- mediate the concept of immutability for users
+---------------------------------------------------
+CREATE VIEW filtered_user_resource_privilege AS
+SELECT p.user_id, r.resource_id,
+    CASE
+    	WHEN (r.resource_immutable AND p.privilege_id < 3) THEN 3
+    	ELSE p.privilege_id
+	END AS privilege_id
+FROM user_resource_privilege p 
+    LEFT JOIN resources r on p.resource_id=r.resource_id;
+
+---------------------------------------------------
+-- union of immutability filter and public resources 
+---------------------------------------------------
+CREATE VIEW total_user_resource_privilege AS
+  (select * from filtered_user_resource_privilege)
+UNION
+  (select * from public_user_resource_privilege) ;
+
+---------------------------------------------------
+-- Cumulative rights over resource including resource overrides. 
+-- This is rather problematic in one sense. 
+-- Declaring something immutable overrides ownership as a raw access privilege. 
+-- * This means -- in particular -- that it is difficult to 
+--   undo immutability. 
+-- * (declaring something public does not override ownership
+--   and is not problematic.)
+-- Thus, when considering ownership, it is necessary to utilize 
+-- a non-cumulative version of ownership that does not account for the 
+-- reduction in powers. That is computed in the view user_resource_privilege
+--
+-- This is what should happen: 
+---------------------------------------------------
+-- imm  pub   person numeric 
+---------------------------------------------------
+-- null null  not    user
+-- null not   not    MIN(3,user) (public => "at most 3" (read-only))
+-- not  null  not    MAX(3,user) (immutable => "at least 3" (read-only))
+-- not  not   not    MIN(3, MAX(3, user)) = 3 (public and immutable => readable)
+-- null null  null   does not appear
+-- not  null  null   does not appear
+-- null not   null   3 (read only) 
+-- not  not   null   3 (read only) 
+---------------------------------------------------
+CREATE VIEW cumulative_user_resource_privilege AS
+SELECT user_id, resource_id, MIN(privilege_id) AS privilege_id
+FROM total_user_resource_privilege 
+GROUP BY user_id, resource_id; 
+
+---------------------------------------------------
+-- Compute privilege of groups over a resource 
+-- This includes blanket privilege over resource
+-- plus group privilege and resource-local privilege
+---------------------------------------------------
+
+---------------------------------------------------
+-- mediate the concept of immutability for groups
+---------------------------------------------------
+CREATE VIEW filtered_group_resource_privilege AS
+SELECT p.group_id, r.resource_id,
+    CASE
+    	WHEN (r.resource_immutable AND p.privilege_id < 3) THEN 3
+  	ELSE p.privilege_id
+    END AS privilege_id
+FROM group_resource_privilege p 
+    LEFT JOIN resources r on p.resource_id=r.resource_id;
+
+---------------------------------------------------
+-- union of immutability filter and public resources 
+---------------------------------------------------
+CREATE VIEW total_group_resource_privilege AS
+  (select * from filtered_group_resource_privilege)
+UNION
+  (select * from public_group_resource_privilege) ;
+
+---------------------------------------------------
+-- duplicate elimination and privilege fusion
+---------------------------------------------------
+CREATE VIEW cumulative_group_resource_privilege AS
+SELECT group_id, resource_id, MIN(privilege_id) as privilege_id
+FROM total_group_resource_privilege 
+GROUP BY group_id, resource_id; 
+
+---------------------------------------------------
+-- DEBUGGING views depict things in human-readable form
+---------------------------------------------------
+CREATE VIEW debug_membership_in_group AS
+SELECT u.user_login, g.group_name, p.privilege_code 
+from user_membership_in_group m left join users u on u.user_id=m.user_id 
+left join groups g on g.group_id=m.group_id 
+left join privileges p on p.privilege_id = m.privilege_id;
+
+CREATE VIEW debug_cumulative_user_resource_privilege AS 
+SELECT u.user_login, 
+    r.resource_title, r.resource_public, r.resource_immutable, 
+    p.privilege_code
+from cumulative_user_resource_privilege as m
+left join users u on u.user_id=m.user_id 
+left join resources r on r.resource_id=m.resource_id
+left join privileges p on p.privilege_id = m.privilege_id;
+
+CREATE VIEW debug_cumulative_group_resource_privilege AS 
+SELECT g.group_name, 
+    r.resource_title, r.resource_public, r.resource_immutable, 
+    p.privilege_code
+from cumulative_group_resource_privilege as m
+left join groups g on g.group_id=m.group_id 
+left join resources r on r.resource_id=m.resource_id
+left join privileges p on p.privilege_id = m.privilege_id;
+
+CREATE VIEW debug_group_access_to_resource AS
+SELECT g.group_name, 
+    r.resource_title, r.resource_public, r.resource_immutable, 
+    p.privilege_code, u2.user_login as asserting_login
+from group_access_to_resource as m
+left join groups g on g.group_id=m.group_id 
+left join resources r on r.resource_id=m.resource_id
+left join privileges p on p.privilege_id = m.privilege_id
+left join users u2 on u2.user_id=m.assertion_user_id;
+
+CREATE VIEW debug_user_access_to_group AS
+SELECT u.user_login, 
+    g.group_name,  
+    p.privilege_code, 
+    u2.user_login as asserting_login
+from user_access_to_group as m
+left join users u on u.user_id=m.user_id 
+left join groups g on g.group_id=m.group_id
+left join privileges p on p.privilege_id = m.privilege_id
+left join users u2 on u2.user_id=m.assertion_user_id;
+
