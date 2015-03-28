@@ -18,16 +18,16 @@ DROP VIEW IF EXISTS debug_user_access_to_group;
 DROP VIEW IF EXISTS debug_membership_in_group; 
 
 DROP VIEW IF EXISTS cumulative_user_group_privilege; 
-DROP VIEW IF EXISTS total_user_group_privilege; 
-DROP VIEW IF EXISTS public_user_group_privilege; 
+-- DROP VIEW IF EXISTS total_user_group_privilege; 
+-- DROP VIEW IF EXISTS public_user_group_privilege; 
 DROP VIEW IF EXISTS cumulative_user_resource_privilege;
-DROP VIEW IF EXISTS total_user_resource_privilege; 
-DROP VIEW IF EXISTS filtered_user_resource_privilege; 
+-- DROP VIEW IF EXISTS total_user_resource_privilege; 
+-- DROP VIEW IF EXISTS filtered_user_resource_privilege; 
 DROP VIEW IF EXISTS cumulative_group_resource_privilege;
-DROP VIEW IF EXISTS total_group_resource_privilege;
-DROP VIEW IF EXISTS filtered_group_resource_privilege;
-DROP VIEW IF EXISTS public_user_resource_privilege; 
-DROP VIEW IF EXISTS public_group_resource_privilege; 
+-- DROP VIEW IF EXISTS total_group_resource_privilege;
+-- DROP VIEW IF EXISTS filtered_group_resource_privilege;
+-- DROP VIEW IF EXISTS public_user_resource_privilege; 
+-- DROP VIEW IF EXISTS public_group_resource_privilege; 
 
 DROP VIEW IF EXISTS group_resource_privilege; 
 DROP VIEW IF EXISTS user_resource_privilege;
