@@ -2,6 +2,18 @@ __author__ = 'Alva'
 
 import HSAlib
 
+################################################
+# a generic object that can kick off basic queries:
+# - list users
+# - list resources
+# and the like.
+################################################
+
+class HSAccessObject(object):
+    def __init__(self, hsa):
+        self.__hsa = hsa
+
+
 class HSAccessUser(object):
     def __init__(self, hsa, user_uuid):
         """
@@ -29,16 +41,19 @@ class HSAccessUser(object):
     def is_active(self):
         return self.__meta['active']
 
+    # this will only work if logged in as an admin
     def register_user(self, user_login, user_name, user_active=True, user_admin=False):
         uuid = self.__hsa.assert_user(user_login, user_name,  user_active=True, user_admin=False, user_uuid=None)
         return HSAccessUser(self.__hsa, uuid)
 
-    def create_group(self, group_name, group_active=True, group_shareable=True,
+    # anyone can register a group
+    def register_group(self, group_name, group_active=True, group_shareable=True,
                      group_discoverable=True, group_public=True):
         uuid = self.__hsa.assert_group(group_name, group_active=True, group_shareable=True,
                                        group_discoverable=True, group_public=True)
         return HSAccessGroup(self.__hsa, uuid)
 
+    # anyone can register a new resource
     def register_resource(self, resource_path, resource_title,
                           resource_immutable=False, resource_published=False,
                           resource_discoverable=False, resource_public=False,
@@ -50,6 +65,54 @@ class HSAccessUser(object):
                                           resource_public=resource_public,
                                           resource_shareable=resource_shareable)
         return HSAccessResource(self.__hsa, uuid)
+
+    # obey access control
+    def get_groups(self):
+        """
+        Get groups accessible to a user, along with requisite action links
+
+        There is a fundamental difference between HSAccessUser.get_* and
+        HSAccessObject.get_*. The former sees what a user sees, while the latter
+        sees only what the user would see in this situation.
+        """
+        pass
+
+    # obey access control
+    def get_resources(self):
+        """
+        Get a list of accessible resources, along wih requisite action links
+
+        This gets the list of resources accessible to a specific user.
+        """
+        pass
+
+    def get_group_invitations(self):
+        """
+        Get a list of invitations to join groups, with "accept" and "reject" buttons
+        """
+        pass
+
+    def get_resource_invitations(self):
+        """
+        Get a list of all invitations to own resources, with "accept" and "reject" buttons
+        """
+        pass
+
+    # i think we need an invitation object for this
+
+    def accept_group_invitation(self, hsa_grp):
+        """
+        Accept a prior invitation to join a group
+        """
+        pass
+
+    def refuse_group_invitation(self, hsa_grp):
+        """
+        Refuse an invitation to join a group
+        """
+        pass
+
+
 
 # there is a basic question as to how to handle these objects.
 # there really should be only one connection for all objects.

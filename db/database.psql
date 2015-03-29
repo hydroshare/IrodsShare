@@ -1,15 +1,14 @@
 ------------------------------------------------
--- issues
--- a] inactive users should not have privilege -- DONE
--- b] inactive groups should not have privilege -- DONE
--- c] immutable should override privilege -- DONE
--- d] public should override privilege -- DONE
--- e] problems with performance of public cross-product: use function instead 
+-- outstanding issues
+-- - Can a user share a public resource with another? 
+-- - Should there be a sharing message that indicates intent? 
+--   Should that message be stored here or elsewhere? 
 ------------------------------------------------
 
 -- MUST DROP IN REVERSE ORDER 
 -- in order to avoid dependencies. 
 
+-- views for debugging/human readability 
 DROP VIEW IF EXISTS debug_cumulative_user_resource_privilege; 
 DROP VIEW IF EXISTS debug_cumulative_group_resource_privilege; 
 DROP VIEW IF EXISTS debug_user_access_to_resource; 
@@ -17,28 +16,25 @@ DROP VIEW IF EXISTS debug_group_access_to_resource;
 DROP VIEW IF EXISTS debug_user_access_to_group; 
 DROP VIEW IF EXISTS debug_membership_in_group; 
 
+-- cumulative privilege 
 DROP VIEW IF EXISTS cumulative_user_group_privilege; 
--- DROP VIEW IF EXISTS total_user_group_privilege; 
--- DROP VIEW IF EXISTS public_user_group_privilege; 
 DROP VIEW IF EXISTS cumulative_user_resource_privilege;
--- DROP VIEW IF EXISTS total_user_resource_privilege; 
--- DROP VIEW IF EXISTS filtered_user_resource_privilege; 
 DROP VIEW IF EXISTS cumulative_group_resource_privilege;
--- DROP VIEW IF EXISTS total_group_resource_privilege;
--- DROP VIEW IF EXISTS filtered_group_resource_privilege;
--- DROP VIEW IF EXISTS public_user_resource_privilege; 
--- DROP VIEW IF EXISTS public_group_resource_privilege; 
 
+-- high-level privilege over resources 
 DROP VIEW IF EXISTS group_resource_privilege; 
 DROP VIEW IF EXISTS user_resource_privilege;
+
+-- 
 DROP TABLE IF EXISTS user_tags_of_resource; 
 DROP TABLE IF EXISTS user_folder_of_resource; 
-DROP VIEW IF EXISTS user_group_privilege_over_resource;
 
 -- obsolete table: replaced by group_resource_privilege
 DROP VIEW IF EXISTS group_privilege_over_resource; 
 
+DROP VIEW IF EXISTS user_group_privilege_over_resource;
 DROP TABLE IF EXISTS group_access_to_resource; 
+
 DROP VIEW IF EXISTS user_membership_in_group; 
 
 -- obsolete table; replaced with view user_membership_in_group 
@@ -47,13 +43,21 @@ DROP TABLE IF EXISTS user_membership_in_group;
 -- obsolete table: replaced by user_group_privilege 
 DROP VIEW IF EXISTS user_privilege_over_group;
 
-DROP VIEW IF EXISTS user_group_privilege; 
+-- raw access to groups 
 DROP TABLE IF EXISTS user_invitations_to_group; 
+DROP VIEW IF EXISTS user_group_privilege; 
 DROP TABLE IF EXISTS user_access_to_group; 
+
+-- raw access to resources 
+DROP TABLE IF EXISTS user_invitations_to_resource; 
 DROP VIEW IF EXISTS user_privilege_over_resource;
 DROP TABLE IF EXISTS user_access_to_resource; 
+
+-- tags and folders 
 DROP TABLE IF EXISTS user_folders; 
 DROP TABLE IF EXISTS user_tags; 
+
+-- primitive objects
 DROP TABLE IF EXISTS resources; 
 DROP TABLE IF EXISTS groups; 
 DROP TABLE IF EXISTS users; 
@@ -250,6 +254,26 @@ CREATE VIEW user_privilege_over_resource AS
     GROUP BY a.user_id, a.resource_id; 
 
 -------------------------------------------------
+-- invite/accept for resources 
+-- this is a simple invite/accept protocol for resources
+-- a user is invited by another user and then accepts 
+-- the invitation. 
+-- This is a general interface, although invite/accept
+-- is only planned for use in case of ownership. 
+-------------------------------------------------
+create table user_invitations_to_resource ( 
+   id SERIAL PRIMARY KEY, 
+   user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   resource_id INTEGER REFERENCES resources(resource_id) NOT NULL, 
+   privilege_id INTEGER REFERENCES privileges(privilege_id) NOT NULL, 
+   assertion_user_id INTEGER REFERENCES users(user_id) NOT NULL, 
+   assertion_time TIMESTAMP NOT NULL DEFAULT(CURRENT_TIMESTAMP),
+   -- one user can make at most one access control invitation for another user. 
+   CONSTRAINT user_resource_invitation_unique 
+	UNIQUE(user_id, resource_id, assertion_user_id)
+);
+
+-------------------------------------------------
 -- access control for groups 
 -- This is similar to access control for resources. 
 -- * the user designated by user_id 
@@ -281,6 +305,19 @@ create table user_access_to_group (
 ); 
 
 -------------------------------------------------
+-- privileges over a group are the logical-or
+-- of privileges granted by individuals. 
+-------------------------------------------------
+
+CREATE VIEW user_group_privilege AS 
+    SELECT a.user_id, a.group_id, MIN(a.privilege_id) as privilege_id
+    FROM user_access_to_group a
+	LEFT JOIN users u ON u.user_id=a.user_id
+	LEFT JOIN groups g ON g.group_id=a.group_id
+    WHERE u.user_active=TRUE AND g.group_active=TRUE
+    GROUP BY a.user_id, a.group_id; 
+
+-------------------------------------------------
 -- invite/accept for groups 
 -- this is a simple invite/accept protocol for groups
 -- a user is invited by another user and then accepts 
@@ -297,19 +334,6 @@ create table user_invitations_to_group (
    CONSTRAINT user_group_invitation_unique 
 	UNIQUE(user_id, group_id, assertion_user_id)
 );
-
--------------------------------------------------
--- privileges over a group are the logical-or
--- of privileges granted by individuals. 
--------------------------------------------------
-
-CREATE VIEW user_group_privilege AS 
-    SELECT a.user_id, a.group_id, MIN(a.privilege_id) as privilege_id
-    FROM user_access_to_group a
-	LEFT JOIN users u ON u.user_id=a.user_id
-	LEFT JOIN groups g ON g.group_id=a.group_id
-    WHERE u.user_active=TRUE AND g.group_active=TRUE
-    GROUP BY a.user_id, a.group_id; 
 
 -- OLD -- Removed 2015-03-28 in favor of marking held public resources
 -- OLD -------------------------------------------------

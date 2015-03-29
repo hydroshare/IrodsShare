@@ -1398,7 +1398,6 @@ class HSAccessCore(object):
         :param resource_uuid:
         :type resource_uuid: str
         :param resource_uuid: uuid of resource
-        :param user_uuid: uuid of user; omit to report on current user
         :return: str
 
         This returns one of the following strings:
@@ -1449,7 +1448,9 @@ class HSAccessCore(object):
 
         user_id = self.__get_user_id_from_uuid(user_uuid)
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        return self.__get_user_privilege_over_resource_by_id(resource_id, user_id)
 
+    def __get_user_privilege_over_resource_by_id(self, resource_id, user_id):
         self.__cur.execute("""select user_id, resource_id, privilege_id from user_resource_privilege
                               where user_id=%s and resource_id=%s""",
                            (user_id, resource_id))
@@ -1465,12 +1466,11 @@ class HSAccessCore(object):
         else:
             # print "no privilege"
             return self.__PRIVILEGE_NONE  # no privilege
-
     ###########################################################
     # cumulative resource privilege interface includes resource-local
     # flags that override user flags for data access.
     ###########################################################
-    def get_cumulative_user_privilege_over_resource(self, resource_uuid):
+    def get_cumulative_user_privilege_over_resource(self, resource_uuid, user_uuid=None):
         """
         Get privilege code for user over a resource
 
@@ -1499,7 +1499,7 @@ class HSAccessCore(object):
 
                 No privilege over resource
         """
-        pnum = self.__get_cumulative_user_privilege_over_resource(resource_uuid)
+        pnum = self.__get_cumulative_user_privilege_over_resource(resource_uuid, user_uuid)
         if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
             return self.__PRIVILEGE_CODES[pnum-1]
         else:
@@ -1532,7 +1532,7 @@ class HSAccessCore(object):
         Thus it is appropriate for use in iRODS, but not in resource metadata manipulation.
         See also __get_user_privilege_over_resource().
 
-        Note: this routine is not subject to access control.
+        Note: this routine is not subject to access control. Anyone can read anyone else's privileges.
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
@@ -1544,7 +1544,8 @@ class HSAccessCore(object):
         # 2 for read/write
         # 3 for read-only
         self.__cur.execute("""select user_id, resource_id, privilege_id from cumulative_user_resource_privilege
-                          where user_id=%s and resource_id=%s""", (user_id, resource_id))
+                              where user_id=%s and resource_id=%s""",
+                           (user_id, resource_id))
         if self.__cur.rowcount > 1:
             raise HSAIntegrityException("Database integrity violation: "
                                         + "more than one record for a specific user/resource pair")
@@ -1555,8 +1556,11 @@ class HSAccessCore(object):
             priv = data['privilege_id']
             return priv
         else:
-            # print "no privilege"
-            return self.__PRIVILEGE_NONE  # no privilege
+            if self.resource_is_public(resource_uuid):  # separate query, to avoid cross product
+                return self.__PRIVILEGE_RO
+            else:
+                # print "no privilege"
+                return self.__PRIVILEGE_NONE  # no privilege
 
     # whether resource is accessible according to a specific code
     def __resource_accessible(self, user_uuid, resource_uuid, code):
@@ -1634,7 +1638,10 @@ class HSAccessCore(object):
         if actual_priv <= privilege_id:
             return True
         else:
-            return False
+            if privilege_id == 3 and self.resource_is_public(resource_uuid):
+                return True
+            else:
+                return False
 
     def resource_is_owned(self, resource_uuid, user_uuid=None):
         """
@@ -1739,11 +1746,23 @@ class HSAccessCore(object):
                 raise HSAccessException("User has no access to resource")
             if user_priv > privilege_id:
                 raise HSAccessException("User has less privilege to resource than required")
-        # sufficient privileges present to share this resource
+        self.__share_resource_with_user(requesting_id, user_id, resource_id, privilege_id)
+
+    def __share_resource_with_user(self, requesting_id, user_id, resource_id, privilege_id):
+        """
+        Share a resource with a user at a given privilege level.
+
+        :param requesting_id int: id of requesting user
+        :param user_id int: user id of user to which to grant privilege
+        :param resource_id int: resource id to which to grant privilege
+        :param privilege_id int: privilege to grant
+        :return:None
+        """
+        #  sufficient privileges present to share this resource
         if self.__user_access_to_resource_exists(user_id, resource_id, requesting_id):
             # don't let user remove last owner.
-            if self.get_number_of_resource_owners(resource_uuid) > 1 \
-                    or self.__get_user_privilege_over_resource(resource_uuid, user_uuid) > 1:
+            if self.__get_number_of_resource_owners_by_id(resource_id) > 1 \
+                    or self.__get_user_privilege_over_resource_by_id(resource_id, user_id) > 1:
                 self.__share_resource_user_update(requesting_id, user_id, resource_id, privilege_id)
             else:
                 raise HSAccessException("Cannot remove last resource owner, including self")
@@ -2019,12 +2038,12 @@ class HSAccessCore(object):
         # assert_id = self.__get_user_id_from_uuid(self.get_uuid())
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
         group_id = self.__get_group_id_from_uuid(group_uuid)
-        if self.user_is_admin(self.get_uuid()) or self.resource_is_owned(resource_uuid):
+        if self.user_is_admin(self.get_uuid()) or self.group_is_owned(group_uuid):
             self.__cur.execute("""delete from group_access_to_resource where group_id = %s and resource_id=%s""",
                                (group_id, resource_id))
             self.__conn.commit()
         else:
-            raise HSAccessException("Regular user must own resource")
+            raise HSAccessException("Regular user must own group")
 
     ###########################################################
     # group membership
@@ -2157,17 +2176,17 @@ class HSAccessCore(object):
     # cumulative resource privilege interface includes resource-local
     # flags that override user flags for data access.
     ###########################################################
-    def get_cumulative_user_privilege_over_group(self, group_uuid):
+    def get_cumulative_user_privilege_over_group(self, group_uuid, user_uuid=None):
         """
         Get privilege code for user over a group
 
-        :param resource_uuid:
-        :type resource_uuid: str
-        :param resource_uuid: uuid of group
+        :param group_uuid:
+        :type group_uuid: str
+        :param group_uuid: uuid of group
         :param user_uuid: uuid of user; omit to report on current user
         :return: str
 
-        This checks for both user group permissions and group flags.
+        This checks for both user group permissions and group flags, including group_public.
         This returns one of the following strings:
 
             'own'
@@ -2176,7 +2195,7 @@ class HSAccessCore(object):
 
             'rw'
 
-                User can change thsi resource
+                User can change this resource
 
             'ro'
 
@@ -2186,7 +2205,7 @@ class HSAccessCore(object):
 
                 No privilege over resource
         """
-        pnum = self.__get_cumulative_user_privilege_over_group(group_uuid)
+        pnum = self.__get_cumulative_user_privilege_over_group(group_uuid, user_uuid)
         if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
             return self.__PRIVILEGE_CODES[pnum-1]
         else:
@@ -2220,7 +2239,10 @@ class HSAccessCore(object):
         if self.__cur.rowcount > 0:
             return self.__cur.fetchone()['privilege_id']
         else:
-            return self.__PRIVILEGE_NONE  # no privilege
+            if self.group_is_public(group_uuid):  # separate query, to avoid cross product
+                return self.__PRIVILEGE_RO
+            else:
+                return self.__PRIVILEGE_NONE  # no privilege
 
     # utility routine returns numeric code for privilege
     def __group_cumulatively_accessible(self, user_uuid, group_uuid, code):
@@ -2240,7 +2262,10 @@ class HSAccessCore(object):
         if actual_priv <= requested_priv:
             return True
         else:
-            return False
+            if requested_priv == 3 and self.group_is_public(group_uuid):
+                return True
+            else:
+                return False
 
     # can remove group and disinvite group members.
     def group_is_owned(self, group_uuid, user_uuid=None):
@@ -2290,12 +2315,12 @@ class HSAccessCore(object):
     # CLI: hs invite ....
     def invite_user_to_group(self, group_uuid, user_uuid, privilege_code='ro'):
         """
-        Invite a user into a group. The user must accept in a separate step
+        Invite a user into a group. The user must accept in a separate step.
 
         :param group_uuid:
         :param user_uuid:
         :param privilege_code:
-        :return:
+        :return: None
         """
         user_id = self.__get_user_id_from_uuid(user_uuid)
         privilege_id = self.__get_privilege_id_from_code(privilege_code)
@@ -2440,17 +2465,16 @@ class HSAccessCore(object):
         This is from the point of view of the invited user.
         List group invitations in the form::
 
-            {'group':
-                {'uuid': {uuid of group},
-                 'name': {name of group},
-                 'privilege': {privilege_code}},
-             'host':
-                { 'uuid': {uuid of inviting user},
-                  'name': {name of inviting user},
-                  'login': {login of inviting user}}
+            {
+                'group_uuid': {uuid of group},
+                'group_name': {name of group},
+                'group_privilege': {privilege_code},
+                'inviting_user_uuid': {uuid of inviting user},
+                'inviting_user_name': {name of inviting user},
+                'inviting_user_login': {login of inviting user}
             }
 
-        Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users
+        Note: this has been refactored to have a single level of dict objects rather than two.
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
@@ -2466,12 +2490,12 @@ class HSAccessCore(object):
         rows = self.__cur.fetchall()
         result = []
         for row in rows:
-            result += [{'group': {'uuid': row['group_uuid'],
-                                  'name': row['group_name'],
-                                  'privilege': row['privilege_code']},
-                        'host': {'uuid': row['user_uuid'],
-                                 'name': row['user_name'],
-                                 'login': row['user_login']}}]
+            result += [{'group_uuid': row['group_uuid'],
+                        'group_name': row['group_name'],
+                        'group_privilege': row['privilege_code'],
+                        'inviting_user_uuid': row['user_uuid'],
+                        'inviting_user_name': row['user_name'],
+                        'inviting_user_login': row['user_login']}]
         return result
 
     # CLI hs ls invitations
@@ -2485,17 +2509,16 @@ class HSAccessCore(object):
 
         This is from the point of view of the inviting user. List group invitations in the form::
 
-            {'group':
-                {'uuid': {uuid of group},
-                 'name': {name of group},
-                 'privilege': {privilege_code}},
-             'user':
-                { 'uuid': {uuid of inviting user},
-                  'name': {name of inviting user},
-                  'login': {login of inviting user}}
+            {
+                'group_uuid': {uuid of group},
+                'group_name': {name of group},
+                'group_privilege': {privilege_code},
+                'inviting_user_uuid': {uuid of inviting user},
+                'inviting_user_name': {name of inviting user},
+                'inviting_user_login': {login of inviting user}
             }
 
-        Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users
+        Note: this has been refactored to have a single level of dict objects rather than two.
 
         """
         if user_uuid is None:
@@ -2512,12 +2535,12 @@ class HSAccessCore(object):
         rows = self.__cur.fetchall()
         result = []
         for row in rows:
-            result += [{'group': {'uuid': row['group_uuid'],
-                                  'name': row['group_name'],
-                                  'privilege': row['privilege_code']},
-                        'user': {'uuid': row['user_uuid'],
-                                 'name': row['user_name'],
-                                 'login': row['user_login']}}]
+            result += [{'group_uuid': row['group_uuid'],
+                        'group_name': row['group_name'],
+                        'group_privilege': row['privilege_code'],
+                        'inviting_user_uuid': row['user_uuid'],
+                        'inviting_user_name': row['user_name'],
+                        'inviting_user_login': row['user_login']}]
         return result
 
     # CLI: hs accept ...
@@ -2564,6 +2587,286 @@ class HSAccessCore(object):
             self.__uninvite_user_to_group(requesting_id, group_id, user_id)
         else:
             raise HSAccessException("No group invitation for user")
+
+    ################################################
+    # resource sharing invitations
+    #################################################
+        # CLI: hs invite ....
+    def invite_user_to_resource(self, resource_uuid, user_uuid, privilege_code='ro'):
+        """
+        Invite a user into a resource. The user must accept in a separate step.
+
+        :param resource_uuid:
+        :param user_uuid:
+        :param privilege_code:
+        :return: None
+        """
+        user_id = self.__get_user_id_from_uuid(user_uuid)
+        privilege_id = self.__get_privilege_id_from_code(privilege_code)
+        resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        requesting_id = self.__get_user_id_from_uuid(self.get_uuid())
+        # sanity logic: no such thing as 'ns' access.
+        # if privilege_code == 'ns':
+        #    raise HSAccessException("privilege 'readable without sharing' does not apply to resources")
+        # access control logic: cannot grant sharing above own privilege
+        if not (self.user_is_admin(self.get_uuid())):
+            # use join to access privilege records
+            user_priv = self.__get_cumulative_user_privilege_over_resource(resource_uuid)
+            if user_priv >= self.__PRIVILEGE_RO:  # read-only or no-sharing
+                raise HSAccessException("User does not have permission to invite members")
+            else:
+                if user_priv > privilege_id:
+                    raise HSAccessException("User has insufficient privilege over resource")
+        # sufficient privileges present to share this resource
+        if self.__user_invite_to_resource_exists(requesting_id, resource_id, user_id):
+            self.__invite_resource_user_update(requesting_id, user_id, resource_id, privilege_id)
+        else:
+            self.__invite_resource_user_add(requesting_id, user_id, resource_id, privilege_id)
+
+    def __invite_resource_user_update(self, requesting_id, user_id, resource_id, privilege_id):
+        """
+        PRIVATE: update user access to a resource
+
+        :type requesting_id: int
+        :type user_id: int
+        :type resource_id: int
+        :type privilege_id: int
+        :param requesting_id: id of user requesting change
+        :param user_id: id of user to be enabled
+        :param resource_id: id of resource to be modified
+        :param privilege_id: id of privilege to be installed
+        :return: None
+        """
+        self.__cur.execute("""update user_invitations_to_resource set privilege_id = %s,
+                              assertion_time=CURRENT_TIMESTAMP
+                              where user_id=%s and resource_id=%s
+                                and assertion_user_id=%s""",
+                           (privilege_id, user_id, resource_id, requesting_id))
+        self.__conn.commit()
+
+    def __invite_resource_user_add(self, requesting_id, user_id, resource_id, privilege_id):
+        """
+        PRIVATE: add new user access for a resource
+
+        :type requesting_id: int
+        :type user_id: int
+        :type resource_id: int
+        :type privilege_id: int
+        :param requesting_id: int: id of user requesting change
+        :param user_id: int: id of user to be enabled
+        :param resource_id: int: id of resource to be modified
+        :param privilege_id: int: id of privilege to be installed
+        :return: None
+        """
+        self.__cur.execute("""insert into user_invitations_to_resource values (DEFAULT, %s, %s, %s, %s, DEFAULT)""",
+                           (user_id, resource_id, privilege_id, requesting_id))
+        self.__conn.commit()
+
+    # determine whether an invitation exists already
+    def __user_invite_to_resource_exists(self, requesting_id, resource_id, user_id):
+        """
+        Test whether there is an access record for a specific user, resource, and asserting user
+
+        :type user_id: int
+        :type resource_id: int
+        :type requesting_id: int
+        :param user_id: user id of user who needs privilege
+        :param resource_id: resource id of resource to which privilege will be assigned
+        :param requesting_id: user id of user assigning privilege
+        :return:
+        """
+        self.__cur.execute("""select privilege_id from user_invitations_to_resource
+                              where user_id=%s and resource_id=%s
+                                and assertion_user_id=%s""",
+                           (user_id, resource_id, requesting_id))
+        if self.__cur.rowcount > 1:
+            raise HSAIntegrityException("More than one record for a resource privilege tuple")
+        if self.__cur.rowcount > 0:
+            return True
+        else:
+            return False
+
+    def __get_privilege_from_resource_invite(self, requesting_id, user_id, resource_id):
+        """
+        Test whether there is an access record for a specific user, resource, and asserting user
+
+        :type user_id: int
+        :type resource_id: int
+        :type requesting_id: int
+        :param user_id: user id of user who needs privilege
+        :param resource_id: resource id of resource to which privilege will be assigned
+        :param requesting_id: user id of user assigning privilege
+        :return:
+        """
+        self.__cur.execute(
+            """select privilege_id from user_invitations_to_resource where user_id=%s and resource_id=%s
+            and assertion_user_id=%s""",
+            (user_id, resource_id, requesting_id))
+        if self.__cur.rowcount > 1:
+            raise HSAIntegrityException("More than one record for a resource invitation")
+        if self.__cur.rowcount > 0:
+            return self.__cur.fetchone()['privilege_id']
+        else:
+            raise HSAccessException("No resource invitation for user")
+
+    # a user can only revoke one's own invitations
+    # CLI: hs uninvite ....
+    def uninvite_user_to_resource(self, resource_uuid, user_uuid):
+        """
+        Uninvite a user the current user invited; does not undo other invitations
+
+        Revoke an invitation to join a resource
+        :param resource_uuid: uuid of resource
+        :param user_uuid: uuid of user
+        :return:
+        """
+        user_id = self.__get_user_id_from_uuid(user_uuid)
+        resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        requesting_id = self.__get_user_id_from_uuid(self.get_uuid())
+        self.__uninvite_user_to_resource(requesting_id, resource_id, user_id)
+
+    def __uninvite_user_to_resource(self, requesting_id, resource_id, user_id):
+        if self.__user_invite_to_resource_exists(requesting_id, resource_id, user_id):
+            self.__cur.execute("""delete from user_invitations_to_resource where user_id=%s
+                              and resource_id=%s and assertion_user_id=%s""",
+                               (user_id, resource_id, requesting_id))
+            self.__conn.commit()
+
+    # CLI hs ls invitations
+    def get_resource_invitations_for_user(self, user_uuid=None):
+        """
+        Get a list of invitations to join resources that can be accepted or refused
+
+        :type user_uuid: str
+        :param user_uuid: uuid of user; omit for current user.
+        :return:
+
+        This is from the point of view of the invited user.
+        List resource invitations in the form::
+
+            {
+                'resource_uuid': {uuid of resource},
+                'resource_title': {name of resource},
+                'resource_privilege': {privilege_code},
+                'inviting_user_uuid': {uuid of inviting user},
+                'inviting_user_name': {name of inviting user},
+                'inviting_user_login': {login of inviting user}
+            }
+
+        Note: this has been refactored to have a single level of dict objects rather than two.
+        """
+        if user_uuid is None:
+            user_uuid = self.get_uuid()
+        self.__cur.execute("""select g.resource_uuid, g.resource_title, p.privilege_code, a.user_uuid, a.user_name, a.user_login
+                              from user_invitations_to_resource i
+                              left join resources g on i.resource_id=g.resource_id
+                              left join users u on u.user_id = i.user_id
+                              left join users a on a.user_id = i.assertion_user_id
+                              left join privileges p on p.privilege_id=i.privilege_id
+                              where u.user_uuid=%s
+                              order by i.assertion_time desc""",
+                           (user_uuid,))
+        rows = self.__cur.fetchall()
+        result = []
+        for row in rows:
+            result += [{'resource_uuid': row['resource_uuid'],
+                        'resource_title': row['resource_title'],
+                        'resource_privilege': row['privilege_code'],
+                        'inviting_user_uuid': row['user_uuid'],
+                        'inviting_user_name': row['user_name'],
+                        'inviting_user_login': row['user_login']}]
+        return result
+
+    # CLI hs ls invitations
+    def get_resource_invitations_sent_by_user(self, user_uuid=None):
+        """
+        Get a list of invitations to join resources that can be uninvited
+
+        :type user_uuid: str
+        :param user_uuid: uuid of user; omit for current user.
+        :return:
+
+        This is from the point of view of the inviting user. List resource invitations in the form::
+
+            {
+                'resource_uuid': {uuid of resource},
+                'resource_title': {name of resource},
+                'resource_privilege': {privilege_code},
+                'inviting_user_uuid': {uuid of inviting user},
+                'inviting_user_name': {name of inviting user},
+                'inviting_user_login': {login of inviting user}
+            }
+
+        Note: this has been refactored to have a single level of dict objects rather than two.
+
+        """
+        if user_uuid is None:
+            user_uuid = self.get_uuid()
+        self.__cur.execute("""select g.resource_uuid, g.resource_title, p.privilege_code, u.user_uuid, u.user_name, u.user_login
+                              from user_invitations_to_resource i
+                              left join resources g on i.resource_id=g.resource_id
+                              left join users u on u.user_id = i.user_id
+                              left join users a on a.user_id = i.assertion_user_id
+                              left join privileges p on p.privilege_id=i.privilege_id
+                              where i.assertion_user_id=%s
+                              order by i.assertion_time desc""",
+                           (user_uuid,))
+        rows = self.__cur.fetchall()
+        result = []
+        for row in rows:
+            result += [{'resource_uuid': row['resource_uuid'],
+                        'resource_title': row['resource_title'],
+                        'resource_privilege': row['privilege_code'],
+                        'inviting_user_uuid': row['user_uuid'],
+                        'inviting_user_name': row['user_name'],
+                        'inviting_user_login': row['user_login']}]
+        return result
+
+    # CLI: hs accept ...
+    def accept_invitation_to_resource(self, resource_uuid, host_uuid):
+        """
+        Accept an invitation to join a resource
+
+        :type resource_uuid: str
+        :type host_uuid: str
+        :param resource_uuid: uuid of resource for which to accept invitation
+        :param host_uuid: user uuid of person who invited you
+        :return:
+
+        Accept an invitation to a resource previously made by another user via
+        'invite_user_to_resource'
+        """
+        user_id = self.__get_user_id_from_uuid(self.get_uuid())
+        resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        requesting_id = self.__get_user_id_from_uuid(host_uuid)
+        privilege_id = self.__get_privilege_from_resource_invite(requesting_id, user_id, resource_id)
+        if self.__user_invite_to_resource_exists(requesting_id, resource_id, user_id):
+            self.__share_resource_with_user(requesting_id, user_id, resource_id, privilege_id)
+            # remove invitation after acting on it
+            self.__uninvite_user_to_resource(requesting_id, resource_id, user_id)
+        else:
+            raise HSAccessException("No resource invitation for user")
+
+    # CLI: hs refuse
+    def refuse_invitation_to_resource(self, resource_uuid, host_uuid):
+        """
+        Refuse an invitation to join a resource
+
+        :param resource_uuid:
+        :param host_uuid: user uuid of person who invited
+        :return:
+
+        Refuse an invitation created with 'invite_user_to_resource'.
+        """
+        user_id = self.__get_user_id_from_uuid(self.get_uuid())
+        resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        requesting_id = self.__get_user_id_from_uuid(host_uuid)
+        if self.__user_invite_to_resource_exists(requesting_id, resource_id, user_id):
+            # remove invitation without acting on it
+            self.__uninvite_user_to_resource(requesting_id, resource_id, user_id)
+        else:
+            raise HSAccessException("No resource invitation for user")
+
 
     #  for now, couple group membership with group privilege
     # self.assert_user_in_group(group_uuid, user_uuid)
@@ -3048,6 +3351,9 @@ class HSAccessCore(object):
         :return: int: number of owners
         """
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        return self.__get_number_of_resource_owners_by_id(resource_id)
+
+    def __get_number_of_resource_owners_by_id(self, resource_id):
         self.__cur.execute("""select count(distinct user_id) as count from user_resource_privilege
                               where resource_id=%s and privilege_id=1""",
                            (resource_id,))
@@ -3061,10 +3367,13 @@ class HSAccessCore(object):
         :param group_uuid: identifier of group to report upon
         :return: int: number of owners
         """
-        resource_id = self.__get_group_id_from_uuid(group_uuid)
+        group_id = self.__get_group_id_from_uuid(group_uuid)
+        return self.__get_number_of_group_owners_by_id(group_id)
+
+    def __get_number_of_group_owners_by_id(self, group_id):
         self.__cur.execute("""select count(distinct user_id) as count from user_group_privilege
                               where group_id=%s and privilege_id=1""",
-                           (resource_id,))
+                           (group_id,))
         return self.__cur.fetchone()['count']
 
     def get_number_of_resources_owned_by_user(self, user_uuid=None):
@@ -3187,6 +3496,7 @@ class HSAccessCore(object):
                 self.__cur.execute("delete from user_folder_of_resource")
                 self.__cur.execute("delete from group_access_to_resource")
                 # self.__cur.execute("delete from user_membership_in_group")
+                self.__cur.execute("delete from user_invitations_to_resource")
                 self.__cur.execute("delete from user_invitations_to_group")
                 self.__cur.execute("delete from user_access_to_group")
                 self.__cur.execute("delete from user_access_to_resource")

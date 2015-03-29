@@ -417,18 +417,18 @@ class T07InviteToGroup(unittest.TestCase):
 
         # check that invitation itself is valid
         self.assertTrue(len(invites) == 1)
-        self.assertTrue(invites[0]['group']['uuid'] == context['groups']['operas'])
-        # self.assertTrue(invites[0]['host']['uuid'] == ha._HSAccessCore__get_user_uuid_from_login('dog'))
-        self.assertTrue(invites[0]['group']['privilege'] == 'ro')
+        self.assertTrue(invites[0]['group_uuid'] == context['groups']['operas'])
+        self.assertTrue(invites[0]['inviting_user_uuid'] == context['users']['dog'])
+        self.assertTrue(invites[0]['group_privilege'] == 'ro')
 
         # check that invitation has not been acted upon
         self.assertFalse(ha.user_in_group(context['groups']['operas']))
         self.assertFalse(ha.group_is_owned(context['groups']['operas']))
         self.assertFalse(ha.group_is_readwrite(context['groups']['operas']))
-        self.assertTrue(ha.group_is_readable(context['groups']['operas']))
+        self.assertTrue(ha.group_is_readable(context['groups']['operas']))  # group is public
 
         # accept invitation
-        ha.accept_invitation_to_group(invites[0]['group']['uuid'], invites[0]['host']['uuid'])
+        ha.accept_invitation_to_group(invites[0]['group_uuid'], invites[0]['inviting_user_uuid'])
 
         # invitation is no longer present
         self.assertTrue(len(ha.get_group_invitations_for_user()) == 0)
@@ -451,9 +451,9 @@ class T07InviteToGroup(unittest.TestCase):
         ha = startup('dog')
         invites = ha.get_group_invitations_for_user()
         self.assertTrue(len(invites) == 1)
-        self.assertTrue(invites[0]['group']['uuid'] == group_carnivores)
-        self.assertTrue(invites[0]['host']['uuid'] == context['users']['cat'])
-        self.assertTrue(invites[0]['group']['privilege'] == 'own')
+        self.assertTrue(invites[0]['group_uuid'] == group_carnivores)
+        self.assertTrue(invites[0]['inviting_user_uuid'] == context['users']['cat'])
+        self.assertTrue(invites[0]['group_privilege'] == 'own')
 
         # test that invitation has not taken hold
         self.assertFalse(ha.user_in_group(group_carnivores))
@@ -462,7 +462,7 @@ class T07InviteToGroup(unittest.TestCase):
         self.assertTrue(ha.group_is_readable(group_carnivores))
 
         # reject invitation
-        ha.refuse_invitation_to_group(invites[0]['group']['uuid'], invites[0]['host']['uuid'])
+        ha.refuse_invitation_to_group(invites[0]['group_uuid'], invites[0]['inviting_user_uuid'])
 
         # check that invitation has been deleted
         self.assertTrue(len(ha.get_group_invitations_for_user()) == 0)
@@ -472,6 +472,74 @@ class T07InviteToGroup(unittest.TestCase):
         self.assertFalse(ha.group_is_owned(group_carnivores))
         self.assertFalse(ha.group_is_readwrite(group_carnivores))
         self.assertTrue(ha.group_is_readable(group_carnivores))
+
+class T07InviteToResource(unittest.TestCase):
+    def test(self):
+        global context
+
+        ha = startup('dog')
+        context['resources']['weber'] = ha.assert_resource('/dog/weber', 'Andrew Lloyd Weber')  # resources are public by default
+
+        ha.invite_user_to_resource(context['resources']['weber'], context['users']['cat'], 'ro')  # dog invites cat to weber
+        invites = ha.get_resource_invitations_for_user()
+        self.assertTrue(len(invites) == 0)
+
+        ha = startup('cat')
+        invites = ha.get_resource_invitations_for_user()
+
+        # check that invitation itself is valid
+        self.assertTrue(len(invites) == 1)
+        self.assertTrue(invites[0]['resource_uuid'] == context['resources']['weber'])
+        self.assertTrue(invites[0]['inviting_user_uuid'] == context['users']['dog'])
+        self.assertTrue(invites[0]['resource_privilege'] == 'ro')
+
+        # check that invitation has not been acted upon
+        self.assertFalse(ha.resource_is_owned(context['resources']['weber']))
+        self.assertFalse(ha.resource_is_readwrite(context['resources']['weber']))
+        self.assertFalse(ha.resource_is_readable(context['resources']['weber']))  # resource is not public
+
+        # accept invitation
+        ha.accept_invitation_to_resource(invites[0]['resource_uuid'], invites[0]['inviting_user_uuid'])
+
+        # invitation is no longer present
+        self.assertTrue(len(ha.get_resource_invitations_for_user()) == 0)
+
+        # check that invitation powers are granted
+        self.assertFalse(ha.resource_is_owned(context['resources']['weber']))
+        self.assertFalse(ha.resource_is_readwrite(context['resources']['weber']))
+        self.assertTrue(ha.resource_is_readable(context['resources']['weber']))
+
+        # now try a reject operation
+        resource_familiars = ha.assert_resource('/cat/familiars', 'familiars')
+        context['resources']['familiars'] = resource_familiars
+        ha.invite_user_to_resource(resource_familiars, context['users']['dog'], 'own')
+
+        # check that there is no invite crosstalk
+        invites = ha.get_resource_invitations_for_user()
+        self.assertTrue(len(invites) == 0)
+
+        ha = startup('dog')
+        invites = ha.get_resource_invitations_for_user()
+        self.assertTrue(len(invites) == 1)
+        self.assertTrue(invites[0]['resource_uuid'] == resource_familiars)
+        self.assertTrue(invites[0]['inviting_user_uuid'] == context['users']['cat'])
+        self.assertTrue(invites[0]['resource_privilege'] == 'own')
+
+        # test that invitation has not taken hold
+        self.assertFalse(ha.resource_is_owned(resource_familiars))
+        self.assertFalse(ha.resource_is_readwrite(resource_familiars))
+        self.assertFalse(ha.resource_is_readable(resource_familiars))
+
+        # reject invitation
+        ha.refuse_invitation_to_resource(invites[0]['resource_uuid'], invites[0]['inviting_user_uuid'])
+
+        # check that invitation has been deleted
+        self.assertTrue(len(ha.get_resource_invitations_for_user()) == 0)
+
+        # test that invitation has not taken hold
+        self.assertFalse(ha.resource_is_owned(resource_familiars))
+        self.assertFalse(ha.resource_is_readwrite(resource_familiars))
+        self.assertFalse(ha.resource_is_readable(resource_familiars))
 
 
 class T08ResourceFlags(unittest.TestCase):
@@ -618,10 +686,19 @@ class T09GroupSharing(unittest.TestCase):
         self.assertTrue(ha.group_is_readable(context['groups']['felines']))
         self.assertFalse(ha.group_is_readwrite(context['groups']['felines']))
         self.assertFalse(ha.group_is_owned(context['groups']['felines']))
+
         self.assertTrue(ha.resource_is_readable(context['resources']['scratching']))
         self.assertTrue(ha.resource_is_readwrite(context['resources']['scratching']))
         self.assertFalse(ha.resource_is_owned(context['resources']['scratching']))
+        try:
+            ha.unshare_resource_with_group(context['resources']['scratching'], context['groups']['felines'])
+            self.fail("Non-owner of group was allowed to unshare resource with group")
+        except HSAlib.HSAccessException as e:
+            self.assertTrue(e.value == 'Regular user must own group')
 
+        ha = startup('dog')
+        ha.unshare_resource_with_group(context['resources']['scratching'], context['groups']['felines'])
+        self.assertTrue(len(ha.get_resources_held_by_group(context['groups']['felines'])) == 0)
 
 class T10GroupFlags(unittest.TestCase):
     def test(self):
