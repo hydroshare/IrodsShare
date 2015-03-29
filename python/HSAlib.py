@@ -550,6 +550,30 @@ class HSAccessCore(object):
             result += [{'uuid': row['group_uuid'], 'name': row['group_name'], 'code': row['privilege_code']}]
         return result
 
+    def get_group_members(self, group_uuid):
+        """
+        Get a list of members of a specific group
+
+        :param group_uuid: the group to report on; omit to report on current user.
+        :return: list of dicts describing groups
+
+        This returns a list of groups in the following format::
+            { 'name': *name of group*, 'uuid': *uuid of group* } ]
+        """
+        self.__cur.execute("""select u.user_uuid, u.user_name, x.privilege_code
+                              from groups g
+                              left join user_group_privilege p on p.group_id=g.group_id
+                              left join users u on u.user_id = p.user_id
+                              left join privileges x on x.privilege_id=p.privilege_id
+                              where g.group_uuid=%s
+                              order by u.user_name, u.user_uuid""",
+                           (group_uuid,))
+        rows = self.__cur.fetchall()
+        result = []
+        for row in rows:
+            result += [{'uuid': row['user_uuid'], 'name': row['user_name'], 'code': row['privilege_code']}]
+        return result
+
     def get_group_metadata(self, group_uuid):
         """
         Get metadata for a group as a dict record
@@ -2173,7 +2197,7 @@ class HSAccessCore(object):
     # in current version this is synonymous with membership
     ###########################################################
     ###########################################################
-    # cumulative resource privilege interface includes resource-local
+    # cumulative resource privilege interface includes group-local
     # flags that override user flags for data access.
     ###########################################################
     def get_cumulative_user_privilege_over_group(self, group_uuid, user_uuid=None):
@@ -2211,6 +2235,41 @@ class HSAccessCore(object):
         else:
             raise HSAIntegrityException("Invalid privilege number")
 
+    def get_user_privilege_over_group(self, group_uuid, user_uuid=None):
+        """
+        Get privilege code for user over a group
+
+        :param group_uuid:
+        :type group_uuid: str
+        :param group_uuid: uuid of group
+        :param user_uuid: uuid of user; omit to report on current user
+        :return: str
+
+        This checks for both user group permissions and group flags, including group_public.
+        This returns one of the following strings:
+
+            'own'
+
+                User owns this resource
+
+            'rw'
+
+                User can change this resource
+
+            'ro'
+
+                User can read but not change this resource
+
+            'none'
+
+                No privilege over resource
+        """
+        pnum = self.__get_user_privilege_over_group(group_uuid, user_uuid)
+        if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
+            return self.__PRIVILEGE_CODES[pnum-1]
+        else:
+            raise HSAIntegrityException("Invalid privilege number")
+
     # utilize a join view to summarize user privilege
     def __get_cumulative_user_privilege_over_group(self, group_uuid, user_uuid=None):
         """
@@ -2243,6 +2302,36 @@ class HSAccessCore(object):
                 return self.__PRIVILEGE_RO
             else:
                 return self.__PRIVILEGE_NONE  # no privilege
+
+    # utilize a join view to summarize user privilege
+    def __get_user_privilege_over_group(self, group_uuid, user_uuid=None):
+        """
+        Get the privilege that is specified for a user over a specific group
+        :type user_uuid: str
+        :type group_uuid: str
+        :param user_uuid: uuid of user for which to obtain privilege
+        :param group_uuid: group to which to allow access
+        :return: int: privilege code 1-4
+
+        This returns the cumulative user privilege over a group, including whether the group is public if the
+        user is not a member. This is a union of privileges from membership and the group public flag.
+        Note that there is no ownership conflict in this case because a group cannot be made immutable.
+        """
+        if user_uuid is None:
+            user_uuid = self.get_uuid()
+        user_id = self.__get_user_id_from_uuid(user_uuid)
+        group_id = self.__get_group_id_from_uuid(group_uuid)
+        # THIS IS THE QUERY THAT DETERMINES GROUP ACCESS
+        # SAME CODES AS FOR USER PRIVILEGE
+        self.__cur.execute("""select privilege_id from cumulative_user_group_privilege
+                              where user_id=%s and group_id=%s""",
+                           (user_id, group_id))
+        if self.__cur.rowcount > 1:
+            raise HSAIntegrityException("More than one user group privilege tuple for one granting user")
+        if self.__cur.rowcount > 0:
+            return self.__cur.fetchone()['privilege_id']
+        else:
+            return self.__PRIVILEGE_NONE  # no privilege
 
     # utility routine returns numeric code for privilege
     def __group_cumulatively_accessible(self, user_uuid, group_uuid, code):
@@ -2478,7 +2567,8 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        self.__cur.execute("""select g.group_uuid, g.group_name, p.privilege_code, a.user_uuid, a.user_name, a.user_login
+        self.__cur.execute("""select g.group_uuid, g.group_name, p.privilege_code,
+                              a.user_uuid, a.user_name, a.user_login
                               from user_invitations_to_group i
                               left join groups g on i.group_id=g.group_id
                               left join users u on u.user_id = i.user_id
@@ -2519,17 +2609,20 @@ class HSAccessCore(object):
             }
 
         Note: this has been refactored to have a single level of dict objects rather than two.
-
+        Note: this has been refactored to report on a single group object
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        self.__cur.execute("""select g.group_uuid, g.group_name, p.privilege_code, u.user_uuid, u.user_name, u.user_login
+        self.__cur.execute("""select u.user_uuid, u.user_name, u.user_login,
+                                     g.group_uuid, g.group_name,
+                                     p.privilege_code,
+                                     a.user_uuid, a.user_name, a.user_login
                               from user_invitations_to_group i
                               left join groups g on i.group_id=g.group_id
                               left join users u on u.user_id = i.user_id
                               left join users a on a.user_id = i.assertion_user_id
                               left join privileges p on p.privilege_id=i.privilege_id
-                              where i.assertion_user_id=%s
+                              where a.user_uuid=%s
                               order by i.assertion_time desc""",
                            (user_uuid,))
         rows = self.__cur.fetchall()
@@ -2538,6 +2631,9 @@ class HSAccessCore(object):
             result += [{'group_uuid': row['group_uuid'],
                         'group_name': row['group_name'],
                         'group_privilege': row['privilege_code'],
+                        'user_uuid': row['user_uuid'],
+                        'user_name': row['user_name'],
+                        'user_login': row['user_login'],
                         'inviting_user_uuid': row['user_uuid'],
                         'inviting_user_name': row['user_name'],
                         'inviting_user_login': row['user_login']}]
@@ -3092,6 +3188,39 @@ class HSAccessCore(object):
                            'privilege': row['privilege_code']})
         return result
 
+    def get_users_holding_resource(self, resource_uuid):
+        """
+        Make a list of resources held by user, sorted by title
+
+        :type user_uuid: str
+        :param user_uuid: uuid of user; omit for current user.
+        :return: List of resources containing dict items
+
+        This returns a list of user dict records, in the format::
+
+            {
+            'uuid': *uuid of user*,
+            'name': *name of user*,
+            'login': *login of user*,
+            'privilege': *privilege code*
+            }
+
+        Note: this is not currently subject to access control.
+        """
+        resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        self.__cur.execute("""select distinct u.user_uuid, u.user_name, u.user_login, p.privilege_code
+          from user_resource_privilege urp
+          left join users u on u.user_id = urp.user_id
+          left join privileges p on p.privilege_id = urp.privilege_id
+          where resource_id=%s order by u.user_name""", (resource_id,))
+        result = []
+        for row in self.__cur:
+            result.append({'uuid': row['user_uuid'],
+                           'name': row['user_name'],
+                           'login': row['user_login'],
+                           'privilege': row['privilege_code']})
+        return result
+
     def get_resources_held_by_group(self, group_uuid):
         """
         Retrieve resources accessible to a specific group.
@@ -3112,7 +3241,7 @@ class HSAccessCore(object):
         Note: this is not subject to access control.
         """
         group_id = self.__get_group_id_from_uuid(group_uuid)
-        self.__cur.execute("""select r.resource_title, r.resource_uuid, r.resource_path, q.privilege_code
+        self.__cur.execute("""select DISTINCT r.resource_title, r.resource_uuid, r.resource_path, q.privilege_code
                               from resources r
                               inner join group_resource_privilege p on r.resource_id = p.resource_id
                               left join privileges q on p.privilege_id = q.privilege_id
@@ -3124,6 +3253,39 @@ class HSAccessCore(object):
             result.append({'uuid': row['resource_uuid'],
                            'title': row['resource_title'],
                            'path': row['resource_path'],
+                           'privilege': row['privilege_code']})
+        return result
+
+    def get_groups_holding_resource(self, resource_uuid):
+        """
+        Retrieve resources accessible to a specific group.
+
+        :type group_uuid: str
+        :param group_uuid: uuid of the group to check
+        :return: list: structure of resources
+
+        This returns a list of groups that can access a resource, in the format:
+
+            {
+            'uuid': *uuid of group*,
+            'name': *name of group*,
+            'privilege': *privilege code*
+            }
+
+        Note: this is not subject to access control.
+        """
+        resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        self.__cur.execute("""select DISTINCT g.group_name, g.group_uuid, q.privilege_code
+                              from group_resource_privilege p
+                              LEFT JOIN groups g ON g.group_id = p.group_id
+                              left join privileges q on p.privilege_id = q.privilege_id
+                              where p.resource_id = %s""",
+                           (resource_id,))
+        # map this into a dict structure
+        result = []
+        for row in self.__cur:
+            result.append({'uuid': row['group_uuid'],
+                           'name': row['group_name'],
                            'privilege': row['privilege_code']})
         return result
 
@@ -3597,6 +3759,13 @@ class HSAccess(HSAccessCore):
         if not meta['published'] or not meta['discoverable']:
             meta['published'] = True
             meta['discoverable'] = True
+            # this checks access privileges
+            self.assert_resource_metadata(meta, user_uuid)
+
+    def make_resource_not_published(self, resource_uuid, user_uuid=None):
+        meta = self.get_resource_metadata(resource_uuid)
+        if meta['published']:
+            meta['published'] = False
             # this checks access privileges
             self.assert_resource_metadata(meta, user_uuid)
 

@@ -10,35 +10,49 @@ def startup(login):
 ha = startup('admin')
 ha._HSAccessCore__global_reset("yes, I'm sure")     # clear the database
 
-userAdmin = HSAccessUser(ha, ha.get_uuid())
-uJoe = userAdmin.register_user('joe', 'Joe Cool')
-uFrank = userAdmin.register_user('frank', 'Frank Furter')
-uIma = userAdmin.register_user('ima', 'Ima Nutcase', False, False)
-pprint(uJoe)
-print "Joe is admin? ", uJoe.is_admin()
-print "Joe is active? ", uJoe.is_active()
-pprint(uFrank)
-print "Frank is admin? ", uFrank.is_admin()
-print "Frank is active? ", uFrank.is_active()
-pprint(uIma)
-print "Ima is admin? ", uIma.is_admin()
-print "Ima is active? ", uFrank.is_active()
+uAdmin = HSAccessUser(ha, ha.get_uuid())
+uAdmin.pprint()
+
+uJoe = uAdmin.get_capabilities()['register_user']('joe', 'Joe Cool')
+uJoe.pprint()
+uFrank = uAdmin.get_capabilities()['register_user']('frank', 'Frank Furter')
+uFrank.pprint()
+uIma = uAdmin.get_capabilities()['register_user']('ima', 'Ima Nutcase', False, False)
+uIma.pprint()
+
 ha = startup('joe')
 uJoe = HSAccessUser(ha, uJoe.get_uuid())
-gCoolies = uJoe.create_group('coolies')
-pprint(gCoolies)
-print "Coolies is active? ", gCoolies.is_active()
-print "Joe owns Coolies?", gCoolies.is_owned()
-pprint(gCoolies.get_capabilities())
+uJoe.pprint()
+
+gCoolies = uJoe.register_group('coolies')
+gCoolies.pprint()
+
+
 caps = gCoolies.get_capabilities()
 caps['make_not_discoverable']()
-pprint(gCoolies.get_capabilities())
+gCoolies.pprint()
 
 rDives = uJoe.register_resource("/joe/dives", "The best dives")
+rDives.pprint()
+
 rDivesCaps = rDives.get_capabilities()
-pprint(rDivesCaps)
 rDivesCaps['change_title']("The bestest dives")
-print "Dives title is ", rDives.get_title()
 
+rDives.pprint()
 
+pprint(uJoe.get_groups())
+pprint(uJoe.get_resources())
 
+rDives.get_capabilities()['make_public']()
+
+rDives.pprint()
+
+gCoolies.get_capabilities()['invite_user'](uFrank, "ro")
+
+# pprint(gCoolies.get_invited_users())
+
+uJoe.pprint()
+uAdmin['register_user']
+
+rDives.pprint()
+gCoolies.pprint()
