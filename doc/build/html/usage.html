@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>IrodsShare HSAccess usage &mdash; IrodsShare 0.1 documentation</title>
+    <title>IrodsShare HSAccess usage &mdash; IrodsShare 0.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="IrodsShare 0.1 documentation" href="index.html" />
+    <link rel="top" title="IrodsShare 0.2 documentation" href="index.html" />
     <link rel="next" title="IrodsShare module documentation" href="module.html" />
     <link rel="prev" title="Welcome to IrodsShare’s documentation!" href="index.html" /> 
   </head>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to IrodsShare’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">IrodsShare 0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">IrodsShare 0.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -131,7 +131,7 @@ one must know the uuid. Listing functions allow one to easily recover the uuid f
 all relevant objects that one is allowed to access.</p>
 <p>The use of UUIDs allows us to be quite flexible on naming of objects. For example, in IrodsShare, it is not
 an error for two groups or resources to have the exact same name. The UUIDs disambiguate between these.</p>
-<p>For example, consider <a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_user" title="HSAlib.HSAccess.share_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt></a>. This requires two uuids:
+<p>For example, consider <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt>. This requires two uuids:
 one identifying the user and another identifying the resource. A third uuid is that of the
 current user, which is contained inside the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt></a> object and need not be
 mentioned.</p>
@@ -184,16 +184,16 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 </ul>
 <p>The latter is a state-machine model of sharing, to wit:</p>
 <ol class="arabic simple">
-<li>One user invites another to a group with <a class="reference internal" href="module.html#HSAlib.HSAccess.invite_user_to_group" title="HSAlib.HSAccess.invite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt></a>.</li>
+<li>One user invites another to a group with <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt>.</li>
 <li>The user can:<ol class="loweralpha">
-<li>List invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_for_user" title="HSAlib.HSAccess.get_group_invitations_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt></a>.</li>
-<li>Accept invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.accept_invitation_to_group" title="HSAlib.HSAccess.accept_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt></a>.</li>
-<li>Refuse invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.refuse_invitation_to_group" title="HSAlib.HSAccess.refuse_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.refuse_invitation_to_group()</span></tt></a>.</li>
+<li>List invitations through <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt>.</li>
+<li>Accept invitations through <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt>.</li>
+<li>Refuse invitations through <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.refuse_invitation_to_group()</span></tt>.</li>
 </ol>
 </li>
 <li>Meanwhile, if too much time passes, the original inviter can:<ol class="loweralpha">
-<li>List unaccepted invitations through <a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_sent_by_user" title="HSAlib.HSAccess.get_group_invitations_sent_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_sent_by_user()</span></tt></a></li>
-<li>Uninvite the invited user via <a class="reference internal" href="module.html#HSAlib.HSAccess.uninvite_user_to_group" title="HSAlib.HSAccess.uninvite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt></a>.</li>
+<li>List unaccepted invitations through <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_sent_by_user()</span></tt></li>
+<li>Uninvite the invited user via <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt>.</li>
 </ol>
 </li>
 </ol>
@@ -208,9 +208,9 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>User creation and management:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_user" title="HSAlib.HSAccess.assert_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_user()</span></tt></a>: create a user and update user metadata.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_user_metadata" title="HSAlib.HSAccess.get_user_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_metadata()</span></tt></a>: get a user record.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_user_metadata" title="HSAlib.HSAccess.assert_user_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_user_metadata()</span></tt></a>: push a user record with changes.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_user()</span></tt>: create a user and update user metadata.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_metadata()</span></tt>: get a user record.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_user_metadata()</span></tt>: push a user record with changes.</li>
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_user_print_name" title="HSAlib.HSAccess.get_user_print_name"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_print_name()</span></tt></a>: get the print name of a user.</li>
 </ul>
 </dd>
@@ -219,9 +219,9 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>User status</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.user_exists" title="HSAlib.HSAccess.user_exists"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_exists()</span></tt></a>: True if user is valid.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.user_is_active" title="HSAlib.HSAccess.user_is_active"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_is_active()</span></tt></a>: True if the user is active and enabled.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.user_is_admin" title="HSAlib.HSAccess.user_is_admin"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_is_admin()</span></tt></a>: True if the user is an administrator.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_exists()</span></tt>: True if user is valid.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_is_active()</span></tt>: True if the user is active and enabled.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_is_admin()</span></tt>: True if the user is an administrator.</li>
 </ul>
 </dd>
 </dl>
@@ -229,7 +229,7 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Miscellaneous:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_users" title="HSAlib.HSAccess.get_users"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_users()</span></tt></a>: a list of all active users.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_users()</span></tt>: a list of all active users.</li>
 </ul>
 </dd>
 </dl>
@@ -244,10 +244,10 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Creation and management:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_group" title="HSAlib.HSAccess.assert_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_group()</span></tt></a>: register a group.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_metadata" title="HSAlib.HSAccess.get_group_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_metadata()</span></tt></a>: read a group registration record.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_group_metadata" title="HSAlib.HSAccess.assert_group_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_group_metadata()</span></tt></a>: make changes in a group registration record.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_group" title="HSAlib.HSAccess.retract_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_group()</span></tt></a>: remove a group (not recommended).</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_group()</span></tt>: register a group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_metadata()</span></tt>: read a group registration record.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_group_metadata()</span></tt>: make changes in a group registration record.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_group()</span></tt>: remove a group (not recommended).</li>
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_print_name" title="HSAlib.HSAccess.get_group_print_name"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_print_name()</span></tt></a>: get the print name for a group.</li>
 </ul>
 </dd>
@@ -256,8 +256,8 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Views of group membership</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_groups" title="HSAlib.HSAccess.get_groups"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_groups()</span></tt></a>: a list of all valid groups.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_groups_for_user" title="HSAlib.HSAccess.get_groups_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_groups_for_user()</span></tt></a>: a list of groups to which a user belongs.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_groups()</span></tt>: a list of all valid groups.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_groups_for_user()</span></tt>: a list of groups to which a user belongs.</li>
 </ul>
 </dd>
 </dl>
@@ -265,7 +265,7 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Status of a group</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_exists" title="HSAlib.HSAccess.group_exists"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_exists()</span></tt></a>: whether group is valid</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_exists()</span></tt>: whether group is valid</li>
 </ul>
 </dd>
 </dl>
@@ -280,9 +280,9 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Creation and update:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_resource" title="HSAlib.HSAccess.assert_resource"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource()</span></tt></a>: register a resource or update resource registration.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resource_metadata" title="HSAlib.HSAccess.get_resource_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resource_metadata()</span></tt></a>: get a registration record.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_resource_metadata" title="HSAlib.HSAccess.assert_resource_metadata"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_metadata()</span></tt></a>: post changes to a registration record.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource()</span></tt>: register a resource or update resource registration.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resource_metadata()</span></tt>: get a registration record.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_metadata()</span></tt>: post changes to a registration record.</li>
 <li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resource_print_name" title="HSAlib.HSAccess.get_resource_print_name"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resource_print_name()</span></tt></a>: get the print name of a resource.</li>
 </ul>
 </dd>
@@ -291,9 +291,9 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Status of a resource</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_exists" title="HSAlib.HSAccess.resource_exists"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_exists()</span></tt></a>: whether resource is valid.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_accessible" title="HSAlib.HSAccess.resource_accessible"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_accessible()</span></tt></a>: whether a resource is accessible to a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_immutable" title="HSAlib.HSAccess.resource_is_immutable"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_immutable()</span></tt></a>: whether a resource is immutable and thus archival.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_exists()</span></tt>: whether resource is valid.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_accessible()</span></tt>: whether a resource is accessible to a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_immutable()</span></tt>: whether a resource is immutable and thus archival.</li>
 </ul>
 </dd>
 </dl>
@@ -311,11 +311,11 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Access status:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_owned" title="HSAlib.HSAccess.resource_is_owned"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_owned()</span></tt></a>: True if resource is owned by a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_readwrite" title="HSAlib.HSAccess.resource_is_readwrite"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readwrite()</span></tt></a>: True of resource is read/write to a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_readable" title="HSAlib.HSAccess.resource_is_readable"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readable()</span></tt></a>: True if resource is readable to a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.resource_is_readable_without_sharing" title="HSAlib.HSAccess.resource_is_readable_without_sharing"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readable_without_sharing()</span></tt></a>: True if resource is readable without sharing for a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_user_privilege_over_resource" title="HSAlib.HSAccess.get_user_privilege_over_resource"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_privilege_over_resource()</span></tt></a>: return numeric privilege 1-4 for a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_owned()</span></tt>: True if resource is owned by a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readwrite()</span></tt>: True of resource is read/write to a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readable()</span></tt>: True if resource is readable to a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.resource_is_readable_without_sharing()</span></tt>: True if resource is readable without sharing for a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_privilege_over_resource()</span></tt>: return numeric privilege 1-4 for a user.</li>
 </ul>
 </dd>
 </dl>
@@ -323,9 +323,9 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>User access to resources:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_user" title="HSAlib.HSAccess.share_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt></a>: make a resource accessible to a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.unshare_resource_with_user" title="HSAlib.HSAccess.unshare_resource_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_resource_with_user()</span></tt></a>: remove access to a resource for a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resources_held_by_user" title="HSAlib.HSAccess.get_resources_held_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_held_by_user()</span></tt></a>: list the resources accessible to a user (by any means).</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_user()</span></tt>: make a resource accessible to a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_resource_with_user()</span></tt>: remove access to a resource for a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_held_by_user()</span></tt>: list the resources accessible to a user (by any means).</li>
 </ul>
 </dd>
 </dl>
@@ -333,9 +333,9 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Group access to resources:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.share_resource_with_group" title="HSAlib.HSAccess.share_resource_with_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_group()</span></tt></a>: make a resource accessible to a group.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.unshare_resource_with_group" title="HSAlib.HSAccess.unshare_resource_with_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_resource_with_group()</span></tt></a>: remove access to a resource for a group.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resources_held_by_group" title="HSAlib.HSAccess.get_resources_held_by_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_held_by_group()</span></tt></a>: list the resources available to a group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_resource_with_group()</span></tt>: make a resource accessible to a group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_resource_with_group()</span></tt>: remove access to a resource for a group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_held_by_group()</span></tt>: list the resources available to a group.</li>
 </ul>
 </dd>
 </dl>
@@ -350,11 +350,11 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Access status:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_exists" title="HSAlib.HSAccess.group_exists"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_exists()</span></tt></a>: whether group is valid</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_owned" title="HSAlib.HSAccess.group_is_owned"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_owned()</span></tt></a>: whether group is owned by a specified user</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_readwrite" title="HSAlib.HSAccess.group_is_readwrite"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readwrite()</span></tt></a>: whether group is read/write to a specified user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_readable" title="HSAlib.HSAccess.group_is_readable"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readable()</span></tt></a>: whether group is readable to a user; minimum privilege.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_user_privilege_over_group" title="HSAlib.HSAccess.get_user_privilege_over_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_privilege_over_group()</span></tt></a>: get numeric privilege 1-3 for a group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_exists()</span></tt>: whether group is valid</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_owned()</span></tt>: whether group is owned by a specified user</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readwrite()</span></tt>: whether group is read/write to a specified user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readable()</span></tt>: whether group is readable to a user; minimum privilege.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_user_privilege_over_group()</span></tt>: get numeric privilege 1-3 for a group.</li>
 </ul>
 </dd>
 </dl>
@@ -362,9 +362,9 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>User access to groups:</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_owned" title="HSAlib.HSAccess.group_is_owned"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_owned()</span></tt></a>: whether group is owned by a specified user</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_readwrite" title="HSAlib.HSAccess.group_is_readwrite"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readwrite()</span></tt></a>: whether group is read/write to a specified user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.group_is_readable" title="HSAlib.HSAccess.group_is_readable"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readable()</span></tt></a>: whether group is readable to a user; minimum privilege.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_owned()</span></tt>: whether group is owned by a specified user</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readwrite()</span></tt>: whether group is read/write to a specified user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.group_is_readable()</span></tt>: whether group is readable to a user; minimum privilege.</li>
 </ul>
 </dd>
 </dl>
@@ -372,8 +372,8 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Membership reporting</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.user_in_group" title="HSAlib.HSAccess.user_in_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_in_group()</span></tt></a>: True if user is in a given group.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.groups_of_user" title="HSAlib.HSAccess.groups_of_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.groups_of_user()</span></tt></a>: a list of groups in which the user is a member.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.user_in_group()</span></tt>: True if user is in a given group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.groups_of_user()</span></tt>: a list of groups in which the user is a member.</li>
 </ul>
 </dd>
 </dl>
@@ -381,14 +381,14 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>New members</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.invite_user_to_group" title="HSAlib.HSAccess.invite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt></a>: invite a user.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_sent_by_user" title="HSAlib.HSAccess.get_group_invitations_sent_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_sent_by_user()</span></tt></a>: get all invitations.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.uninvite_user_to_group" title="HSAlib.HSAccess.uninvite_user_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt></a>: retract an invitation.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_group_invitations_for_user" title="HSAlib.HSAccess.get_group_invitations_for_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt></a>: get all invitations.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.accept_invitation_to_group" title="HSAlib.HSAccess.accept_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt></a>: accept an invitation.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.refuse_invitation_to_group" title="HSAlib.HSAccess.refuse_invitation_to_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.refuse_invitation_to_group()</span></tt></a>: refuse an invitation.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.share_group_with_user" title="HSAlib.HSAccess.share_group_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_group_with_user()</span></tt></a>: DEPRECATED: group membership without invitation.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.unshare_group_with_user" title="HSAlib.HSAccess.unshare_group_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_group_with_user()</span></tt></a>: remove all access to a group for a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.invite_user_to_group()</span></tt>: invite a user.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_sent_by_user()</span></tt>: get all invitations.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.uninvite_user_to_group()</span></tt>: retract an invitation.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_group_invitations_for_user()</span></tt>: get all invitations.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.accept_invitation_to_group()</span></tt>: accept an invitation.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.refuse_invitation_to_group()</span></tt>: refuse an invitation.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.share_group_with_user()</span></tt>: DEPRECATED: group membership without invitation.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.unshare_group_with_user()</span></tt>: remove all access to a group for a user.</li>
 </ul>
 </dd>
 </dl>
@@ -407,12 +407,12 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Tagging of resources</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_tag" title="HSAlib.HSAccess.assert_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_tag()</span></tt></a>: make a new tag.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_tag" title="HSAlib.HSAccess.retract_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_tag()</span></tt></a>: destroy a tag and delete all uses.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_resource_has_tag" title="HSAlib.HSAccess.assert_resource_has_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_has_tag()</span></tt></a>: tag a resource.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_resource_has_tag" title="HSAlib.HSAccess.retract_resource_has_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_resource_has_tag()</span></tt></a>: untag a resource.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_tags" title="HSAlib.HSAccess.get_tags"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_tags()</span></tt></a>: get a list of all active tags.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resources_by_tag" title="HSAlib.HSAccess.get_resources_by_tag"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_by_tag()</span></tt></a>: get a structure of resources, filed by tag.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_tag()</span></tt>: make a new tag.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_tag()</span></tt>: destroy a tag and delete all uses.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_has_tag()</span></tt>: tag a resource.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_resource_has_tag()</span></tt>: untag a resource.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_tags()</span></tt>: get a list of all active tags.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_by_tag()</span></tt>: get a structure of resources, filed by tag.</li>
 </ul>
 </dd>
 </dl>
@@ -420,12 +420,12 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Folders for resources</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_folder" title="HSAlib.HSAccess.assert_folder"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_folder()</span></tt></a>: make a new folder.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_folder" title="HSAlib.HSAccess.retract_folder"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_folder()</span></tt></a>: destroy a folder and remove all links in the folder.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_folders" title="HSAlib.HSAccess.get_folders"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_folders()</span></tt></a>: get a list of all folders.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.assert_resource_in_folder" title="HSAlib.HSAccess.assert_resource_in_folder"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_in_folder()</span></tt></a>: put a resource into a folder.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.retract_resource_in_folder" title="HSAlib.HSAccess.retract_resource_in_folder"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_resource_in_folder()</span></tt></a>: remove a resource from a folder.</li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_resources_in_folders" title="HSAlib.HSAccess.get_resources_in_folders"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_in_folders()</span></tt></a>: list resources by folder.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_folder()</span></tt>: make a new folder.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_folder()</span></tt>: destroy a folder and remove all links in the folder.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_folders()</span></tt>: get a list of all folders.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.assert_resource_in_folder()</span></tt>: put a resource into a folder.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.retract_resource_in_folder()</span></tt>: remove a resource from a folder.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources_in_folders()</span></tt>: list resources by folder.</li>
 </ul>
 </dd>
 </dl>
@@ -437,12 +437,12 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Statistics</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_group_owners" title="HSAlib.HSAccess.get_number_of_group_owners"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_group_owners()</span></tt></a></li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_groups_of_user" title="HSAlib.HSAccess.get_number_of_groups_of_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_groups_of_user()</span></tt></a></li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_groups_owned_by_user" title="HSAlib.HSAccess.get_number_of_groups_owned_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_groups_owned_by_user()</span></tt></a></li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_resource_owners" title="HSAlib.HSAccess.get_number_of_resource_owners"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resource_owners()</span></tt></a></li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_resources_held_by_user" title="HSAlib.HSAccess.get_number_of_resources_held_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resources_held_by_user()</span></tt></a></li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_number_of_resources_owned_by_user" title="HSAlib.HSAccess.get_number_of_resources_owned_by_user"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resources_owned_by_user()</span></tt></a></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_group_owners()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_groups_of_user()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_groups_owned_by_user()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resource_owners()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resources_held_by_user()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resources_owned_by_user()</span></tt></li>
 </ul>
 </dd>
 </dl>
@@ -450,8 +450,8 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
 <li><dl class="first docutils">
 <dt>Current user</dt>
 <dd><ul class="first last simple">
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_uuid" title="HSAlib.HSAccess.get_uuid"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_uuid()</span></tt></a></li>
-<li><a class="reference internal" href="module.html#HSAlib.HSAccess.get_login" title="HSAlib.HSAccess.get_login"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_login()</span></tt></a></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_uuid()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_login()</span></tt></li>
 </ul>
 </dd>
 </dl>
@@ -530,7 +530,7 @@ Obviously, a user with &#8220;read-only without sharing&#8221; cannot share the 
         <li class="right" >
           <a href="index.html" title="Welcome to IrodsShare’s documentation!"
              >previous</a> |</li>
-        <li><a href="index.html">IrodsShare 0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">IrodsShare 0.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

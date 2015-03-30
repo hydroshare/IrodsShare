@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>IrodsShare module documentation &mdash; IrodsShare 0.1 documentation</title>
+    <title>IrodsShare module documentation &mdash; IrodsShare 0.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,8 +23,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="IrodsShare 0.1 documentation" href="index.html" />
-    <link rel="next" title="Thoughts on the IrodsShare/Django UI" href="ui.html" />
+    <link rel="top" title="IrodsShare 0.2 documentation" href="index.html" />
+    <link rel="next" title="IrodsShare Object Library" href="objects.html" />
     <link rel="prev" title="IrodsShare HSAccess usage" href="usage.html" /> 
   </head>
   <body>
@@ -38,12 +38,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ui.html" title="Thoughts on the IrodsShare/Django UI"
+          <a href="objects.html" title="IrodsShare Object Library"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="usage.html" title="IrodsShare HSAccess usage"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">IrodsShare 0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">IrodsShare 0.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -61,12 +61,14 @@
 <li>resource registration and access control.</li>
 </ol>
 <dl class="class">
-<dt id="HSAlib.HSAccess">
-<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccess</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Access control class for HydroShare Resources, Groups</p>
+<dt id="HSAlib.HSAccessCore">
+<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccessCore</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class consists of the core methods that contact iRODS</p>
+<p>Unlike HSAccess, it does not contain helper functions;
+only the functions necessary to the core logic.</p>
 <dl class="method">
-<dt id="HSAlib.HSAccess.accept_invitation_to_group">
-<tt class="descname">accept_invitation_to_group</tt><big>(</big><em>group_uuid</em>, <em>host_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.accept_invitation_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.accept_invitation_to_group" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.accept_invitation_to_group">
+<tt class="descname">accept_invitation_to_group</tt><big>(</big><em>group_uuid</em>, <em>host_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.accept_invitation_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.accept_invitation_to_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Accept an invitation to join a group</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -83,13 +85,36 @@
 </tr>
 </tbody>
 </table>
-<p>Accept an invitation to a group previously made by another user via 
+<p>Accept an invitation to a group previously made by another user via
 &#8216;invite_user_to_group&#8217;</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_folder">
-<tt class="descname">assert_folder</tt><big>(</big><em>folder_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_folder" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.accept_invitation_to_resource">
+<tt class="descname">accept_invitation_to_resource</tt><big>(</big><em>resource_uuid</em>, <em>host_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.accept_invitation_to_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.accept_invitation_to_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accept an invitation to join a resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource for which to accept invitation</li>
+<li><strong>host_uuid</strong> (<em>str</em>) &#8211; user uuid of person who invited you</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Accept an invitation to a resource previously made by another user via
+&#8216;invite_user_to_resource&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.assert_folder">
+<tt class="descname">assert_folder</tt><big>(</big><em>folder_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Create a folder in the user_folders relation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -101,13 +126,13 @@
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: the identity of the current user.
+<p>Uses self.get_uuid(): the identity of the current user.
 Folders are local to the current user.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_group">
-<tt class="descname">assert_group</tt><big>(</big><em>group_name</em>, <em>group_active=True</em>, <em>group_uuid=None</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_group" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_group">
+<tt class="descname">assert_group</tt><big>(</big><em>group_name</em>, <em>group_active=True</em>, <em>group_shareable=True</em>, <em>group_discoverable=True</em>, <em>group_public=True</em>, <em>group_uuid=None</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register or update a group</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -116,6 +141,9 @@ Folders are local to the current user.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>group_name</strong> (<em>str</em>) &#8211; str: name of group</li>
 <li><strong>group_active</strong> (<em>bool</em>) &#8211; bool: whether group is active</li>
+<li><strong>group_shareable</strong> (<em>bool</em>) &#8211; bool: whether group can be managed by non-owners.</li>
+<li><strong>group_discoverable</strong> (<em>bool</em>) &#8211; bool: whether group and owners are discoverable in listings.</li>
+<li><strong>group_public</strong> (<em>bool</em>) &#8211; bool: whether group members are publicly accessible.</li>
 <li><strong>group_uuid</strong> (<em>str</em>) &#8211; str: group identifier, if omitted or unset, then a new group_uuid is created and returned.</li>
 <li><strong>user_uuid</strong> (<em>str</em>) &#8211; user identifier; omit to utilize current user.</li>
 </ul>
@@ -150,8 +178,8 @@ then the operation is undertaken on behalf of the stated user.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_group_metadata">
-<tt class="descname">assert_group_metadata</tt><big>(</big><em>metadata</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_group_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_group_metadata" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_group_metadata">
+<tt class="descname">assert_group_metadata</tt><big>(</big><em>metadata</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_group_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_group_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assert changes in user metadata</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -163,32 +191,36 @@ then the operation is undertaken on behalf of the stated user.</li>
 </tr>
 </tbody>
 </table>
-<p>This asserts changes in group metadata subject to the restrictions in &#8216;assert_group&#8217;.  
+<p>This asserts changes in group metadata subject to the restrictions in &#8216;assert_group&#8217;.
 It can be used to create new groups as well as to edit group metadata.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_resource">
-<tt class="descname">assert_resource</tt><big>(</big><em>resource_path</em>, <em>resource_title</em>, <em>resource_immutable=False</em>, <em>resource_uuid=None</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_resource" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_resource">
+<tt class="descname">assert_resource</tt><big>(</big><em>resource_path</em>, <em>resource_title</em>, <em>resource_uuid=None</em>, <em>user_uuid=None</em>, <em>resource_immutable=False</em>, <em>resource_published=False</em>, <em>resource_discoverable=False</em>, <em>resource_public=False</em>, <em>resource_shareable=True</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add or modify a resource in the resource registry</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>resource_path</strong> (<em>str</em>) &#8211; path to resource in iRODS  title</li>
-<li><strong>resource_title</strong> (<em>str</em>) &#8211; human-readable title</li>
-<li><strong>resource_immutable</strong> (<em>str</em>) &#8211; whether resource is immutable</li>
-<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</li>
-<li><strong>user_uuid</strong> (<em>str</em>) &#8211; user identifier of asserting user; omit to use current user.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str: resource identifier used</p>
-</td>
-</tr>
 </tbody>
 </table>
+<p>;type resource_published: bool
+:type resource_discoverable: bool
+:type resource_public: bool
+:type resource_shareable: bool
+:type resource_uuid: str?
+:type user_uuid: str?
+:param resource_path: path to resource in iRODS  title
+:param resource_title: human-readable title
+:param resource_immutable: whether resource is immutable
+:param resource_published: whether resource is published
+:param resource_discoverable: whether the existence of the resource should be advertised to others
+:param resource_public: whether the data of the resource should be available to everyone
+:param resource_shareable: whether resource is shareable by non-owners
+:param resource_uuid: resource identifier
+:param user_uuid: user identifier of asserting user; omit to use current user.
+:return: str: resource identifier used</p>
 <p>This routine creates or changes resource parameters.</p>
 <p>This is subject to several access control rules:</p>
 <ol class="arabic simple">
@@ -208,13 +240,13 @@ Notwithstanding that, it creates a new resource uuid.</li>
 <li>Edit any part of the resource registration.</li>
 </ol>
 <p>If user_uuid is not None, then the operation is done on behalf of the stated user
-as an administrator. If admin privileges are not present in this case, 
+as an administrator. If admin privileges are not present in this case,
 an exception is raised.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_resource_has_tag">
-<tt class="descname">assert_resource_has_tag</tt><big>(</big><em>resource_uuid</em>, <em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_resource_has_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_resource_has_tag" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_resource_has_tag">
+<tt class="descname">assert_resource_has_tag</tt><big>(</big><em>resource_uuid</em>, <em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_resource_has_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_resource_has_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Assign a resource a previously created tag</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -231,14 +263,14 @@ an exception is raised.</p>
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: the identity of the current user.
+<p>Uses self.get_uuid(): the identity of the current user.
 Tags are local to the current user.
 Multiple asserts with different tags apply all of them</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_resource_in_folder">
-<tt class="descname">assert_resource_in_folder</tt><big>(</big><em>resource_uuid</em>, <em>folder_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_resource_in_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_resource_in_folder" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_resource_in_folder">
+<tt class="descname">assert_resource_in_folder</tt><big>(</big><em>resource_uuid</em>, <em>folder_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_resource_in_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_resource_in_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Put a resource into a previously created folder</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -255,13 +287,13 @@ Multiple asserts with different tags apply all of them</p>
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: the identity of the current user.
+<p>Uses self.get_uuid(): the identity of the current user.
 Folders are local to the current user.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_resource_metadata">
-<tt class="descname">assert_resource_metadata</tt><big>(</big><em>metadata</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_resource_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_resource_metadata" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_resource_metadata">
+<tt class="descname">assert_resource_metadata</tt><big>(</big><em>metadata</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_resource_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_resource_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assert changes in resource metadata</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -273,14 +305,14 @@ Folders are local to the current user.</p>
 </tr>
 </tbody>
 </table>
-<p>This is a wrapper for &#8216;assert_resource&#8217; that connects it to a return value 
+<p>This is a wrapper for &#8216;assert_resource&#8217; that connects it to a return value
 format from &#8216;get_resource_metadata&#8217;. This can be used to edit resource
 fields incrementally.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_tag">
-<tt class="descname">assert_tag</tt><big>(</big><em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_tag" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_tag">
+<tt class="descname">assert_tag</tt><big>(</big><em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Create a tag in the user_tags relation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -292,14 +324,14 @@ fields incrementally.</p>
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: the identity of the current user.</p>
-<p>Registers a tag for later uses. This assures that tags are unambiguous when applied. 
+<p>Uses self.get_uuid(): the identity of the current user.</p>
+<p>Registers a tag for later uses. This assures that tags are unambiguous when applied.
 Folders are local to the current user.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_user">
-<tt class="descname">assert_user</tt><big>(</big><em>user_login</em>, <em>user_name</em>, <em>user_active=True</em>, <em>user_admin=False</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_user">
+<tt class="descname">assert_user</tt><big>(</big><em>user_login</em>, <em>user_name</em>, <em>user_active=True</em>, <em>user_admin=False</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register or update the registration of a user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -321,7 +353,7 @@ Folders are local to the current user.</p>
 </table>
 <p>This is used in two forms:</p>
 <ol class="arabic simple">
-<li>with user_uuid absent, it attempts to register a new user. Note if the specified 
+<li>with user_uuid absent, it attempts to register a new user. Note if the specified
 login is found, that is utilized as a unique key and that record is updated instead.</li>
 <li>with user_uuid present, it updates the metadata record for that user.</li>
 </ol>
@@ -341,8 +373,8 @@ login is found, that is utilized as a unique key and that record is updated inst
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.assert_user_metadata">
-<tt class="descname">assert_user_metadata</tt><big>(</big><em>metadata</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.assert_user_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.assert_user_metadata" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.assert_user_metadata">
+<tt class="descname">assert_user_metadata</tt><big>(</big><em>metadata</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.assert_user_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.assert_user_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assert changes in user metadata</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -358,8 +390,84 @@ login is found, that is utilized as a unique key and that record is updated inst
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_folders">
-<tt class="descname">get_folders</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_folders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_folders" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_cumulative_user_privilege_over_group">
+<tt class="descname">get_cumulative_user_privilege_over_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_cumulative_user_privilege_over_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_cumulative_user_privilege_over_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get privilege code for user over a group</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>group_uuid</strong> (<em>str</em>) &#8211; </li>
+<li><strong>group_uuid</strong> &#8211; uuid of group</li>
+<li><strong>user_uuid</strong> &#8211; uuid of user; omit to report on current user</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This checks for both user group permissions and group flags, including group_public.
+This returns one of the following strings:</p>
+<blockquote>
+<div><p>&#8216;own&#8217;</p>
+<blockquote>
+<div>User owns this resource</div></blockquote>
+<p>&#8216;rw&#8217;</p>
+<blockquote>
+<div>User can change this resource</div></blockquote>
+<p>&#8216;ro&#8217;</p>
+<blockquote>
+<div>User can read but not change this resource</div></blockquote>
+<p>&#8216;none&#8217;</p>
+<blockquote>
+<div>No privilege over resource</div></blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.get_cumulative_user_privilege_over_resource">
+<tt class="descname">get_cumulative_user_privilege_over_resource</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_cumulative_user_privilege_over_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_cumulative_user_privilege_over_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get privilege code for user over a resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; </li>
+<li><strong>resource_uuid</strong> &#8211; uuid of resource</li>
+<li><strong>user_uuid</strong> &#8211; uuid of user; omit to report on current user</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This checks for both user resource permissions and resource flags.
+This returns one of the following strings:</p>
+<blockquote>
+<div><p>&#8216;own&#8217;</p>
+<blockquote>
+<div>User owns this resource</div></blockquote>
+<p>&#8216;rw&#8217;</p>
+<blockquote>
+<div>User can change thsi resource</div></blockquote>
+<p>&#8216;ro&#8217;</p>
+<blockquote>
+<div>User can read but not change this resource</div></blockquote>
+<p>&#8216;none&#8217;</p>
+<blockquote>
+<div>No privilege over resource</div></blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.get_folders">
+<tt class="descname">get_folders</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_folders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_folders" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Return a list of folders for this user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -369,12 +477,12 @@ login is found, that is utilized as a unique key and that record is updated inst
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: current user identity</p>
+<p>Uses self.get_uuid(): current user identity</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_group_invitations_for_user">
-<tt class="descname">get_group_invitations_for_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_group_invitations_for_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_group_invitations_for_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_group_invitations_for_user">
+<tt class="descname">get_group_invitations_for_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_group_invitations_for_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_group_invitations_for_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of invitations to join groups that can be accepted or refused</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -388,23 +496,22 @@ login is found, that is utilized as a unique key and that record is updated inst
 </table>
 <p>This is from the point of view of the invited user.
 List group invitations in the form:</p>
-<div class="highlight-python"><div class="highlight"><pre>{&#39;group&#39;: 
-    {&#39;uuid&#39;: {uuid of group},
-     &#39;name&#39;: {name of group},
-     &#39;privilege&#39;: {privilege_code}},
- &#39;host&#39;: 
-    { &#39;uuid&#39;: {uuid of inviting user},
-      &#39;name&#39;: {name of inviting user},
-      &#39;login&#39;: {login of inviting user}}
+<div class="highlight-python"><div class="highlight"><pre>{
+    &#39;group_uuid&#39;: {uuid of group},
+    &#39;group_name&#39;: {name of group},
+    &#39;group_privilege&#39;: {privilege_code},
+    &#39;inviting_user_uuid&#39;: {uuid of inviting user},
+    &#39;inviting_user_name&#39;: {name of inviting user},
+    &#39;inviting_user_login&#39;: {login of inviting user}
 }
 </pre></div>
 </div>
-<p>Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users</p>
+<p>Note: this has been refactored to have a single level of dict objects rather than two.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_group_invitations_sent_by_user">
-<tt class="descname">get_group_invitations_sent_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_group_invitations_sent_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_group_invitations_sent_by_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_group_invitations_sent_by_user">
+<tt class="descname">get_group_invitations_sent_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_group_invitations_sent_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_group_invitations_sent_by_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of invitations to join groups that can be uninvited</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -417,23 +524,43 @@ List group invitations in the form:</p>
 </tbody>
 </table>
 <p>This is from the point of view of the inviting user. List group invitations in the form:</p>
-<div class="highlight-python"><div class="highlight"><pre>{&#39;group&#39;:
-    {&#39;uuid&#39;: {uuid of group},
-     &#39;name&#39;: {name of group},
-     &#39;privilege&#39;: {privilege_code}},
- &#39;user&#39;:
-    { &#39;uuid&#39;: {uuid of inviting user},
-      &#39;name&#39;: {name of inviting user},
-      &#39;login&#39;: {login of inviting user}}
+<div class="highlight-python"><div class="highlight"><pre>{
+    &#39;group_uuid&#39;: {uuid of group},
+    &#39;group_name&#39;: {name of group},
+    &#39;group_privilege&#39;: {privilege_code},
+    &#39;inviting_user_uuid&#39;: {uuid of inviting user},
+    &#39;inviting_user_name&#39;: {name of inviting user},
+    &#39;inviting_user_login&#39;: {login of inviting user}
 }
 </pre></div>
 </div>
-<p>Note: this is scheduled for refactoring for easier acceptance, rejection, and uninviting of users</p>
+<p>Note: this has been refactored to have a single level of dict objects rather than two.
+Note: this has been refactored to report on a single group object</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_group_metadata">
-<tt class="descname">get_group_metadata</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_group_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_group_metadata" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_group_members">
+<tt class="descname">get_group_members</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_group_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_group_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of members of a specific group</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> &#8211; the group to report on; omit to report on current user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of dicts describing groups</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>This returns a list of groups in the following format::</dt>
+<dd>{ &#8216;name&#8217;: <em>name of group</em>, &#8216;uuid&#8217;: <em>uuid of group</em> } ]</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.get_group_metadata">
+<tt class="descname">get_group_metadata</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_group_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_group_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get metadata for a group as a dict record</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -449,35 +576,21 @@ List group invitations in the form:</p>
 <div class="highlight-python"><div class="highlight"><pre>{
     &#39;uuid&#39;: *uuid of group*,
     &#39;name&#39;: *name of group*,
-    &#39;active&#39;: *whether group is active*, 
-    &#39;asserting_login&#39;: *login of user who last changed metadata*, 
-    &#39;asserting_uuid&#39;: *uuid of user who last changed metadata*, 
+    &#39;active&#39;: *whether group is active*,
+    &#39;discoverable&#39;: *whether group existence is discoverable*,
+    &#39;public&#39;: *whether group members are published*,
+    &#39;asserting_login&#39;: *login of user who last changed metadata*,
+    &#39;asserting_uuid&#39;: *uuid of user who last changed metadata*,
     &#39;assertion_time&#39;: *time of last metadata change*
-} 
+}
 </pre></div>
 </div>
 <p>This value can be edited and used as an argument to &#8216;assert_group_metadata&#8217;.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_group_print_name">
-<tt class="descname">get_group_print_name</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_group_print_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_group_print_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a print name for any given group</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; identifier of group</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested group</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="HSAlib.HSAccess.get_groups">
-<tt class="descname">get_groups</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_groups" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_groups">
+<tt class="descname">get_groups</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_groups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get information on all existing groups</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -488,7 +601,7 @@ List group invitations in the form:</p>
 </tbody>
 </table>
 <p>This returns a list of elements of the form:</p>
-<div class="highlight-python"><div class="highlight"><pre>{ &#39;uuid&#39;: *uuid of group*, &#39;name&#39;: *name of group* } 
+<div class="highlight-python"><div class="highlight"><pre>{ &#39;uuid&#39;: *uuid of group*, &#39;name&#39;: *name of group* }
 </pre></div>
 </div>
 <p>sorted in order of group name. Group names do not have to be unique.</p>
@@ -498,8 +611,8 @@ not limit group visibility; just membership.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_groups_for_user">
-<tt class="descname">get_groups_for_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_groups_for_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_groups_for_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_groups_for_user">
+<tt class="descname">get_groups_for_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_groups_for_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_groups_for_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of groups relevant to a specific user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -512,14 +625,38 @@ not limit group visibility; just membership.</p>
 </tbody>
 </table>
 <dl class="docutils">
-<dt>This returns a list of groups in the following format::  </dt>
+<dt>This returns a list of groups in the following format::</dt>
 <dd>{ &#8216;name&#8217;: <em>name of group</em>, &#8216;uuid&#8217;: <em>uuid of group</em> } ]</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_login">
-<tt class="descname">get_login</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_login" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_groups_holding_resource">
+<tt class="descname">get_groups_holding_resource</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_groups_holding_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_groups_holding_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve resources accessible to a specific group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of the group to check</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list: structure of resources</td>
+</tr>
+</tbody>
+</table>
+<p>This returns a list of groups that can access a resource, in the format:</p>
+<blockquote>
+<div>{
+&#8216;uuid&#8217;: <em>uuid of group</em>,
+&#8216;name&#8217;: <em>name of group</em>,
+&#8216;privilege&#8217;: <em>privilege code</em>
+}</div></blockquote>
+<p>Note: this is not subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.get_login">
+<tt class="descname">get_login</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the (iRODS) login name of the current user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -532,8 +669,8 @@ not limit group visibility; just membership.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_number_of_group_owners">
-<tt class="descname">get_number_of_group_owners</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_number_of_group_owners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_number_of_group_owners" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_number_of_group_owners">
+<tt class="descname">get_number_of_group_owners</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_number_of_group_owners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_number_of_group_owners" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the number of resource owners for a resource, for reporting purposes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -548,8 +685,8 @@ not limit group visibility; just membership.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_number_of_groups_of_user">
-<tt class="descname">get_number_of_groups_of_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_number_of_groups_of_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_number_of_groups_of_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_number_of_groups_of_user">
+<tt class="descname">get_number_of_groups_of_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_number_of_groups_of_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_number_of_groups_of_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the number of groups in which a user is a member</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -565,8 +702,8 @@ not limit group visibility; just membership.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_number_of_groups_owned_by_user">
-<tt class="descname">get_number_of_groups_owned_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_number_of_groups_owned_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_number_of_groups_owned_by_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_number_of_groups_owned_by_user">
+<tt class="descname">get_number_of_groups_owned_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_number_of_groups_owned_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_number_of_groups_owned_by_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the number of groups owned by a user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -582,8 +719,8 @@ not limit group visibility; just membership.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_number_of_resource_owners">
-<tt class="descname">get_number_of_resource_owners</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_number_of_resource_owners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_number_of_resource_owners" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_number_of_resource_owners">
+<tt class="descname">get_number_of_resource_owners</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_number_of_resource_owners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_number_of_resource_owners" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the number of resource owners for a resource, for reporting purposes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -598,8 +735,8 @@ not limit group visibility; just membership.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_number_of_resources_held_by_user">
-<tt class="descname">get_number_of_resources_held_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_number_of_resources_held_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_number_of_resources_held_by_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_number_of_resources_held_by_user">
+<tt class="descname">get_number_of_resources_held_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_number_of_resources_held_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_number_of_resources_held_by_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the number of resources held by a user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -615,8 +752,8 @@ not limit group visibility; just membership.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_number_of_resources_owned_by_user">
-<tt class="descname">get_number_of_resources_owned_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_number_of_resources_owned_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_number_of_resources_owned_by_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_number_of_resources_owned_by_user">
+<tt class="descname">get_number_of_resources_owned_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_number_of_resources_owned_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_number_of_resources_owned_by_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the number of resources owned by a user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -632,14 +769,71 @@ not limit group visibility; just membership.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_resource_metadata">
-<tt class="descname">get_resource_metadata</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resource_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resource_metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get metadata for a group as a dict record</p>
+<dt id="HSAlib.HSAccessCore.get_resource_invitations_for_user">
+<tt class="descname">get_resource_invitations_for_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_resource_invitations_for_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_resource_invitations_for_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of invitations to join resources that can be accepted or refused</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; group identifier for which to fetch metadata</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>This is from the point of view of the invited user.
+List resource invitations in the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+    &#39;resource_uuid&#39;: {uuid of resource},
+    &#39;resource_title&#39;: {name of resource},
+    &#39;resource_privilege&#39;: {privilege_code},
+    &#39;inviting_user_uuid&#39;: {uuid of inviting user},
+    &#39;inviting_user_name&#39;: {name of inviting user},
+    &#39;inviting_user_login&#39;: {login of inviting user}
+}
+</pre></div>
+</div>
+<p>Note: this has been refactored to have a single level of dict objects rather than two.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.get_resource_invitations_sent_by_user">
+<tt class="descname">get_resource_invitations_sent_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_resource_invitations_sent_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_resource_invitations_sent_by_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of invitations to join resources that can be uninvited</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>This is from the point of view of the inviting user. List resource invitations in the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+    &#39;resource_uuid&#39;: {uuid of resource},
+    &#39;resource_title&#39;: {name of resource},
+    &#39;resource_privilege&#39;: {privilege_code},
+    &#39;inviting_user_uuid&#39;: {uuid of inviting user},
+    &#39;inviting_user_name&#39;: {name of inviting user},
+    &#39;inviting_user_login&#39;: {login of inviting user}
+}
+</pre></div>
+</div>
+<p>Note: this has been refactored to have a single level of dict objects rather than two.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.get_resource_metadata">
+<tt class="descname">get_resource_metadata</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_resource_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_resource_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get metadata for a resource as a dict record</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier for which to fetch metadata</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict</td>
 </tr>
@@ -650,6 +844,10 @@ not limit group visibility; just membership.</p>
 &#39;title&#39;: *title of resource*,
 &#39;uuid&#39;: *uuid of resource*,
 &#39;path&#39;: *path of resource*,
+&#39;shareable&#39;: *whether resource is shareable*,
+&#39;discoverable&#39;: *whether resource is discoverable*,
+&#39;public&#39;: *whether resource is publicly accessible*,
+&#39;published&#39;: *whether resource is published and has a DOI*,
 &#39;immutable&#39;: *whether resource is immutable*,
 &#39;asserting_login&#39;: *login of user who made last change to metadata*,
 &#39;asserting_uuid&#39;: *uuid of user who made last change to metadata*,
@@ -657,31 +855,15 @@ not limit group visibility; just membership.</p>
 }
 </pre></div>
 </div>
-<p>The record returned from &#8216;get_resource_metadata&#8217; is suitable for use in 
+<p>The record returned from &#8216;get_resource_metadata&#8217; is suitable for use in
 &#8216;assert_resource_metadata&#8217; and may be used for things like cloning resources.</p>
-<p>The &#8216;asserting_uuid&#8217; is not used during &#8216;assert_resource_metadata&#8217;; this is a record 
+<p>The &#8216;asserting_uuid&#8217; is not used during &#8216;assert_resource_metadata&#8217;; this is a record
 of &#8220;who to blame&#8221; for the last change.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_resource_print_name">
-<tt class="descname">get_resource_print_name</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resource_print_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resource_print_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a print name for any given resource</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; identifier of resource</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested resource</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="HSAlib.HSAccess.get_resources_by_tag">
-<tt class="descname">get_resources_by_tag</tt><big>(</big><em>tag=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resources_by_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resources_by_tag" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_resources_by_tag">
+<tt class="descname">get_resources_by_tag</tt><big>(</big><em>tag=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_resources_by_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_resources_by_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Get a structured dictionary of tags and their contents</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -693,7 +875,7 @@ of &#8220;who to blame&#8221; for the last change.</p>
 </tr>
 </tbody>
 </table>
-<p>Uses: self._user_uuid: the current user.
+<p>Uses: self.get_uuid(): the current user.
 This returns a dictionary structure of the form:</p>
 <div class="highlight-python"><div class="highlight"><pre>{ &quot;tag&quot;: { resource_uuid : { title : *resource title*, &#39;access&#39; : *access code* }}}
 </pre></div>
@@ -702,9 +884,9 @@ This returns a dictionary structure of the form:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_resources_held_by_group">
-<tt class="descname">get_resources_held_by_group</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resources_held_by_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resources_held_by_group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve resources accessible to a specific group</p>
+<dt id="HSAlib.HSAccessCore.get_resources_held_by_group">
+<tt class="descname">get_resources_held_by_group</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_resources_held_by_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_resources_held_by_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve resources accessible to a specific group.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -728,8 +910,8 @@ This returns a dictionary structure of the form:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_resources_held_by_user">
-<tt class="descname">get_resources_held_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resources_held_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resources_held_by_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_resources_held_by_user">
+<tt class="descname">get_resources_held_by_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_resources_held_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_resources_held_by_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a list of resources held by user, sorted by title</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -750,12 +932,12 @@ This returns a dictionary structure of the form:</p>
 }
 </pre></div>
 </div>
-<p>Note: this is not subject to access control.</p>
+<p>Note: this is not currently subject to access control.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_resources_in_folders">
-<tt class="descname">get_resources_in_folders</tt><big>(</big><em>folder=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resources_in_folders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resources_in_folders" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_resources_in_folders">
+<tt class="descname">get_resources_in_folders</tt><big>(</big><em>folder=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_resources_in_folders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_resources_in_folders" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Get a structured dictionary of folders and their contents</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -767,7 +949,7 @@ This returns a dictionary structure of the form:</p>
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: the current user.</p>
+<p>Uses self.get_uuid(): the current user.</p>
 <p>This returns a dictionary structure of the form:</p>
 <div class="highlight-python"><div class="highlight"><pre>{ folder: { resource_uuid : { title : *resource title*, &#39;access&#39; : *access code* }}}
 </pre></div>
@@ -779,8 +961,8 @@ This returns a dictionary structure of the form:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_tags">
-<tt class="descname">get_tags</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_tags" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_tags">
+<tt class="descname">get_tags</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Return a list of tags for this user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -790,12 +972,12 @@ This returns a dictionary structure of the form:</p>
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: current user identity</p>
+<p>Uses self.get_uuid(): current user identity</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_user_metadata">
-<tt class="descname">get_user_metadata</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_user_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_user_metadata" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_user_metadata">
+<tt class="descname">get_user_metadata</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_user_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_user_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get metadata for a user as a dict record</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -807,68 +989,87 @@ This returns a dictionary structure of the form:</p>
 </tr>
 </tbody>
 </table>
-<p>This gives more complete information than &#8216;get_users&#8217;, including the date of user creation. 
+<p>This gives more complete information than &#8216;get_users&#8217;, including the date of user creation.
 The extra data is not utilize in &#8216;assert_user_metadata&#8217;.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_user_print_name">
-<tt class="descname">get_user_print_name</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_user_print_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_user_print_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a print name for any given user</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; identifier of user, None for current user</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested user</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="HSAlib.HSAccess.get_user_privilege_over_group">
-<tt class="descname">get_user_privilege_over_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_user_privilege_over_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_user_privilege_over_group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the privilege that is specified for a user over a specific group
-:type user_uuid: str
-:type group_uuid: str
-:param user_uuid: uuid of user for which to obtain privilege
-:param group_uuid: group to which to allow access
-:return: int: privilege code 1-100</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="HSAlib.HSAccess.get_user_privilege_over_resource">
-<tt class="descname">get_user_privilege_over_resource</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_user_privilege_over_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_user_privilege_over_resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Summarize privileges of a user over a resource</p>
+<dt id="HSAlib.HSAccessCore.get_user_privilege_over_group">
+<tt class="descname">get_user_privilege_over_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_user_privilege_over_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_user_privilege_over_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get privilege code for user over a group</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource</li>
-<li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</li>
+<li><strong>group_uuid</strong> (<em>str</em>) &#8211; </li>
+<li><strong>group_uuid</strong> &#8211; uuid of group</li>
+<li><strong>user_uuid</strong> &#8211; uuid of user; omit to report on current user</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">int: privilege number 1-100</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>The access privileges are the minimum (most powerful) privilege granted by any one user. 
-These include:</p>
-<ol class="arabic simple">
-<li>Privileges granted specifically to the user.</li>
-<li>Privileges granted via membership in a group.</li>
-</ol>
-<p>Note: this routine is not subject to access control.</p>
+<p>This checks for both user group permissions and group flags, including group_public.
+This returns one of the following strings:</p>
+<blockquote>
+<div><p>&#8216;own&#8217;</p>
+<blockquote>
+<div>User owns this resource</div></blockquote>
+<p>&#8216;rw&#8217;</p>
+<blockquote>
+<div>User can change this resource</div></blockquote>
+<p>&#8216;ro&#8217;</p>
+<blockquote>
+<div>User can read but not change this resource</div></blockquote>
+<p>&#8216;none&#8217;</p>
+<blockquote>
+<div>No privilege over resource</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_users">
-<tt class="descname">get_users</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_users" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_user_privilege_over_resource">
+<tt class="descname">get_user_privilege_over_resource</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_user_privilege_over_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_user_privilege_over_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get privilege code for user over a resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; </li>
+<li><strong>resource_uuid</strong> &#8211; uuid of resource</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This returns one of the following strings:</p>
+<blockquote>
+<div><p>&#8216;own&#8217;</p>
+<blockquote>
+<div>User owns this resource</div></blockquote>
+<p>&#8216;rw&#8217;</p>
+<blockquote>
+<div>User can change thsi resource</div></blockquote>
+<p>&#8216;ro&#8217;</p>
+<blockquote>
+<div>User can read but not change this resource</div></blockquote>
+<p>&#8216;none&#8217;</p>
+<blockquote>
+<div>No privilege over resource</div></blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.get_users">
+<tt class="descname">get_users</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_users" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the registered user list</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -884,7 +1085,7 @@ These include:</p>
 &#39;uuid&#39;: *user uuid*,
 &#39;name&#39;: *user name*,
 &#39;active&#39;: *true if user is active*,
-&#39;admin&#39;:  *true if user is admin* 
+&#39;admin&#39;:  *true if user is admin*
 }
 </pre></div>
 </div>
@@ -892,8 +1093,34 @@ These include:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.get_uuid">
-<tt class="descname">get_uuid</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_uuid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_uuid" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.get_users_holding_resource">
+<tt class="descname">get_users_holding_resource</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_users_holding_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_users_holding_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a list of resources held by user, sorted by title</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of resources containing dict items</td>
+</tr>
+</tbody>
+</table>
+<p>This returns a list of user dict records, in the format:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+&#39;uuid&#39;: *uuid of user*,
+&#39;name&#39;: *name of user*,
+&#39;login&#39;: *login of user*,
+&#39;privilege&#39;: *privilege code*
+}
+</pre></div>
+</div>
+<p>Note: this is not currently subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.get_uuid">
+<tt class="descname">get_uuid</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_uuid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_uuid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the uuid of the current user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -906,8 +1133,8 @@ These include:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.group_exists">
-<tt class="descname">group_exists</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.group_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.group_exists" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.group_exists">
+<tt class="descname">group_exists</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.group_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.group_exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine whether group identifier (uuid) is registered</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -919,46 +1146,143 @@ These include:</p>
 </tr>
 </tbody>
 </table>
-<p>This is used to avoid execution exceptions by ensuring that a group uuid 
+<p>This is used to avoid execution exceptions by ensuring that a group uuid
 is valid before performing further actions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.group_is_owned">
-<tt class="descname">group_is_owned</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.group_is_owned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.group_is_owned" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check whether a group is owned by a user
-:type user_uuid: str
-:type group_uuid: str
-:param user_uuid: uuid of user to check
-:param group_uuid: group uuid of group to check
-:return: bool: True if group uuid is owned by user uuid</p>
+<dt id="HSAlib.HSAccessCore.group_is_active">
+<tt class="descname">group_is_active</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.group_is_active"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.group_is_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if a group is active</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: true if group is active.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.group_is_readable">
-<tt class="descname">group_is_readable</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.group_is_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.group_is_readable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check whether a group is owned by a user
-:type user_uuid: str
-:type group_uuid: str
-:param user_uuid: uuid of user to check
-:param group_uuid: group uuid of group to check
-:return: bool: True if group uuid is readable by user uuid</p>
+<dt id="HSAlib.HSAccessCore.group_is_discoverable">
+<tt class="descname">group_is_discoverable</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.group_is_discoverable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.group_is_discoverable" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if a group is discoverable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: true if group is discoverable.</td>
+</tr>
+</tbody>
+</table>
+<p>If a group is discoverable, then it appears in the active groups along with its owner contact information.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.group_is_readwrite">
-<tt class="descname">group_is_readwrite</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.group_is_readwrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.group_is_readwrite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check whether a group is owned by a user
-:type user_uuid: str
-:type group_uuid: str
-:param user_uuid: uuid of user to check
-:param group_uuid: group uuid of group to check
-:return: bool: True if group uuid is read/write to user uuid</p>
+<dt id="HSAlib.HSAccessCore.group_is_owned">
+<tt class="descname">group_is_owned</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.group_is_owned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.group_is_owned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a group is owned by a user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user to check</li>
+<li><strong>group_uuid</strong> (<em>str</em>) &#8211; group uuid of group to check</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if group uuid is owned by user uuid</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.groups_of_user">
-<tt class="descname">groups_of_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.groups_of_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.groups_of_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.group_is_public">
+<tt class="descname">group_is_public</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.group_is_public"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.group_is_public" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if a group is public</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: true if group is discoverable.</td>
+</tr>
+</tbody>
+</table>
+<p>If a group is public, then others can see group members.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.group_is_readable">
+<tt class="descname">group_is_readable</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.group_is_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.group_is_readable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a group is readable by a user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user to check</li>
+<li><strong>group_uuid</strong> (<em>str</em>) &#8211; group uuid of group to check</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if group uuid is readable by user uuid</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.group_is_readwrite">
+<tt class="descname">group_is_readwrite</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.group_is_readwrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.group_is_readwrite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a group is owned by a user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user to check</li>
+<li><strong>group_uuid</strong> (<em>str</em>) &#8211; group uuid of group to check</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if group uuid is read/write to user uuid</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.group_is_shareable">
+<tt class="descname">group_is_shareable</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.group_is_shareable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.group_is_shareable" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if a group is shareable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: true if group is shareable.</td>
+</tr>
+</tbody>
+</table>
+<p>If a group is shareable, then users with readwrite privilege can invite members. Otherwise, they cannot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.groups_of_user">
+<tt class="descname">groups_of_user</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.groups_of_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.groups_of_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a list of groups in which a user is a member.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -972,7 +1296,7 @@ is valid before performing further actions.</p>
 </table>
 <p>This returns a list of dictionaries, each of the form:</p>
 <div class="highlight-python"><div class="highlight"><pre>{
-&#39;uuid&#39;: *group&#39;s uuid*, 
+&#39;uuid&#39;: *group&#39;s uuid*,
 &#39;name&#39;: *group&#39;s name*
 }
 </pre></div>
@@ -981,18 +1305,52 @@ is valid before performing further actions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.invite_user_to_group">
-<tt class="descname">invite_user_to_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid</em>, <em>privilege_code='ro'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.invite_user_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.invite_user_to_group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Invite a user into a group. The user must accept in a separate step
-:param group_uuid:
-:param user_uuid:
-:param privilege_code:
-:return:</p>
+<dt id="HSAlib.HSAccessCore.invite_user_to_group">
+<tt class="descname">invite_user_to_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid</em>, <em>privilege_code='ro'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.invite_user_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.invite_user_to_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invite a user into a group. The user must accept in a separate step.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>group_uuid</strong> &#8211; </li>
+<li><strong>user_uuid</strong> &#8211; </li>
+<li><strong>privilege_code</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.refuse_invitation_to_group">
-<tt class="descname">refuse_invitation_to_group</tt><big>(</big><em>group_uuid</em>, <em>host_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.refuse_invitation_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.refuse_invitation_to_group" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.invite_user_to_resource">
+<tt class="descname">invite_user_to_resource</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid</em>, <em>privilege_code='ro'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.invite_user_to_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.invite_user_to_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invite a user into a resource. The user must accept in a separate step.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resource_uuid</strong> &#8211; </li>
+<li><strong>user_uuid</strong> &#8211; </li>
+<li><strong>privilege_code</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.refuse_invitation_to_group">
+<tt class="descname">refuse_invitation_to_group</tt><big>(</big><em>group_uuid</em>, <em>host_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.refuse_invitation_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.refuse_invitation_to_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Refuse an invitation to join a group</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1013,44 +1371,30 @@ is valid before performing further actions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.resource_accessible">
-<tt class="descname">resource_accessible</tt><big>(</big><em>user_uuid</em>, <em>resource_uuid</em>, <em>code</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resource_accessible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resource_accessible" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if resource is accessible to a specific user in a specific way</p>
+<dt id="HSAlib.HSAccessCore.refuse_invitation_to_resource">
+<tt class="descname">refuse_invitation_to_resource</tt><big>(</big><em>resource_uuid</em>, <em>host_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.refuse_invitation_to_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.refuse_invitation_to_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refuse an invitation to join a resource</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>user_uuid</strong> (<em>str</em>) &#8211; user uuid, key to users table</li>
-<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource uuid: key to resources table</li>
-<li><strong>code</strong> (<em>str</em>) &#8211; privilege code: key to privileges table</li>
+<li><strong>resource_uuid</strong> &#8211; </li>
+<li><strong>host_uuid</strong> &#8211; user uuid of person who invited</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if resource is accessible to user in the mode indicated by code</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>This routine checks if a resource is accessible at a given level. 
-The codes include:</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>own</dt>
-<dd>ownership</dd>
-<dt>rw </dt>
-<dd>read-write (with sharing)</dd>
-<dt>ro </dt>
-<dd>read-only (with sharing)</dd>
-<dt>ns </dt>
-<dd>read-only (no sharing)</dd>
-</dl>
-</div></blockquote>
+<p>Refuse an invitation created with &#8216;invite_user_to_resource&#8217;.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.resource_exists">
-<tt class="descname">resource_exists</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resource_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resource_exists" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.resource_exists">
+<tt class="descname">resource_exists</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine whether a resource is registered in the database</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1066,8 +1410,24 @@ The codes include:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.resource_is_immutable">
-<tt class="descname">resource_is_immutable</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resource_is_immutable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resource_is_immutable" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.resource_is_discoverable">
+<tt class="descname">resource_is_discoverable</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_is_discoverable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_is_discoverable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether resource is flagged as discoverable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as published</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.resource_is_immutable">
+<tt class="descname">resource_is_immutable</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_is_immutable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_is_immutable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether resource is flagged as immutable</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1082,18 +1442,18 @@ The codes include:</p>
 <p>If a resource is immutable:</p>
 <ol class="arabic simple">
 <li>All write access is denied by all users regardless of privilege. This includes
-resource deletion and any changes to any aspect of the resource. Even owners have no 
+resource deletion and any changes to any aspect of the resource. Even owners have no
 privileges other than read over an immutable resource.</li>
-<li>Only an administrative user can promote a resource from immutable to mutable. 
+<li>Only an administrative user can promote a resource from immutable to mutable.
 Other users must instead copy the resource to a new location.</li>
 </ol>
-<p>The spirit of the immutable flag is that the affected resource&#8217;s landing page can then safely be 
+<p>The spirit of the immutable flag is that the affected resource&#8217;s landing page can then safely be
 issued a data citation.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.resource_is_owned">
-<tt class="descname">resource_is_owned</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resource_is_owned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resource_is_owned" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.resource_is_owned">
+<tt class="descname">resource_is_owned</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_is_owned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_is_owned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check whether a given resource is owned by a specific user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1110,11 +1470,46 @@ issued a data citation.</p>
 </tr>
 </tbody>
 </table>
+<p>This routine is a bit strange, because ownership &#8211; unlike read/write and read-only privileges &#8211;
+is not subject to overrides from resource flags including &#8216;immutable&#8217; and &#8216;public&#8221;.</p>
+<p>Thus &#8211; in particular &#8211; it is possible for an immutable resource to be <em>owned but not writeable</em>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.resource_is_readable">
-<tt class="descname">resource_is_readable</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resource_is_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resource_is_readable" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.resource_is_public">
+<tt class="descname">resource_is_public</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_is_public"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_is_public" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether resource is flagged as public</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as published</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.resource_is_published">
+<tt class="descname">resource_is_published</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_is_published"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_is_published" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether resource is flagged as published</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as published</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.resource_is_readable">
+<tt class="descname">resource_is_readable</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_is_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_is_readable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check whether a given resource is readable by a specific user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1131,32 +1526,12 @@ issued a data citation.</p>
 </tr>
 </tbody>
 </table>
+<p>This is subject to resource override flags including &#8216;immutable&#8217; and &#8216;public&#8217;.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.resource_is_readable_without_sharing">
-<tt class="descname">resource_is_readable_without_sharing</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resource_is_readable_without_sharing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resource_is_readable_without_sharing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check whether a given resource is readable without sharing</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier for resource to be checked for access</li>
-<li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user whose privileges should be checked; omit to check current user</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if user has read-only without sharing privileges over resource.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="HSAlib.HSAccess.resource_is_readwrite">
-<tt class="descname">resource_is_readwrite</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.resource_is_readwrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.resource_is_readwrite" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.resource_is_readwrite">
+<tt class="descname">resource_is_readwrite</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_is_readwrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_is_readwrite" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check whether a given resource is read/write to a specific user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1173,11 +1548,28 @@ issued a data citation.</p>
 </tr>
 </tbody>
 </table>
+<p>This is subject to resource override flags including &#8216;immutable&#8217; and &#8216;public&#8217;.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.retract_folder">
-<tt class="descname">retract_folder</tt><big>(</big><em>folder_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.retract_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.retract_folder" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.resource_is_shareable">
+<tt class="descname">resource_is_shareable</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.resource_is_shareable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.resource_is_shareable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether resource is flagged as shareable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as published</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.retract_folder">
+<tt class="descname">retract_folder</tt><big>(</big><em>folder_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.retract_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.retract_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Remove a folder; things in the folder become &#8220;unfiled&#8221;</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1189,13 +1581,13 @@ issued a data citation.</p>
 </tr>
 </tbody>
 </table>
-<p>Uses: self._user_uuid: the identity of the current user.
+<p>Uses: self.get_uuid(): the identity of the current user.
 Folders are local to the current user.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.retract_group">
-<tt class="descname">retract_group</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.retract_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.retract_group" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.retract_group">
+<tt class="descname">retract_group</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.retract_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.retract_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a group and all membership information</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1207,7 +1599,7 @@ Folders are local to the current user.</p>
 </tr>
 </tbody>
 </table>
-<p>Retractions are handled via database cascade logic. This deletes all information about the 
+<p>Retractions are handled via database cascade logic. This deletes all information about the
 group, including every resource held with that group.</p>
 <p><em>Consider making a group inactive instead of using this routine.</em></p>
 <p>Restrictions:</p>
@@ -1218,7 +1610,7 @@ group, including every resource held with that group.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Todo:</th><td class="field-body">fix cascade logic in database so that this always works correctly. Currently 
+<tr class="field-odd field"><th class="field-name">Todo:</th><td class="field-body">fix cascade logic in database so that this always works correctly. Currently
 there is a band-aid fix that does the cascade in the application.</td>
 </tr>
 </tbody>
@@ -1226,8 +1618,8 @@ there is a band-aid fix that does the cascade in the application.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.retract_resource_has_tag">
-<tt class="descname">retract_resource_has_tag</tt><big>(</big><em>resource_uuid</em>, <em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.retract_resource_has_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.retract_resource_has_tag" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.retract_resource_has_tag">
+<tt class="descname">retract_resource_has_tag</tt><big>(</big><em>resource_uuid</em>, <em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.retract_resource_has_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.retract_resource_has_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Remove a tag from a resource; it becomes untagged.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1244,14 +1636,14 @@ there is a band-aid fix that does the cascade in the application.</td>
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: the identity of the current user.
+<p>Uses self.get_uuid(): the identity of the current user.
 Tags are local to the current user.
 This removes an assertion of one tag while leaving the others alone.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.retract_resource_in_folder">
-<tt class="descname">retract_resource_in_folder</tt><big>(</big><em>resource_uuid</em>, <em>folder_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.retract_resource_in_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.retract_resource_in_folder" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.retract_resource_in_folder">
+<tt class="descname">retract_resource_in_folder</tt><big>(</big><em>resource_uuid</em>, <em>folder_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.retract_resource_in_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.retract_resource_in_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Remove a resource from a folder; it becomes unfiled.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1271,8 +1663,8 @@ This removes an assertion of one tag while leaving the others alone.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.retract_tag">
-<tt class="descname">retract_tag</tt><big>(</big><em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.retract_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.retract_tag" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.retract_tag">
+<tt class="descname">retract_tag</tt><big>(</big><em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.retract_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.retract_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Remove a tag; things in the tag become &#8220;untagged&#8221;</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1284,14 +1676,14 @@ This removes an assertion of one tag while leaving the others alone.</p>
 </tr>
 </tbody>
 </table>
-<p>Uses self._user_uuid: the identity of the current user.</p>
-<p>Unregisters a tag along with all of uses of that tag on resources. 
+<p>Uses self.get_uuid(): the identity of the current user.</p>
+<p>Unregisters a tag along with all of uses of that tag on resources.
 Folders are local to the current user.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.share_group_with_user">
-<tt class="descname">share_group_with_user</tt><big>(</big><em>group_uuid</em>, <em>user_uuid</em>, <em>privilege_code='ro'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.share_group_with_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.share_group_with_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.share_group_with_user">
+<tt class="descname">share_group_with_user</tt><big>(</big><em>group_uuid</em>, <em>user_uuid</em>, <em>privilege_code='ro'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.share_group_with_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.share_group_with_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>DEPRECATED: Attempt to share a group with a user: this allows read/write to the group membership list</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1309,11 +1701,11 @@ Folders are local to the current user.</p>
 </tr>
 </tbody>
 </table>
-<p>This routine has been replaced by the invite/accept/refuse/uninvite interface, including: 
-* invite_user_to_group (for inviter) 
-* uninvite_user_to_group (for inviter) 
-* accept_invitation_to_group (for invitee) 
-* refuse_invitation_to_group (for invitee) 
+<p>This routine has been replaced by the invite/accept/refuse/uninvite interface, including:
+* invite_user_to_group (for inviter)
+* uninvite_user_to_group (for inviter)
+* accept_invitation_to_group (for invitee)
+* refuse_invitation_to_group (for invitee)
 * get_invitations_to_group (for invitee)</p>
 <p>This is a direct sharing of a group without user permission.</p>
 <p>Preconditions:</p>
@@ -1336,8 +1728,8 @@ Folders are local to the current user.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.share_resource_with_group">
-<tt class="descname">share_resource_with_group</tt><big>(</big><em>resource_uuid</em>, <em>group_uuid</em>, <em>privilege_code='ns'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.share_resource_with_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.share_resource_with_group" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.share_resource_with_group">
+<tt class="descname">share_resource_with_group</tt><big>(</big><em>resource_uuid</em>, <em>group_uuid</em>, <em>privilege_code='ns'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.share_resource_with_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.share_resource_with_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Share a resource with a group of users</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1345,8 +1737,8 @@ Folders are local to the current user.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; the resource to be shared</li>
-<li><strong>group_uuid</strong> (<em>str</em>) &#8211; the group with which to share it: self._user_uuid must be a member.</li>
-<li><strong>privilege_code</strong> (<em>str</em>) &#8211; the privilege to assign: must be less than or equal to self._user_uuid&#8217;s privilege</li>
+<li><strong>group_uuid</strong> (<em>str</em>) &#8211; the group with which to share it: self.get_uuid() must be a member.</li>
+<li><strong>privilege_code</strong> (<em>str</em>) &#8211; the privilege to assign: must be less than or equal to self.get_uuid()&#8217;s privilege</li>
 </ul>
 </td>
 </tr>
@@ -1359,21 +1751,21 @@ Folders are local to the current user.</p>
 <p>Preconditions:</p>
 <ol class="arabic simple">
 <li>Current user must be a member of the group, or have administrative privilege.</li>
-<li>Current user must have the same or more comprehensive access to the resource than for the share, 
+<li>Current user must have the same or more comprehensive access to the resource than for the share,
 or administrative privilege.</li>
 </ol>
 <p>Postconditions: resource is shared with all members of the group. Privileges changes for all group members
 as individuals, simultaneously.</p>
-<p>This works the same whether this is the first or a subsequent time the resource is shared. A user can 
+<p>This works the same whether this is the first or a subsequent time the resource is shared. A user can
 downgrade or upgrade sharing privileges for a resource at will.</p>
-<p>Note: if a user shares a privilege that is then revoked for that user, the sharing privilege persists 
-for the object.  It is possible to downgrade privilege assigned by a user whose privilege has been 
+<p>Note: if a user shares a privilege that is then revoked for that user, the sharing privilege persists
+for the object.  It is possible to downgrade privilege assigned by a user whose privilege has been
 downgraded, but this has not been implemented.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.share_resource_with_user">
-<tt class="descname">share_resource_with_user</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid</em>, <em>privilege_code='ns'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.share_resource_with_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.share_resource_with_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.share_resource_with_user">
+<tt class="descname">share_resource_with_user</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid</em>, <em>privilege_code='ns'</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.share_resource_with_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.share_resource_with_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Share a specific resource with a specific user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1391,7 +1783,7 @@ downgraded, but this has not been implemented.</p>
 </tr>
 </tbody>
 </table>
-<p>This shares a resource with a user other than self. The current user is implicitly 
+<p>This shares a resource with a user other than self. The current user is implicitly
 the initiator of the sharing.</p>
 <p>This is subject to several restrictions:</p>
 <ol class="arabic simple">
@@ -1404,18 +1796,28 @@ privileges for another user.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.uninvite_user_to_group">
-<tt class="descname">uninvite_user_to_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.uninvite_user_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.uninvite_user_to_group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uninvite a user the current user invited; does not undo other invitations
-Revoke an invitation to join a group
+<dt id="HSAlib.HSAccessCore.uninvite_user_to_group">
+<tt class="descname">uninvite_user_to_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.uninvite_user_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.uninvite_user_to_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uninvite a user the current user invited; does not undo other invitations</p>
+<p>Revoke an invitation to join a group
 :param group_uuid: uuid of group
 :param user_uuid: uuid of user
 :return:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.unshare_group_with_user">
-<tt class="descname">unshare_group_with_user</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.unshare_group_with_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.unshare_group_with_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.uninvite_user_to_resource">
+<tt class="descname">uninvite_user_to_resource</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.uninvite_user_to_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.uninvite_user_to_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uninvite a user the current user invited; does not undo other invitations</p>
+<p>Revoke an invitation to join a resource
+:param resource_uuid: uuid of resource
+:param user_uuid: uuid of user
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore.unshare_group_with_user">
+<tt class="descname">unshare_group_with_user</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.unshare_group_with_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.unshare_group_with_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt to unshare a group with a user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1441,8 +1843,8 @@ Revoke an invitation to join a group
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.unshare_resource_with_group">
-<tt class="descname">unshare_resource_with_group</tt><big>(</big><em>resource_uuid</em>, <em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.unshare_resource_with_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.unshare_resource_with_group" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.unshare_resource_with_group">
+<tt class="descname">unshare_resource_with_group</tt><big>(</big><em>resource_uuid</em>, <em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.unshare_resource_with_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.unshare_resource_with_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove all sharing with user (owner or administrator only)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1459,13 +1861,13 @@ Revoke an invitation to join a group
 </tr>
 </tbody>
 </table>
-<p>Only a group owner or administrator may revoke all privileges over a resource.  This 
+<p>Only a group owner or administrator may revoke all privileges over a resource.  This
 includes all grants of privilege no matter what the source within the group.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.unshare_resource_with_user">
-<tt class="descname">unshare_resource_with_user</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.unshare_resource_with_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.unshare_resource_with_user" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.unshare_resource_with_user">
+<tt class="descname">unshare_resource_with_user</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.unshare_resource_with_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.unshare_resource_with_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove all sharing with user (owner only)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1493,8 +1895,8 @@ before all sharing is removed. It is possible that a user will have several diff
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.user_exists">
-<tt class="descname">user_exists</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.user_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.user_exists" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.user_exists">
+<tt class="descname">user_exists</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.user_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.user_exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine whether a login name is registered in the HSAccess database</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1506,13 +1908,13 @@ before all sharing is removed. It is possible that a user will have several diff
 </tr>
 </tbody>
 </table>
-<p>This checks a uuid and returns True if it exists. This is used to avoid 
+<p>This checks a uuid and returns True if it exists. This is used to avoid
 unintentional exceptions from use of a non-existent uuid.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.user_in_group">
-<tt class="descname">user_in_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.user_in_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.user_in_group" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.user_in_group">
+<tt class="descname">user_in_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.user_in_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.user_in_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check whether a user is a member of a group</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1529,11 +1931,13 @@ unintentional exceptions from use of a non-existent uuid.</p>
 </tr>
 </tbody>
 </table>
+<p>Note: this uses user_group_privilege whereas access uses cumulative_user_group_privilege.
+The reason for this is that membership must not account for public groups (which is most of them).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.user_is_active">
-<tt class="descname">user_is_active</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.user_is_active"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.user_is_active" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.user_is_active">
+<tt class="descname">user_is_active</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.user_is_active"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.user_is_active" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine whether a user uuid is an active user</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1545,16 +1949,16 @@ unintentional exceptions from use of a non-existent uuid.</p>
 </tr>
 </tbody>
 </table>
-<p>This reports whether a given user is active. Inactive users cannot login or access anything, 
-but their privileges and owned documents are kept intact. It is legal for a resource or group 
-to be owned by an inactive user, and groups and resources originally created by an inactive user 
-continue to be available to others. Whether a group is active is independent of whether its 
+<p>This reports whether a given user is active. Inactive users cannot login or access anything,
+but their privileges and owned documents are kept intact. It is legal for a resource or group
+to be owned by an inactive user, and groups and resources originally created by an inactive user
+continue to be available to others. Whether a group is active is independent of whether its
 owner is active.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccess.user_is_admin">
-<tt class="descname">user_is_admin</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.user_is_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.user_is_admin" title="Permalink to this definition">¶</a></dt>
+<dt id="HSAlib.HSAccessCore.user_is_admin">
+<tt class="descname">user_is_admin</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.user_is_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.user_is_admin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine whether a user identified by uuid has admin privileges</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1566,7 +1970,7 @@ owner is active.</p>
 </tr>
 </tbody>
 </table>
-<p>This reports whether the given user has administrative privileges. 
+<p>This reports whether the given user has administrative privileges.
 Administrative users can, for example:</p>
 <ol class="arabic simple">
 <li>register new users with &#8216;assert_user&#8217;</li>
@@ -1574,6 +1978,74 @@ Administrative users can, for example:</p>
 </ol>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccessCore</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>This class consists of the core methods that contact iRODS</p>
+<p>Unlike HSAccess, it does not contain helper functions;
+only the functions necessary to the core logic.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="HSAlib.HSAccess">
+<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccess</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Access control class for HydroShare Users, Resources, and Groups</p>
+<dl class="method">
+<dt id="HSAlib.HSAccess.get_group_print_name">
+<tt class="descname">get_group_print_name</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_group_print_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_group_print_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a print name for any given group</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; identifier of group</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested group</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccess.get_resource_print_name">
+<tt class="descname">get_resource_print_name</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_resource_print_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_resource_print_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a print name for any given resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; identifier of resource</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested resource</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccess.get_user_print_name">
+<tt class="descname">get_user_print_name</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess.get_user_print_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess.get_user_print_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a print name for any given user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; identifier of user, None for current user</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested user</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccess</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Access control class for HydroShare Users, Resources, and Groups</p>
 </dd></dl>
 
 </div>
@@ -1588,8 +2060,8 @@ Administrative users can, for example:</p>
   <p class="topless"><a href="usage.html"
                         title="previous chapter">IrodsShare HSAccess usage</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="ui.html"
-                        title="next chapter">Thoughts on the IrodsShare/Django UI</a></p>
+  <p class="topless"><a href="objects.html"
+                        title="next chapter">IrodsShare Object Library</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/module.txt"
@@ -1622,12 +2094,12 @@ Administrative users can, for example:</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ui.html" title="Thoughts on the IrodsShare/Django UI"
+          <a href="objects.html" title="IrodsShare Object Library"
              >next</a> |</li>
         <li class="right" >
           <a href="usage.html" title="IrodsShare HSAccess usage"
              >previous</a> |</li>
-        <li><a href="index.html">IrodsShare 0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">IrodsShare 0.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

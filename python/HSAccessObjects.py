@@ -3,12 +3,6 @@ __author__ = 'Alva'
 from HSAlib import HSAccess, HSAccessCore, HSAException, HSAccessException, HSAIntegrityException, HSAUsageException
 from pprint import pprint
 
-def __spaces(self, indent=0):
-    s = ""
-    for i in [n for n in range(1, indent)]:
-        s += ' '
-    return s
-
 ################################################
 # a generic object that can kick off basic queries:
 # - list users
@@ -18,18 +12,34 @@ def __spaces(self, indent=0):
 
 
 class HSAccessObject(object):
+    """
+    Generic object interface: does not assume anything about user environment
+    """
+
     def __init__(self, hsa):
         self.__hsa = hsa
 
 
 class HSAccessUser(object):
+    """
+    Representation of an IrodsShare user, including all actions that apply to a user. 
+
+        * Public methods are always available to the user. 
+
+        * Private methods are made conditionally available through the :py:meth:`get_capabilities` method. 
+    """
     def __init__(self, hsa, user_uuid=None):
         """
         Initialize a user object
 
         :type hsa: HSAccess
         :type user_uuid: str?
+        :param hsa: A raw HSAccess object with non-object interface. 
+        :param user_uuid: uuid of the user to represent with this object. 
         :return: None
+
+        This stores a primitive HSAccess object as a sub-object and then stores context as to what
+        specific user it represents. It reads and caches metadata in order to reduce database calls. 
         """
         self.__hsa = hsa
         if user_uuid is not None:
@@ -40,59 +50,240 @@ class HSAccessUser(object):
         self.__meta = self.__hsa.get_user_metadata(self.__uuid)
 
     def get_uuid(self):
+        """ 
+        Get the uuid of the user that this object represents. 
+
+        :return: str: uuid of current user
+        """
         return self.__uuid
 
     def get_login(self):
+        """ 
+        Get the login name in iRODS of the user that this object represents. 
+
+        :return: str: login name of current user
+        """
         return self.__meta['login']
 
     def get_name(self):
+        """ 
+        Get the print name of the user that this object represents. 
+
+        :return: str: print name of current user
+        """
         return self.__meta['name']
 
     def is_admin(self):
+        """ 
+        Return True if user is administrator
+
+        :return: bool: True if current user is an administrator
+        """
         return self.__meta['admin']
 
     def is_active(self):
+        """ 
+        Return True if user is active now. 
+
+        :return: bool: True if current user is active. 
+        """
         return self.__meta['active']
 
     def get_privilege_over_resource(self, resource_uuid):
+        """ 
+        Get the privilege code for the privilege that this user holds over a given resource
+
+        :type resource_uuid: str
+        :param resource_uuid: uuid of the resource to check. 
+        :return: str: one of 'own', 'rw', 'ro', 'none'.
+
+        This returns one of the following codes: 
+
+            'own'
+
+                User owns this resource
+
+            'rw'
+
+                User can read and change this resource
+
+            'ro'
+
+                User can read but not change this resource
+
+            'none'
+
+                No privilege over resource
+        """
         return self.__hsa.get_user_privilege_over_resource(resource_uuid)
 
     def get_privilege_over_group(self, group_uuid):
+        """ 
+        Get the privilege code for the privilege that this user holds over a given group. 
+
+        :type group_uuid: str
+        :param group_uuid: uuid of the group to check. 
+        :return: str: one of 'own', 'rw', 'ro', 'none'.
+
+        This returns one of the following codes: 
+
+            'own'
+
+                User owns this group.
+
+            'rw'
+
+                User can read and change this group, e.g., by adding members.
+
+            'ro'
+
+                User can read but not change this group, e.g., by listing the users in the group. 
+
+            'none'
+
+                No privilege over group; user cannot see members of the group. 
+        """
         return self.__hsa.get_user_privilege_over_group(group_uuid)
 
     # "__" routines require privilege that is determined by get_capabilities
     def __change_name(self, new_name):
+        """ 
+        PRIVATE: change the name of a user. 
+
+        :type new_name: str
+        :param new_name: new name to assign. 
+        :return: None
+
+        This function is exposed via :py:meth:`get_capabilities` as capability key 'change_name'. 
+        """
         self.__meta['name'] = new_name
         self.__hsa.assert_user_metadata(self.__meta)
 
     def __make_active(self):
+        """ 
+        PRIVATE: make the user active. 
+
+        :return: None
+
+        This makes the user active if not, and does nothing if already active. 
+
+        This function is exposed via :py:meth:`get_capabilities` as capability key 'make_active'. 
+
+        Notes: 
+
+            * Inactive users are prohibited from doing anything. 
+
+            * Only an administrator can make a user active or inactive.
+        """
         if self.__meta['active'] is False:
             self.__meta['active'] = True
             self.__hsa.assert_user_metadata(self.__meta)
 
     def __make_not_active(self):
+        """ 
+        PRIVATE: make the user inactive. 
+
+        :return: None
+
+        This makes the user inactive if active, and does nothing if already inactive.
+
+        This function is exposed via :py:meth:`get_capabilities` as capability key 'make_not_active'. 
+
+        Notes: 
+
+            * Inactive users are prohibited from doing anything. 
+
+            * Only an administrator can make a user active or inactive.
+        """
         if self.__meta['active'] is True:
             self.__meta['active'] = False
             self.__hsa.assert_user_metadata(self.__meta)
 
     def __make_admin(self):
+        """ 
+        PRIVATE: make the user an administrator. 
+
+        :return: None
+
+        This makes the user an administrator if not, and does nothing if already an administrator. 
+
+        This function is exposed via :py:meth:`get_capabilities` as capability key 'make_admin'. 
+
+        Notes: 
+
+            * Only an administrator can make a user an administrator.
+
+        """
         if self.__meta['admin'] is False:
             self.__meta['admin'] = True
             self.__hsa.assert_user_metadata(self.__meta)
 
     def __make_not_admin(self):
+        """ 
+        PRIVATE: make the user a non-administrator. 
+
+        :return: None
+
+        This makes the user a non-administrator if already an administrator, and does nothing otherwise. 
+
+        This function is exposed via :py:meth:`get_capabilities` as capability key 'make_not_admin'. 
+
+        Notes: 
+
+            * Only an administrator can make a user a non-administrator.
+
+            * **Administrators can do this to themselves, after which they are no longer administrators.**
+        """
         if self.__meta['admin'] is True:
             self.__meta['admin'] = False
             self.__hsa.assert_user_metadata(self.__meta)
 
     # this will only work if the user in question has admin
     def __register_user(self, user_login, user_name, user_active=True, user_admin=False):
+        """
+        Register a new user; requires administrative privilege. 
+
+        :type user_login: str
+        :type user_name: str
+        :type user_active: bool
+        :type user_admin: bool 
+        :param user_login: iRODS login for the user. 
+        :param user_name: print name for the new user. 
+        :param user_active: whether user is initially active: default is True.
+        :param user_admin: whether user is initially an administrator: default is False. 
+
+        This registers a new user, which must already exist in iRODS. 
+       
+        To modify an already registered user, see other methods, including :py:meth:`_HSAccessObject__change_name`, etc. 
+        """
         uuid = self.__hsa.assert_user(user_login, user_name,  user_active, user_admin)
         return HSAccessUser(self.__hsa, uuid)
 
     # anyone can register a group
     def register_group(self, group_name, group_active=True, group_shareable=True,
                        group_discoverable=True, group_public=True):
+        """ 
+        Register a new group. 
+
+        :type group_name: str
+        :type group_active: bool
+        :type group_shareable: bool
+        :type group_discoverable: bool
+        :type group_public: bool 
+        :param group_name: print name of the group, need not be unique. 
+        :param group_active: whether the group is active. 
+        :param group_shareable: whether the group is shareable, which allows non-owners to invite members. 
+        :param group_discoverable: whether the group is discoverable in group listings. 
+        :param group_public: whether the group is public, which allows all users to see members. 
+        :return: HSAccessGroup: object representing the created group. 
+
+        Some notes: 
+            
+            * Group names need not be unique. If one creates two groups in rapid succession with the same 
+              name, they will be distinct. 
+           
+            * Anyone can create a group; this is not a privileged action. 
+        """
         uuid = self.__hsa.assert_group(group_name, group_active, group_shareable,
                                        group_discoverable, group_public)
         return HSAccessGroup(self.__hsa, uuid)
@@ -102,6 +293,30 @@ class HSAccessUser(object):
                           resource_immutable=False, resource_published=False,
                           resource_discoverable=False, resource_public=False,
                           resource_shareable=True):
+        """
+        Register a new group. 
+
+        :type resource_title: str
+        :type resource_immutable: bool
+        :type resource_published: bool
+        :type resource_discoverable: bool
+        :type resource_public: bool 
+        :type resource_shareable: bool
+        :param resource_title: print name of the group, need not be unique. 
+        :param resource_immutable: whether the resource is immutable, which downgrades all privileges to read-only. 
+        :param resource_published: whether the resource is published, which means a DOI has been issued. 
+        :param resource_discoverable: whether the resource is discoverable in resource listings. 
+        :param resource_public: whether the resource is public, which allows all users to read it. 
+        :param resource_shareable: whether the resource is shareable, which allows non-owners to share with others. 
+        :return: HSAccessResource: object representing the created resource. 
+
+        Some notes: 
+            
+            * Resource titles need not be unique. If one creates two resources in rapid succession with the same 
+              title, they will be distinct. 
+           
+            * Anyone can create a resource; this is not a privileged action. 
+        """
         uuid = self.__hsa.assert_resource(resource_path, resource_title,
                                           resource_immutable=resource_immutable,
                                           resource_published=resource_published,
@@ -115,9 +330,9 @@ class HSAccessUser(object):
         """
         Get groups accessible to a user, along with requisite action links
 
-        There is a fundamental difference between HSAccessUser.get_* and
-        HSAccessObject.get_*. The former sees what a user sees, while the latter
-        sees only what the user would see in this situation.
+        :return: List of :py:class:`HSAccessGroup` instances. 
+
+        This gets the list of groups accessible to the current user, as objects. 
         """
         group_uuids = self.__hsa.get_groups_for_user(self.__uuid)
         result = []
@@ -130,7 +345,9 @@ class HSAccessUser(object):
         """
         Get a list of accessible resources, along wih requisite action links
 
-        This gets the list of resources accessible to a specific user.
+        :return: List of :py:class:`HSAccessResource` instances. 
+
+        This gets the list of resources accessible to the current user, as objects. 
         """
         resource_uuids = self.__hsa.get_resources_held_by_user(self.__uuid)
         result = []
@@ -157,23 +374,66 @@ class HSAccessUser(object):
     ### ERROR ###     pass
 
     def get_capabilities(self):
-        caps = {}
+        """
+        Get the capabilities of this particular user. 
+
+        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+
+        This function exposes private methods of :py:class:`HSAccessUser` based upon the 
+        capabilities of the represented user. The format of the return value
+        is::
+
+            {'capability_key': bound_method, ...}
+
+        This is used via the following pattern::
+
+            caps = Object.get_capabilities() 
+            ...
+            if 'capability_key' in caps.keys(): 
+                caps['capability_key'](...arguments...)
+
+        where arguments are documented below. 
+
+        User capability keys include: 
+        
+            * 'register_user': register a new user. This requires administrative privilege
+              and returns the :py:meth:`HSAccessUser` object corresponding to the new user. 
+
+              See :py:meth:`_HSAccessUser__register_user` for details and calling conventions.
+
+            * 'make_active' and 'make_not_active': control whether a user is active. This requires 
+              administrative privilege. There are no arguments. 
+
+            * 'change_name': change the name of a user. This requires either administrative 
+              privilege or being that user. There is one parameter: the new name. 
+              
+              See :py:meth:`_HSAccessUser__change_name` for details. 
+
+        Note: this is not all a user can do. These are simply the "protected" methods that are 
+        enabled and disabled according to user privilege. Other methods are available to all users at 
+        all times. In general, the private methods of :py:class:`HSAccessObjects.HSAccessUser` are 
+        exposed in this fashion while the public methods are always available. 
+
+        Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
+        methods are also protected from being executed inappropriately. 
+        """
+        capabilities = {}
         if self.__hsa.user_is_admin():
-            caps['register_user'] = self.__register_user
+            capabilities['register_user'] = self.__register_user
             if self.__meta['admin']:
-                caps['make_not_admin'] = self.__make_not_admin
+                capabilities['make_not_admin'] = self.__make_not_admin
             else:
-                caps['make_admin'] = self.__make_admin
+                capabilities['make_admin'] = self.__make_admin
             if self.__meta['active']:
-                caps['make_not_active'] = self.__make_not_active
+                capabilities['make_not_active'] = self.__make_not_active
             else:
-                caps['make_active'] = self.__make_active
-            caps['change_name'] = self.__change_name
+                capabilities['make_active'] = self.__make_active
+            capabilities['change_name'] = self.__change_name
 
         if self.__hsa.get_uuid() == self.__uuid:
-            caps['change_name'] = self.__change_name
+            capabilities['change_name'] = self.__change_name
 
-        return caps
+        return capabilities
 
     def __spaces(self, indent=0):
         s = ""
@@ -182,6 +442,15 @@ class HSAccessUser(object):
         return s
 
     def pprint(self, indent=0):
+        """
+        Pretty-print an HSAccessUser for debugging purposes. 
+
+        :type indent: int
+        :param indent: indentation for printout in two-space units. 
+        :return: None
+
+        Indentation allows hierarchical listings of sub-objects. 
+        """ 
         print self.__spaces(indent), "==========="
         print self.__spaces(indent), "USER RECORD"
         print self.__spaces(indent), "  User uuid: ", self.__uuid
@@ -290,6 +559,69 @@ class HSAccessGroup(object):
         return self.__member
 
     def get_capabilities(self):
+        """
+        Get the capabilities of our user over this group. 
+
+        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+
+        This function exposes private methods of :py:class:`HSAccessUser` based upon the 
+        capabilities of the represented user. The format of the return value
+        is::
+
+            {'capability_key': bound_method, ...}
+
+        This is used via the following pattern::
+
+            caps = Object.get_capabilities() 
+            ...
+            if 'capability_key' in caps.keys(): 
+                caps['capability_key'](...arguments...)
+
+        where arguments are documented below. 
+
+        User capability keys include: 
+        
+            * 'make_shareable' and 'make_not_shareable' control whether group members can invite others. 
+              User must be group owner or administrator. 
+
+            * 'make_discoverable' and 'make_not_discoverable' control whether other users can see the
+              group in public listings. User must be group owner or administrator. 
+
+            * 'make_public' and 'make_not_public' control whether other users can see the members of the 
+              group in public listings. User must be group owner or administrator. 
+
+            * 'make_active' and 'make_not_active': control whether the group is active. This requires 
+              administrative privilege. 
+
+            * 'get_members' makes a listing of :py:class:`HSAccessUser` instances representing members of the group. 
+
+              See :py:meth:`_HSAccessGroup__get_members` for details. 
+
+            * 'get_resources' makes a listing of :py:class:`HSAccessResource` instances representing resources 
+              shared with the group. 
+
+              See :py:meth:`_HSAccessGroup__get_resources` for details. 
+
+            * 'change_name': change the name of the group. User must be either group owner or an administrator. 
+              There is one parameter: the new name. 
+              
+              See :py:meth:`_HSAccessGroup__change_name` for details. 
+
+            * 'share_with_user': add a new user to the group, immediately. User must be group owner or administrator, 
+              or group must be shareable. 
+
+              There is one parameter: the :py:class:`HSAccessUser` with which to share the group. 
+              
+              See :py:meth:`_HSAccessGroup__share_with_user` for details. 
+
+        Note: this is not all a user can do. These are simply the "protected" methods that are 
+        enabled and disabled according to user privilege. Other methods are available to all users at 
+        all times. In general, the private methods of :py:class:`HSAccessObjects.HSAccessGroup` are 
+        exposed in this fashion while the public methods are always available. 
+
+        Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
+        methods are also protected from being executed inappropriately. 
+        """
         capabilities = {}
         if not self.__hsa.user_is_active():
             return {}
@@ -308,6 +640,7 @@ class HSAccessGroup(object):
                 capabilities['make_not_shareable'] = self.__make_not_shareable
             else:
                 capabilities['make_shareable'] = self.__make_shareable
+
         if self.__hsa.user_is_admin() or self.is_owned() or self.is_shareable():
             capabilities['share_with_user'] = self.__share_with_user
             # capabilities['invite_user'] = self.__invite_user
@@ -378,6 +711,15 @@ class HSAccessGroup(object):
         return s
 
     def pprint(self, indent=0):
+        """
+        Pretty-print an HSAccessGroup for debugging purposes. 
+
+        :type indent: int
+        :param indent: indentation for printout in two-space units. 
+        :return: None
+
+        Indentation allows hierarchical listings of sub-objects. 
+        """ 
         print self.__spaces(indent), "============"
         print self.__spaces(indent), "GROUP RECORD"
         print self.__spaces(indent), "  Group uuid: ", self.get_uuid()
@@ -400,6 +742,9 @@ class HSAccessGroup(object):
 
 
 class HSAccessGroupInvitation(HSAccessGroup):
+    """
+    Represent an invitation to join a group in  a two-phase transaction. 
+    """
 
     def __init__(self, hsa, user_uuid, group_uuid, inviting_user_uuid):
         HSAccessGroup.__init__(self, hsa, group_uuid)
@@ -409,12 +754,39 @@ class HSAccessGroupInvitation(HSAccessGroup):
     # all one can do with an invitation is to accept or refuse it.
     # after acceptance, other things become possible
     def get_capabilities(self):
-        return {'accept': self.__accept, 'refuse': self.refuse}
+        """
+        Get the capabilities of our user over this invitation. 
+
+        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+
+        This function exposes private methods of :py:class:`HSAccessUser` based upon the 
+        capabilities of the represented user. The format of the return value
+        is::
+
+            {'capability_key': bound_method, ...}
+
+        This is used via the following pattern::
+
+            caps = Object.get_capabilities() 
+            ...
+            if 'capability_key' in caps.keys(): 
+                caps['capability_key'](...arguments...)
+
+        where arguments are documented below. 
+
+        User capability keys include: 
+        
+            * 'accept' and 'refuse' act on an invitation to accept or refuse it. There are no parameters. 
+
+        Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
+        methods are also protected from being executed inappropriately. 
+        """
+        return {'accept': self.__accept, 'refuse': self.__refuse}
 
     def __accept(self):
         self.__hsa.accept_invitation_to_group(self.__uuid, self.__inviting_user_uuid)
 
-    def refuse(self):
+    def __refuse(self):
         self.__hsa.refuse_invitation_to_group(self.__uuid, self.__inviting_user_uuid)
 
 
@@ -429,8 +801,11 @@ class HSAccessResource(object):
         Initialize a resource object
 
         :type hsa: HSAccess
-        :type uuid: str
+        :type uuid: str: uuid of resource. 
         :returns: None
+
+        This builds a resource object from a resource uuid, and caches the state of the 
+        resource to save time during rendering. 
         """
         self.__hsa = hsa
         self.__uuid = uuid
@@ -477,6 +852,80 @@ class HSAccessResource(object):
         return self.__meta['immutable']
 
     def get_capabilities(self):
+        """
+        Get the capabilities of our user over this resource. 
+
+        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+
+        This function exposes private methods of :py:class:`HSAccessResource` based upon the 
+        capabilities of the current user. The format of the return value
+        is::
+
+            {'capability_key': bound_method, ...}
+
+        This is used via the following pattern::
+
+            caps = Object.get_capabilities() 
+            ...
+            if 'capability_key' in caps.keys(): 
+                caps['capability_key'](...arguments...)
+
+        where arguments are documented below. 
+
+        User capability keys include: 
+        
+            * 'make_shareable' and 'make_not_shareable' control whether users and group members with access 
+              can share that access with others. User must be resource owner or administrator. 
+
+            * 'make_discoverable' and 'make_not_discoverable' control whether other users can see the
+              resource in public listings. User must be resource owner or administrator. 
+
+            * 'make_public' and 'make_not_public' control whether other users can read the contents of the resource. 
+              User must be group owner or administrator. 
+
+            * 'make_published' and 'make_not_published' indicate whether a DOI has been generated for the 
+              the resource.  User must be resource owner or administrator. 
+
+            * 'make_immutable' and 'make_not_immutable' indicate whether the resource should be considered
+              read-only to all users.  User must be resource owner or administrator. 
+
+            * 'get_users' makes a listing of :py:class:`HSAccessUser` instances representing users with 
+              access to the resource. 
+
+              See :py:meth:`_HSAccessResource__get_users` for details. 
+
+            * 'get_groupss' makes a listing of :py:class:`HSAccessGroup` instances representing groups with 
+              access to the resource. 
+
+              See :py:meth:`_HSAccessResource__get_groups` for details. 
+
+            * 'change_name': change the name of the group. User must be either group owner or an administrator. 
+              There is one parameter: the new name. 
+              
+              See :py:meth:`_HSAccessGroup__change_name` for details. 
+
+            * 'share_with_user': share the resource with a new user, immediately. 
+              User must be resource owner or administrator, or resource must be shareable. 
+
+              There is one parameter: the :py:class:`HSAccessUser` with which to share the resource. 
+              
+              See :py:meth:`_HSAccessResource__share_with_user` for details. 
+
+            * 'share_with_group': share the resource with a new group, immediately. 
+              User must be resource owner or administrator, or resource must be shareable. 
+
+              There is one parameter: the :py:class:`HSAccessGroup` with which to share the resource. 
+              
+              See :py:meth:`_HSAccessResource__share_with_group` for details. 
+
+        Note: this is not all a user can do. These are simply the "protected" methods that are 
+        enabled and disabled according to user privilege. Other methods are available to all users at 
+        all times. In general, the private methods of :py:class:`HSAccessObjects.HSAccessGroup` are 
+        exposed in this fashion while the public methods are always available. 
+
+        Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
+        methods are also protected from being executed inappropriately. 
+        """
         capabilities = {}
         if not self.__hsa.user_is_active():
             return {}
@@ -584,6 +1033,15 @@ class HSAccessResource(object):
         return s
 
     def pprint(self, indent=0):
+        """
+        Pretty-print an HSAccessResource for debugging purposes. 
+
+        :type indent: int
+        :param indent: indentation for printout in two-space units. 
+        :return: None
+
+        Indentation allows hierarchical listings of sub-objects. 
+        """ 
         print self.__spaces(indent), "==============="
         print self.__spaces(indent), "RESOURCE RECORD"
         print self.__spaces(indent), "  Resource uuid: ", self.get_uuid()

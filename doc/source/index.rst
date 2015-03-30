@@ -13,6 +13,7 @@ Contents:
 
    usage
    module
+   objects
    ui
 
 
