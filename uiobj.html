@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Thoughts on the IrodsShare/Django Object Interface &mdash; IrodsShare 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="IrodsShare 0.2 documentation" href="index.html" />
+    <link rel="next" title="IrodsShare Object Library: Private Methods" href="private.html" />
+    <link rel="prev" title="IrodsShare Object Library" href="objects.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="private.html" title="IrodsShare Object Library: Private Methods"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="objects.html" title="IrodsShare Object Library"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">IrodsShare 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="thoughts-on-the-irodsshare-django-object-interface">
+<h1>Thoughts on the IrodsShare/Django Object Interface<a class="headerlink" href="#thoughts-on-the-irodsshare-django-object-interface" title="Permalink to this headline">¶</a></h1>
+<p>The IrodsShare interface is designed with a specific kind of user interface in mind.
+The object interface in <a href="#id1"><span class="problematic" id="id2">:py:module:`HSAccessObjects`</span></a> uses primitive routines in <a href="#id3"><span class="problematic" id="id4">:py:module:`HSAccess`</span></a> to
+create &#8220;objects&#8221; that are in a sense self-describing.</p>
+<div class="section" id="the-user-object">
+<h2>The User Object<a class="headerlink" href="#the-user-object" title="Permalink to this headline">¶</a></h2>
+<p>Instances of the <tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt> class describe users, including the current authenticated user.
+Each object is aware of the identity of the authenticated user and that user&#8217;s capabilities.
+For example, the following methods are written and intended to drive the
+contents of the user&#8217;s home page:</p>
+<ul class="simple">
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_resources()</span></tt>: get a list of <tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt> instances describing resources
+to which the user has access. These do not include public resources.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_groups()</span></tt>: get a list of groups to which the user belongs.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_capabilities()</span></tt>: describe other capabilities via a dictionary object.</li>
+</ul>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_capabilities()</span></tt> method has a return that is a dictionary object and
+describes the private methods to which a user has access.</p>
+<p>Also, the primitive statistics functions</p>
+<ul class="simple">
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_groups_of_user()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_groups_owned_by_user()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resources_held_by_user()</span></tt></li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.get_number_of_resources_owned_by_user()</span></tt></li>
+</ul>
+<p>are designed for reporting statistics on the user&#8217;s home page.</p>
+</div>
+<div class="section" id="the-resource-object">
+<h2>The Resource Object<a class="headerlink" href="#the-resource-object" title="Permalink to this headline">¶</a></h2>
+<p>Instances of <tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt> describe resources to which a user has access.
+These instances are aware of the identity of the authenticated user. The following routines
+are intended for use on the resource landing page:</p>
+<ul class="simple">
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessResource.is_public()</span></tt>: True if resource is public.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessResource.is_published()</span></tt>: True if resource is published.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessResource.is_discoverable()</span></tt>: True if resource is discoverable.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessResource.is_shareable()</span></tt>: True if resource is shareable by non-owners.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessResource.get_privilege()</span></tt>: Returns the string privilege of the current
+authenticated user over the resource, which can be &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, or &#8216;none&#8217; (for public resources).</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessResource.get_capabilities()</span></tt>: Returns a dictionary object describing capabilities of the
+current authenticated user over the resource in question.</li>
+</ul>
+</div>
+<div class="section" id="the-group-object">
+<h2>The Group Object<a class="headerlink" href="#the-group-object" title="Permalink to this headline">¶</a></h2>
+<p>Instances of <tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt> describe groups of users in which a user is a member
+or which have been marked discoverable or public.
+The following routines are intended for use on the group landing page:</p>
+<ul class="simple">
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessGroup.is_member()</span></tt>: True if current authenticated user is a member of the group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessGroup.is_owner()</span></tt>: True if current authenticated user is an owner of the group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessGroup.is_public()</span></tt>: True if group is public; non-members can read the member list.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessGroup.is_discoverable()</span></tt>: True if group is discoverable; non-members can discover
+the existence of the group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessGroup.is_shareable()</span></tt>: True if non-owners can add members to the group.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessGroup.get_privilege()</span></tt>: Returns the string privilege of the current
+authenticated user over the resource, which can be &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, or &#8216;none&#8217; (for public resources).</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessGroup.get_capabilities()</span></tt>: Returns a dictionary object describing capabilities of the
+current authenticated user over the group in question.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Thoughts on the IrodsShare/Django Object Interface</a><ul>
+<li><a class="reference internal" href="#the-user-object">The User Object</a></li>
+<li><a class="reference internal" href="#the-resource-object">The Resource Object</a></li>
+<li><a class="reference internal" href="#the-group-object">The Group Object</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="objects.html"
+                        title="previous chapter">IrodsShare Object Library</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="private.html"
+                        title="next chapter">IrodsShare Object Library: Private Methods</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/uiobj.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="private.html" title="IrodsShare Object Library: Private Methods"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="objects.html" title="IrodsShare Object Library"
+             >previous</a> |</li>
+        <li><a href="index.html">IrodsShare 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Alva Couch et al..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

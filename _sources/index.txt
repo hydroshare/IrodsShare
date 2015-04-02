@@ -13,7 +13,9 @@ Contents:
 
    usage
    module
-   ui
+   objects
+   uiobj
+   private
 
 
 Indices and tables
