@@ -492,6 +492,8 @@ class HSAccessGroup(object):
 
         :type hsa: HSAccess
         :type uuid: str
+        :param hsa: raw access object: instance of HSAccess. 
+        :param uuid: uuid of group to represent. 
         :returns: None
         """
         self.__hsa = hsa
@@ -502,16 +504,54 @@ class HSAccessGroup(object):
         self.__member = self.__hsa.user_in_group(self.__uuid)
 
     def get_uuid(self):
+        """ 
+        Get the uuid of the group that this object represents. 
+
+        :return: str: uuid of current group
+        """
         return self.__uuid
 
     def get_privilege(self):
+        """
+        Get privilege of current user over group. 
+
+        :return: str: one of 'own', 'rw', 'ro', 'none'.
+
+        This returns one of the following codes: 
+
+            'own'
+
+                User owns this resource
+
+            'rw'
+
+                User can read and change this resource
+
+            'ro'
+
+                User can read but not change this resource
+
+            'none'
+
+                No privilege over resource
+        """
         return self.__priv_cum
 
     def get_name(self):
+        """ 
+        Get the name of the group that this object represents. 
+
+        :return: str: name of current group
+        """
         return self.__meta['name']
 
     # human relationships
     def get_owners(self):
+        """
+        Get owners of the current group as HSAccessUser instances 
+
+        :return: List of HSAccessUser instances. 
+        """
         mems = self.__hsa.get_group_members(self.__uuid)
         results = []
         for m in mems:
@@ -520,6 +560,13 @@ class HSAccessGroup(object):
         return results
 
     def __get_members(self):  # users who hold resource
+        """
+        Get members of the current group as HSAccessUser instances 
+
+        :return: List of HSAccessUser instances. 
+
+        This is a privileged routine made accessible by :py:meth:`get_capabilities`. 
+        """
         mems = self.__hsa.get_group_members(self.__uuid)
         results = []
         for m in mems:
@@ -527,6 +574,13 @@ class HSAccessGroup(object):
         return results
 
     def __get_resources(self):  # resources held by group
+        """
+        Get resources held by group as HSAccessResource instances 
+
+        :return: List of HSAccessResource instances. 
+
+        This is a privileged routine made accessible by :py:meth:`get_capabilities`. 
+        """
         res = self.__hsa.get_resources_held_by_group(self.__uuid)
         results = []
         for m in res:
@@ -535,27 +589,71 @@ class HSAccessGroup(object):
 
     # privileges
     def is_readable(self):
+        """
+        Return True if group is readable (i.e., members are exposed). 
+
+        :return: bool: True if group is readable. 
+        """
         return self.__priv_cum == 'ro' or self.__priv_cum == 'rw' or self.__priv_cum == 'own'
 
     def is_writeable(self):
+        """
+        Return True if group is writeable (i.e., user can add members). 
+
+        :return: bool: True if group is writeable.
+        """
         return self.__priv_cum == 'rw' or self.__priv_cum == 'own'
 
     def is_owned(self):
+        """
+        Return True if group is owned by the current user.
+
+        :return: bool: True if group is owned by current user. 
+        """
         return self.__priv_cum == 'own'
 
     def is_discoverable(self):
+        """
+        Return True if group is discoverable by non-members. 
+
+        :return: bool: True if group is discoverable. 
+        """
         return self.__meta['discoverable']
 
     def is_public(self):
+        """
+        Return True if group members are exposed to non-members. 
+
+        :return: bool: True if group is public. 
+        """
         return self.__meta['public']
 
     def is_active(self):
+        """
+        Return True if group is active. 
+
+        :return: bool: True if group is active. 
+
+        Note: inactive groups do not affect privilege over resources. 
+        """
         return self.__meta['active']
 
     def is_shareable(self):
+        """
+        Return True if group is shareable. 
+
+        :return: bool: True if group is shareable. 
+
+        If a group is shareable, non-owners can invite new members. 
+        """
         return self.__meta['shareable']
 
     def is_member(self):
+        """
+        Return True if current user is a member of the group. 
+
+        :return: bool: True if current user is a member. 
+        """
         return self.__member
 
     def get_capabilities(self):
@@ -654,35 +752,117 @@ class HSAccessGroup(object):
         return capabilities
 
     def __change_name(self, new_name):
+        """
+        Change the name of a group.
+
+        :type new_name: str
+        :param new_name: new name to use. 
+        :return: None
+
+        User must be owner or administrator. 
+
+        This routine is exposed via :py:meth:`get_capabilities`.
+        """
         self.__meta['name'] = new_name
         self.__hsa.assert_group_metadata(self.__meta)
 
     def __make_shareable(self):
+        """
+        Make a group shareable. 
+
+        :return: None
+
+        This means that non-owners can invite group members. 
+        User must be owner or administrator. 
+
+        This routine is exposed via :py:meth:`get_capabilities`.
+        """
         self.__hsa.make_group_shareable(self.__uuid)
         self.__meta['shareable'] = True
 
     def __make_not_shareable(self):
+        """
+        Make a group not shareable. 
+
+        :return: None
+
+        This means that non-owners cannot invite group members. 
+        User must be owner or administrator. 
+
+        This routine is exposed via :py:meth:`get_capabilities`.
+        """
         self.__hsa.make_group_not_shareable(self.__uuid)
         self.__meta['shareable'] = False
 
     def __make_public(self):
-            self.__hsa.make_group_public(self.__uuid)
-            self.__meta['public'] = True
+        """
+        Make a group public. 
+
+        :return: None
+
+        This means that non-members can see group members.
+        User must be owner or administrator. 
+
+        This routine is exposed via :py:meth:`get_capabilities`.
+        """
+        self.__hsa.make_group_public(self.__uuid)
+        self.__meta['public'] = True
 
     def __make_not_public(self):
+        """
+        Make a group not public. 
+
+        :return: None
+
+        This means that non-members cannot see group members.
+        User must be owner or administrator. 
+
+        This routine is exposed via :py:meth:`get_capabilities`.
+        """
         self.__hsa.make_group_not_public(self.__uuid)
         self.__meta['public'] = False
 
     def __make_discoverable(self):
-            self.__hsa.make_group_discoverable(self.__uuid)
-            self.__meta['discoverable'] = True
+        """
+        Make a group discoverable. 
+
+        :return: None
+
+        This means that non-members can discover the group in group listings. 
+        User must be owner or administrator. 
+
+        This routine is exposed via :py:meth:`get_capabilities`.
+        """
+        self.__hsa.make_group_discoverable(self.__uuid)
+        self.__meta['discoverable'] = True
 
     def __make_not_discoverable(self):
+        """
+        Make a group not discoverable. 
+
+        :return: None
+
+        This means that non-members cannot discover the group in group listings. 
+        User must be owner or administrator. 
+
+        This routine is exposed via :py:meth:`get_capabilities`.
+        """
         self.__hsa.make_group_not_discoverable(self.__uuid)
         self.__meta['discoverable'] = False
 
     # need to store allowable privilege codes somewhere; otherwise this will throw exceptions
     def __share_with_user(self, user, privilege_code):
+        """
+        Share a group with a user immediately. 
+
+        :type user: HSAccessUser
+        :type privilege_code: str
+        :param user: user to be added to the group. 
+        :param privilege_code: one of 'own', 'rw', 'ro', 'none'. 
+        :return: None
+
+        This routine is exposed via :py:meth:`get_capabilities`.
+        """
         self.__hsa.share_group_with_user(self.__uuid, user.get_uuid(), privilege_code)
 
     ### ERROR ### def __invite_user(self, user, privilege_code):
