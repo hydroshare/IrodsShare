@@ -1,8 +1,10 @@
 Thoughts on the IrodsShare/Django Object Interface 
 ======================================================
 
+.. module::  HSAccessObjects
+
 The IrodsShare interface is designed with a specific kind of user interface in mind. 
-The object interface in :py:module:`HSAccessObjects` uses primitive routines in :py:module:`HSAccess` to 
+The object interface in :py:mod:`HSAccessObjects` uses primitive routines in :py:mod:`HSAlib` to 
 create "objects" that are in a sense self-describing.
 
 The User Object
@@ -13,12 +15,12 @@ Each object is aware of the identity of the authenticated user and that user's c
 For example, the following methods are written and intended to drive the 
 contents of the user's home page: 
 
-* :py:meth:`HSAccess.get_resources`: get a list of :py:class:`HSAccessResource` instances describing resources 
+* :py:meth:`HSAccessUser.get_resources`: get a list of :py:class:`HSAccessResource` instances describing resources 
   to which the user has access. These do not include public resources. 
-* :py:meth:`HSAccess.get_groups`: get a list of groups to which the user belongs. 
-* :py:meth:`HSAccess.get_capabilities`: describe other capabilities via a dictionary object. 
+* :py:meth:`HSAccessUser.get_groups`: get a list of groups to which the user belongs. 
+* :py:meth:`HSAccessUser.get_capabilities`: describe other capabilities via a dictionary object. 
 
-The :py:meth:`HSAccess.get_capabilities` method has a return that is a dictionary object and 
+The :py:meth:`HSAccessUser.get_capabilities` method has a return that is a dictionary object and 
 describes the private methods to which a user has access. 
 
 Also, the primitive statistics functions 
