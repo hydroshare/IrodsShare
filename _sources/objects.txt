@@ -26,7 +26,7 @@ not listed are protected from use at a lower level, in :py:mod:`HSAlib`. The get
 provides a convenient way to check whether there is permission to use a method or not. 
 
 Theory of Operation
-===================
+-------------------
 
 The theory of operation for this library is that the user interface will list objects and their capabilities. 
 The user can select from capabilities to invoke them. Thus, the programmer does not need to understand complex
@@ -35,19 +35,22 @@ business logic in order to discover which operations can be done on which object
 .. automodule:: HSAccessObjects
 
 HSAccessUser: represent a user
-==============================
+------------------------------
 .. autoclass:: HSAccessObjects.HSAccessUser
    :members:
    :special-members:
+   :private-members:
 
 HSAccessGroup: represent a user group 
-=====================================
+-------------------------------------
 .. autoclass:: HSAccessObjects.HSAccessGroup
    :members:
    :special-members:
+   :private-members:
 
 HSAccessResource: represent a resource file
-===========================================
+-------------------------------------------
 .. autoclass:: HSAccessObjects.HSAccessResource
    :members:
    :special-members:
+   :private-members:

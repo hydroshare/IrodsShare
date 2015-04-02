@@ -69,7 +69,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span> <span class="o">=</span> <span class="n">hsa</span>
 
 
-<div class="viewcode-block" id="HSAccessUser"><a class="viewcode-back" href="../private.html#HSAccessObjects.HSAccessUser">[docs]</a><span class="k">class</span> <span class="nc">HSAccessUser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccessUser"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessUser">[docs]</a><span class="k">class</span> <span class="nc">HSAccessUser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Representation of an IrodsShare user, including all actions that apply to a user. </span>
 
@@ -85,7 +85,6 @@
 <span class="sd">        :type user_uuid: str?</span>
 <span class="sd">        :param hsa: A raw HSAccess object with non-object interface. </span>
 <span class="sd">        :param user_uuid: uuid of the user to represent with this object. </span>
-<span class="sd">        :return: None</span>
 
 <span class="sd">        This stores a primitive HSAccess object as a sub-object and then stores context as to what</span>
 <span class="sd">        specific user it represents. It reads and caches metadata in order to reduce database calls. </span>
@@ -102,7 +101,8 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the uuid of the user that this object represents. </span>
 
-<span class="sd">        :return: str: uuid of current user</span>
+<span class="sd">        :return: uuid of current user</span>
+<span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span>
 </div>
@@ -110,7 +110,8 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the login name in iRODS of the user that this object represents. </span>
 
-<span class="sd">        :return: str: login name of current user</span>
+<span class="sd">        :return: login name of current user</span>
+<span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;login&#39;</span><span class="p">]</span>
 </div>
@@ -118,7 +119,8 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the print name of the user that this object represents. </span>
 
-<span class="sd">        :return: str: print name of current user</span>
+<span class="sd">        :return: print name of current user</span>
+<span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
 </div>
@@ -126,7 +128,8 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Return True if user is administrator</span>
 
-<span class="sd">        :return: bool: True if current user is an administrator</span>
+<span class="sd">        :return: True if current user is an administrator</span>
+<span class="sd">        :rtype: bool </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;admin&#39;</span><span class="p">]</span>
 </div>
@@ -134,7 +137,8 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Return True if user is active now. </span>
 
-<span class="sd">        :return: bool: True if current user is active. </span>
+<span class="sd">        :return: True if current user is active. </span>
+<span class="sd">        :rtype: bool </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;active&#39;</span><span class="p">]</span>
 </div>
@@ -144,7 +148,8 @@
 
 <span class="sd">        :type resource_uuid: str</span>
 <span class="sd">        :param resource_uuid: uuid of the resource to check. </span>
-<span class="sd">        :return: str: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;.</span>
+<span class="sd">        :return: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;.</span>
+<span class="sd">        :rtype: str</span>
 
 <span class="sd">        This returns one of the following codes: </span>
 
@@ -172,7 +177,8 @@
 
 <span class="sd">        :type group_uuid: str</span>
 <span class="sd">        :param group_uuid: uuid of the group to check. </span>
-<span class="sd">        :return: str: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;.</span>
+<span class="sd">        :return: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;.</span>
+<span class="sd">        :rtype: str</span>
 
 <span class="sd">        This returns one of the following codes: </span>
 
@@ -201,7 +207,6 @@
 
 <span class="sd">        :type new_name: str</span>
 <span class="sd">        :param new_name: new name to assign. </span>
-<span class="sd">        :return: None</span>
 
 <span class="sd">        This function is exposed via :py:meth:`get_capabilities` as capability key &#39;change_name&#39;. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -211,8 +216,6 @@
     <span class="k">def</span> <span class="nf">__make_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        PRIVATE: make the user active. </span>
-
-<span class="sd">        :return: None</span>
 
 <span class="sd">        This makes the user active if not, and does nothing if already active. </span>
 
@@ -232,8 +235,6 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        PRIVATE: make the user inactive. </span>
 
-<span class="sd">        :return: None</span>
-
 <span class="sd">        This makes the user inactive if active, and does nothing if already inactive.</span>
 
 <span class="sd">        This function is exposed via :py:meth:`get_capabilities` as capability key &#39;make_not_active&#39;. </span>
@@ -252,8 +253,6 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        PRIVATE: make the user an administrator. </span>
 
-<span class="sd">        :return: None</span>
-
 <span class="sd">        This makes the user an administrator if not, and does nothing if already an administrator. </span>
 
 <span class="sd">        This function is exposed via :py:meth:`get_capabilities` as capability key &#39;make_admin&#39;. </span>
@@ -270,8 +269,6 @@
     <span class="k">def</span> <span class="nf">__make_not_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        PRIVATE: make the user a non-administrator. </span>
-
-<span class="sd">        :return: None</span>
 
 <span class="sd">        This makes the user a non-administrator if already an administrator, and does nothing otherwise. </span>
 
@@ -324,7 +321,8 @@
 <span class="sd">        :param group_shareable: whether the group is shareable, which allows non-owners to invite members. </span>
 <span class="sd">        :param group_discoverable: whether the group is discoverable in group listings. </span>
 <span class="sd">        :param group_public: whether the group is public, which allows all users to see members. </span>
-<span class="sd">        :return: HSAccessGroup: object representing the created group. </span>
+<span class="sd">        :return: object representing the created group. </span>
+<span class="sd">        :rtype: HSAccessGroup </span>
 
 <span class="sd">        Some notes: </span>
 <span class="sd">            </span>
@@ -357,7 +355,8 @@
 <span class="sd">        :param resource_discoverable: whether the resource is discoverable in resource listings. </span>
 <span class="sd">        :param resource_public: whether the resource is public, which allows all users to read it. </span>
 <span class="sd">        :param resource_shareable: whether the resource is shareable, which allows non-owners to share with others. </span>
-<span class="sd">        :return: HSAccessResource: object representing the created resource. </span>
+<span class="sd">        :return: object representing the created resource. </span>
+<span class="sd">        :rtype: HSAccessResource</span>
 
 <span class="sd">        Some notes: </span>
 <span class="sd">            </span>
@@ -380,6 +379,7 @@
 <span class="sd">        Get groups accessible to a user, along with requisite action links</span>
 
 <span class="sd">        :return: List of :py:class:`HSAccessGroup` instances. </span>
+<span class="sd">        :rtype: List&lt;HSAccessGroup&gt;</span>
 
 <span class="sd">        This gets the list of groups accessible to the current user, as objects. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -395,6 +395,7 @@
 <span class="sd">        Get a list of accessible resources, along wih requisite action links</span>
 
 <span class="sd">        :return: List of :py:class:`HSAccessResource` instances. </span>
+<span class="sd">        :rtype: List&lt;HSAccessResource&gt;</span>
 
 <span class="sd">        This gets the list of resources accessible to the current user, as objects. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -427,6 +428,7 @@
 <span class="sd">        Get the capabilities of this particular user. </span>
 
 <span class="sd">        :return: Dict of capability pairs of form { &#39;capability_key&#39;: bound_method, ... } </span>
+<span class="sd">        :rtype: Dict</span>
 
 <span class="sd">        This function exposes private methods of :py:class:`HSAccessUser` based upon the </span>
 <span class="sd">        capabilities of the represented user. The format of the return value</span>
@@ -496,7 +498,6 @@
 
 <span class="sd">        :type indent: int</span>
 <span class="sd">        :param indent: indentation for printout in two-space units. </span>
-<span class="sd">        :return: None</span>
 
 <span class="sd">        Indentation allows hierarchical listings of sub-objects. </span>
 <span class="sd">        &quot;&quot;&quot;</span> 
@@ -529,7 +530,7 @@
 <span class="c"># via get_capabilities?</span>
 
 </div></div>
-<div class="viewcode-block" id="HSAccessGroup"><a class="viewcode-back" href="../private.html#HSAccessObjects.HSAccessGroup">[docs]</a><span class="k">class</span> <span class="nc">HSAccessGroup</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccessGroup"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessGroup">[docs]</a><span class="k">class</span> <span class="nc">HSAccessGroup</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represent a group as a python object</span>
 
@@ -543,7 +544,6 @@
 <span class="sd">        :type uuid: str</span>
 <span class="sd">        :param hsa: raw access object: instance of HSAccess. </span>
 <span class="sd">        :param uuid: uuid of group to represent. </span>
-<span class="sd">        :returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span> <span class="o">=</span> <span class="n">hsa</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span> <span class="o">=</span> <span class="n">uuid</span>
@@ -556,7 +556,8 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the uuid of the group that this object represents. </span>
 
-<span class="sd">        :return: str: uuid of current group</span>
+<span class="sd">        :return: uuid of current group</span>
+<span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span>
 </div>
@@ -564,7 +565,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get privilege of current user over group. </span>
 
-<span class="sd">        :return: str: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;.</span>
+<span class="sd">        :return: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;.</span>
+<span class="sd">        :rtype: str</span>
 
 <span class="sd">        This returns one of the following codes: </span>
 
@@ -590,7 +592,8 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the name of the group that this object represents. </span>
 
-<span class="sd">        :return: str: name of current group</span>
+<span class="sd">        :return: name of current group</span>
+<span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
 
@@ -600,6 +603,7 @@
 <span class="sd">        Get owners of the current group as HSAccessUser instances </span>
 
 <span class="sd">        :return: List of HSAccessUser instances. </span>
+<span class="sd">        :rtype: List&lt;HSAccessUser&gt; </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_group_members</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
@@ -613,6 +617,7 @@
 <span class="sd">        Get members of the current group as HSAccessUser instances </span>
 
 <span class="sd">        :return: List of HSAccessUser instances. </span>
+<span class="sd">        :rtype: List&lt;HSAccessUser&gt; </span>
 
 <span class="sd">        This is a privileged routine made accessible by :py:meth:`get_capabilities`. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -627,6 +632,7 @@
 <span class="sd">        Get resources held by group as HSAccessResource instances </span>
 
 <span class="sd">        :return: List of HSAccessResource instances. </span>
+<span class="sd">        :rtype: List&lt;HSAccessResource&gt; </span>
 
 <span class="sd">        This is a privileged routine made accessible by :py:meth:`get_capabilities`. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -641,7 +647,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if group is readable (i.e., members are exposed). </span>
 
-<span class="sd">        :return: bool: True if group is readable. </span>
+<span class="sd">        :return: True if group is readable. </span>
+<span class="sd">        :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;ro&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;rw&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;own&#39;</span>
 </div>
@@ -649,7 +656,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if group is writeable (i.e., user can add members). </span>
 
-<span class="sd">        :return: bool: True if group is writeable.</span>
+<span class="sd">        :return: True if group is writeable.</span>
+<span class="sd">        :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;rw&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;own&#39;</span>
 </div>
@@ -657,7 +665,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if group is owned by the current user.</span>
 
-<span class="sd">        :return: bool: True if group is owned by current user. </span>
+<span class="sd">        :return: True if group is owned by current user. </span>
+<span class="sd">        :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;own&#39;</span>
 </div>
@@ -665,7 +674,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if group is discoverable by non-members. </span>
 
-<span class="sd">        :return: bool: True if group is discoverable. </span>
+<span class="sd">        :return: True if group is discoverable. </span>
+<span class="sd">        :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;discoverable&#39;</span><span class="p">]</span>
 </div>
@@ -673,7 +683,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if group members are exposed to non-members. </span>
 
-<span class="sd">        :return: bool: True if group is public. </span>
+<span class="sd">        :return: True if group is public. </span>
+<span class="sd">        :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span>
 </div>
@@ -681,7 +692,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if group is active. </span>
 
-<span class="sd">        :return: bool: True if group is active. </span>
+<span class="sd">        :return: True if group is active. </span>
+<span class="sd">        :rtype: bool</span>
 
 <span class="sd">        Note: inactive groups do not affect privilege over resources. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -691,7 +703,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if group is shareable. </span>
 
-<span class="sd">        :return: bool: True if group is shareable. </span>
+<span class="sd">        :return: True if group is shareable. </span>
+<span class="sd">        :rtype: bool</span>
 
 <span class="sd">        If a group is shareable, non-owners can invite new members. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -701,7 +714,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return True if current user is a member of the group. </span>
 
-<span class="sd">        :return: bool: True if current user is a member. </span>
+<span class="sd">        :return: True if current user is a member. </span>
+<span class="sd">        :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__member</span>
 </div>
@@ -710,6 +724,7 @@
 <span class="sd">        Get the capabilities of our user over this group. </span>
 
 <span class="sd">        :return: Dict of capability pairs of form { &#39;capability_key&#39;: bound_method, ... } </span>
+<span class="sd">        :rtype: Dict </span>
 
 <span class="sd">        This function exposes private methods of :py:class:`HSAccessUser` based upon the </span>
 <span class="sd">        capabilities of the represented user. The format of the return value</span>
@@ -806,7 +821,6 @@
 
 <span class="sd">        :type new_name: str</span>
 <span class="sd">        :param new_name: new name to use. </span>
-<span class="sd">        :return: None</span>
 
 <span class="sd">        User must be owner or administrator. </span>
 
@@ -818,8 +832,6 @@
     <span class="k">def</span> <span class="nf">__make_shareable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a group shareable. </span>
-
-<span class="sd">        :return: None</span>
 
 <span class="sd">        This means that non-owners can invite group members. </span>
 <span class="sd">        User must be owner or administrator. </span>
@@ -833,8 +845,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a group not shareable. </span>
 
-<span class="sd">        :return: None</span>
-
 <span class="sd">        This means that non-owners cannot invite group members. </span>
 <span class="sd">        User must be owner or administrator. </span>
 
@@ -846,8 +856,6 @@
     <span class="k">def</span> <span class="nf">__make_public</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a group public. </span>
-
-<span class="sd">        :return: None</span>
 
 <span class="sd">        This means that non-members can see group members.</span>
 <span class="sd">        User must be owner or administrator. </span>
@@ -861,8 +869,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a group not public. </span>
 
-<span class="sd">        :return: None</span>
-
 <span class="sd">        This means that non-members cannot see group members.</span>
 <span class="sd">        User must be owner or administrator. </span>
 
@@ -875,8 +881,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a group discoverable. </span>
 
-<span class="sd">        :return: None</span>
-
 <span class="sd">        This means that non-members can discover the group in group listings. </span>
 <span class="sd">        User must be owner or administrator. </span>
 
@@ -888,8 +892,6 @@
     <span class="k">def</span> <span class="nf">__make_not_discoverable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a group not discoverable. </span>
-
-<span class="sd">        :return: None</span>
 
 <span class="sd">        This means that non-members cannot discover the group in group listings. </span>
 <span class="sd">        User must be owner or administrator. </span>
@@ -908,7 +910,6 @@
 <span class="sd">        :type privilege_code: str</span>
 <span class="sd">        :param user: user to be added to the group. </span>
 <span class="sd">        :param privilege_code: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;. </span>
-<span class="sd">        :return: None</span>
 
 <span class="sd">        This routine is exposed via :py:meth:`get_capabilities`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -945,7 +946,6 @@
 
 <span class="sd">        :type indent: int</span>
 <span class="sd">        :param indent: indentation for printout in two-space units. </span>
-<span class="sd">        :return: None</span>
 
 <span class="sd">        Indentation allows hierarchical listings of sub-objects. </span>
 <span class="sd">        &quot;&quot;&quot;</span> 
@@ -987,6 +987,7 @@
 <span class="sd">        Get the capabilities of our user over this invitation. </span>
 
 <span class="sd">        :return: Dict of capability pairs of form { &#39;capability_key&#39;: bound_method, ... } </span>
+<span class="sd">        :rtype: Dict </span>
 
 <span class="sd">        This function exposes private methods of :py:class:`HSAccessUser` based upon the </span>
 <span class="sd">        capabilities of the represented user. The format of the return value</span>
@@ -1013,13 +1014,19 @@
         <span class="k">return</span> <span class="p">{</span><span class="s">&#39;accept&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__accept</span><span class="p">,</span> <span class="s">&#39;refuse&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__refuse</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">__accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accept an invitation to a group. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">accept_invitation_to_group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inviting_user_uuid</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__refuse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refuse an invitation to a group. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">refuse_invitation_to_group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inviting_user_uuid</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="HSAccessResource"><a class="viewcode-back" href="../private.html#HSAccessObjects.HSAccessResource">[docs]</a><span class="k">class</span> <span class="nc">HSAccessResource</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccessResource"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource">[docs]</a><span class="k">class</span> <span class="nc">HSAccessResource</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represent a resource as a python object</span>
 
@@ -1030,8 +1037,9 @@
 <span class="sd">        Initialize a resource object</span>
 
 <span class="sd">        :type hsa: HSAccess</span>
-<span class="sd">        :type uuid: str: uuid of resource. </span>
-<span class="sd">        :returns: None</span>
+<span class="sd">        :type uuid: str: </span>
+<span class="sd">        :param hsa: Object describing the current (primitive) session.</span>
+<span class="sd">        :param uuid: uuid of resource. </span>
 
 <span class="sd">        This builds a resource object from a resource uuid, and caches the state of the </span>
 <span class="sd">        resource to save time during rendering. </span>
@@ -1043,48 +1051,122 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__priv_prim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_user_privilege_over_resource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
 
     <span class="c"># these routines are available to all users</span></div>
-    <span class="k">def</span> <span class="nf">get_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccessResource.get_uuid"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.get_uuid">[docs]</a>    <span class="k">def</span> <span class="nf">get_uuid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get uuid of the current resource. </span>
+<span class="sd">       </span>
+<span class="sd">        :return: uuid of current resource. </span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span>
-
-    <span class="k">def</span> <span class="nf">get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.get_title"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.get_title">[docs]</a>    <span class="k">def</span> <span class="nf">get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get title of the current resource. </span>
+<span class="sd">       </span>
+<span class="sd">        :return: title of current resource. </span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.get_path"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.get_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get file path of the current resource. </span>
+<span class="sd">       </span>
+<span class="sd">        :return: file path of current resource. </span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;path&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">get_privilege</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.get_privilege"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.get_privilege">[docs]</a>    <span class="k">def</span> <span class="nf">get_privilege</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get privilege of current user over resource.</span>
+<span class="sd">       </span>
+<span class="sd">        :return: &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39; (for public resources) </span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.is_readable"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.is_readable">[docs]</a>    <span class="k">def</span> <span class="nf">is_readable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if resource is readable.</span>
+<span class="sd">       </span>
+<span class="sd">        :return: True if resource is readable </span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">is_readable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;ro&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;rw&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;ro&#39;</span>
-
-    <span class="k">def</span> <span class="nf">is_writeable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.is_writeable"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.is_writeable">[docs]</a>    <span class="k">def</span> <span class="nf">is_writeable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if resource is writeable.</span>
+<span class="sd">       </span>
+<span class="sd">        :return: True if resource is writeable </span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;rw&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_cum</span> <span class="o">==</span> <span class="s">&#39;own&#39;</span>
 
-    <span class="c"># immutability can override cumulative ownership; must check separately.</span>
-    <span class="k">def</span> <span class="nf">is_owned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c"># immutability can override cumulative ownership; must check separately.</span></div>
+<div class="viewcode-block" id="HSAccessResource.is_owned"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.is_owned">[docs]</a>    <span class="k">def</span> <span class="nf">is_owned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if resource is owned by the currently authenticated user. </span>
+<span class="sd">       </span>
+<span class="sd">        :return: True if resource is owned by the currently authenticated user. </span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__priv_prim</span> <span class="o">==</span> <span class="s">&#39;own&#39;</span>
-
-    <span class="k">def</span> <span class="nf">is_discoverable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.is_discoverable"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.is_discoverable">[docs]</a>    <span class="k">def</span> <span class="nf">is_discoverable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if resource is discoverable by the currently authenticated user. </span>
+<span class="sd">       </span>
+<span class="sd">        :return: True if resource is discoverable by the currently authenticated user. </span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;discoverable&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">is_public</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.is_public"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.is_public">[docs]</a>    <span class="k">def</span> <span class="nf">is_public</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if resource is public.</span>
+<span class="sd">       </span>
+<span class="sd">        :return: True if resource is public.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">is_published</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.is_published"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.is_published">[docs]</a>    <span class="k">def</span> <span class="nf">is_published</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if resource is published and has a DOI. </span>
+<span class="sd">       </span>
+<span class="sd">        :return: True if resource is published and has a DOI</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;published&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">is_shareable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.is_shareable"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.is_shareable">[docs]</a>    <span class="k">def</span> <span class="nf">is_shareable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if resource is shareable by non-owners. </span>
+<span class="sd">       </span>
+<span class="sd">        :return: True if resource is shareable by non-owners. </span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;shareable&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HSAccessResource.is_immutable"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.is_immutable">[docs]</a>    <span class="k">def</span> <span class="nf">is_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if resource is immutable. </span>
+<span class="sd">       </span>
+<span class="sd">        :return: True if resource is immutable. This overrides normal ownership privileges. </span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;immutable&#39;</span><span class="p">]</span>
-
+</div>
 <div class="viewcode-block" id="HSAccessResource.get_capabilities"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.get_capabilities">[docs]</a>    <span class="k">def</span> <span class="nf">get_capabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the capabilities of our user over this resource. </span>
 
 <span class="sd">        :return: Dict of capability pairs of form { &#39;capability_key&#39;: bound_method, ... } </span>
+<span class="sd">        :rtype: Dict </span>
 
 <span class="sd">        This function exposes private methods of :py:class:`HSAccessResource` based upon the </span>
 <span class="sd">        capabilities of the current user. The format of the return value</span>
@@ -1123,27 +1205,35 @@
 
 <span class="sd">              See :py:meth:`_HSAccessResource__get_users` for details. </span>
 
-<span class="sd">            * &#39;get_groupss&#39; makes a listing of :py:class:`HSAccessGroup` instances representing groups with </span>
-<span class="sd">              access to the resource. </span>
+<span class="sd">            * &#39;get_groups&#39; makes a listing of :py:class:`HSAccessGroup` instances representing groups with </span>
+<span class="sd">              access to the resource::</span>
+
+<span class="sd">                resource.get_capabilities[&#39;get_groups&#39;]()</span>
 
 <span class="sd">              See :py:meth:`_HSAccessResource__get_groups` for details. </span>
 
-<span class="sd">            * &#39;change_name&#39;: change the name of the group. User must be either group owner or an administrator. </span>
-<span class="sd">              There is one parameter: the new name. </span>
+<span class="sd">            * &#39;change_name&#39;: change the name of the resource. User must be either resource owner or an administrator. </span>
+<span class="sd">              There is one parameter: the new name::</span>
+
+<span class="sd">                resource.get_capabilities[&#39;change_name&#39;](*new_name*)</span>
 <span class="sd">              </span>
 <span class="sd">              See :py:meth:`_HSAccessGroup__change_name` for details. </span>
 
 <span class="sd">            * &#39;share_with_user&#39;: share the resource with a new user, immediately. </span>
 <span class="sd">              User must be resource owner or administrator, or resource must be shareable. </span>
+<span class="sd">              There is one parameter: the :py:class:`HSAccessUser` with which to share the resource. Usage::</span>
 
-<span class="sd">              There is one parameter: the :py:class:`HSAccessUser` with which to share the resource. </span>
+<span class="sd">                resource.get_capabilities[&#39;share_with_user&#39;](*user_object*, *privilege_word*) </span>
 <span class="sd">              </span>
+<span class="sd">              where privilege_word is one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, or &#39;none&#39;. </span>
+
 <span class="sd">              See :py:meth:`_HSAccessResource__share_with_user` for details. </span>
 
 <span class="sd">            * &#39;share_with_group&#39;: share the resource with a new group, immediately. </span>
 <span class="sd">              User must be resource owner or administrator, or resource must be shareable. </span>
-
 <span class="sd">              There is one parameter: the :py:class:`HSAccessGroup` with which to share the resource. </span>
+
+<span class="sd">                resource.get_capabilities()[&#39;share_with_group&#39;](*group_object*)</span>
 <span class="sd">              </span>
 <span class="sd">              See :py:meth:`_HSAccessResource__share_with_group` for details. </span>
 
@@ -1195,6 +1285,12 @@
     <span class="c"># &quot;__&quot; routines are limited via access control</span>
 </div>
     <span class="k">def</span> <span class="nf">__get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of HSAccessUsers currently holding this resource. </span>
+
+<span class="sd">        :return: List of :py:class:`HSAccessUser`</span>
+<span class="sd">        :rtype: List&lt;HSAccessUser&gt; </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_users_holding_resource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
@@ -1202,6 +1298,12 @@
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">__get_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of HSAccessGroups currently holding this resource. </span>
+
+<span class="sd">        :return: List of :py:class:`HSAccessGroup`</span>
+<span class="sd">        :rtype: List&lt;HSAccessGroup&gt; </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_groups_holding_resource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
@@ -1209,51 +1311,102 @@
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">__change_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change title of a resource.</span>
+
+<span class="sd">        :param new_name: new name to use for title. </span>
+<span class="sd">        :type new_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">assert_resource_metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__make_shareable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource shareable. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_shareable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;shareable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">__make_not_shareable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource not shareable. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_not_shareable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;shareable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
     <span class="k">def</span> <span class="nf">__make_public</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_public</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource public. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_public</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">__make_not_public</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource not public. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_not_public</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
     <span class="k">def</span> <span class="nf">__make_published</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_published</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;published&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource published. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_published</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;published&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="k">def</span> <span class="nf">make_not_published</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccessResource.make_not_published"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.make_not_published">[docs]</a>    <span class="k">def</span> <span class="nf">make_not_published</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource not published. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_not_published</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;published&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
-
+</div>
     <span class="k">def</span> <span class="nf">__make_discoverable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_public</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource discoverable. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_public</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">__make_not_discoverable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource not discoverable. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_not_public</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
 
     <span class="k">def</span> <span class="nf">__make_immutable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_immutable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;immutable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the current resource immutable. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">make_resource_immutable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;immutable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="c"># need to store allowable privilege codes somewhere</span>
-    <span class="k">def</span> <span class="nf">__share_with_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_uuid</span><span class="p">,</span> <span class="n">privilege_code</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">share_resource_with_user</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="n">user_uuid</span><span class="p">,</span> <span class="n">privilege_code</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__share_with_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">privilege_code</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Share this resource with a user.</span>
 
-    <span class="k">def</span> <span class="nf">__share_with_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">,</span> <span class="n">privilege_code</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">share_resource_with_group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">,</span> <span class="n">privilege_code</span><span class="p">)</span>
+<span class="sd">        :param user: :py:class:`HSAccessUser` object describing the user </span>
+<span class="sd">        :param privilege_code: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;. </span>
+<span class="sd">        :type user: HSAccessUser</span>
+<span class="sd">        :type privilege_code: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">share_resource_with_user</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">(),</span> <span class="n">privilege_code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__share_with_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">privilege_code</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Share this resource with a group.</span>
+
+<span class="sd">        :param group: :py:class:`HSAccessGroup` object describing the group </span>
+<span class="sd">        :param privilege_code: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;. </span>
+<span class="sd">        :type group: HSAccessGroup</span>
+<span class="sd">        :type privilege_code: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">share_resource_with_group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">(),</span> <span class="n">privilege_code</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
@@ -1267,7 +1420,6 @@
 
 <span class="sd">        :type indent: int</span>
 <span class="sd">        :param indent: indentation for printout in two-space units. </span>
-<span class="sd">        :return: None</span>
 
 <span class="sd">        Indentation allows hierarchical listings of sub-objects. </span>
 <span class="sd">        &quot;&quot;&quot;</span> 

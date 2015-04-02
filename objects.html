@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="IrodsShare 0.2 documentation" href="index.html" />
-    <link rel="next" title="IrodsShare Object Library: Private Methods" href="private.html" />
+    <link rel="next" title="Thoughts on the IrodsShare/Django Object Interface" href="uiobj.html" />
     <link rel="prev" title="IrodsShare module documentation" href="module.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="private.html" title="IrodsShare Object Library: Private Methods"
+          <a href="uiobj.html" title="Thoughts on the IrodsShare/Django Object Interface"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="module.html" title="IrodsShare module documentation"
@@ -74,15 +74,14 @@ if &#39;method&#39; in caps:
 <p>Note that there is no value in overriding the privacy mechanism enforced by get_capabilities(), as the methods
 not listed are protected from use at a lower level, in <a class="reference internal" href="module.html#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a>. The get_capabilities() mechanism only
 provides a convenient way to check whether there is permission to use a method or not.</p>
-</div>
 <div class="section" id="theory-of-operation">
-<h1>Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Permalink to this headline">¶</a></h1>
+<h2>Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Permalink to this headline">¶</a></h2>
 <p>The theory of operation for this library is that the user interface will list objects and their capabilities.
 The user can select from capabilities to invoke them. Thus, the programmer does not need to understand complex
 business logic in order to discover which operations can be done on which objects.</p>
 <span class="target" id="module-HSAccessObjects"></span></div>
 <div class="section" id="hsaccessuser-represent-a-user">
-<h1>HSAccessUser: represent a user<a class="headerlink" href="#hsaccessuser-represent-a-user" title="Permalink to this headline">¶</a></h1>
+<h2>HSAccessUser: represent a user<a class="headerlink" href="#hsaccessuser-represent-a-user" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="HSAccessObjects.HSAccessUser">
 <em class="property">class </em><tt class="descclassname">HSAccessObjects.</tt><tt class="descname">HSAccessUser</tt><big>(</big><em>hsa</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessUser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessUser" title="Permalink to this definition">¶</a></dt>
@@ -94,6 +93,102 @@ business logic in order to discover which operations can be done on which object
 </ul>
 </div></blockquote>
 <dl class="method">
+<dt id="HSAccessObjects.HSAccessUser._HSAccessUser__change_name">
+<tt class="descname">_HSAccessUser__change_name</tt><big>(</big><em>new_name</em><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessUser._HSAccessUser__change_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: change the name of a user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_name</strong> (<em>str</em>) &#8211; new name to assign.</td>
+</tr>
+</tbody>
+</table>
+<p>This function is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessUser.get_capabilities" title="HSAccessObjects.HSAccessUser.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a> as capability key &#8216;change_name&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessUser._HSAccessUser__make_active">
+<tt class="descname">_HSAccessUser__make_active</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessUser._HSAccessUser__make_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: make the user active.</p>
+<p>This makes the user active if not, and does nothing if already active.</p>
+<p>This function is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessUser.get_capabilities" title="HSAccessObjects.HSAccessUser.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a> as capability key &#8216;make_active&#8217;.</p>
+<p>Notes:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Inactive users are prohibited from doing anything.</li>
+<li>Only an administrator can make a user active or inactive.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessUser._HSAccessUser__make_admin">
+<tt class="descname">_HSAccessUser__make_admin</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessUser._HSAccessUser__make_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: make the user an administrator.</p>
+<p>This makes the user an administrator if not, and does nothing if already an administrator.</p>
+<p>This function is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessUser.get_capabilities" title="HSAccessObjects.HSAccessUser.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a> as capability key &#8216;make_admin&#8217;.</p>
+<p>Notes:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Only an administrator can make a user an administrator.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessUser._HSAccessUser__make_not_active">
+<tt class="descname">_HSAccessUser__make_not_active</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessUser._HSAccessUser__make_not_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: make the user inactive.</p>
+<p>This makes the user inactive if active, and does nothing if already inactive.</p>
+<p>This function is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessUser.get_capabilities" title="HSAccessObjects.HSAccessUser.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a> as capability key &#8216;make_not_active&#8217;.</p>
+<p>Notes:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Inactive users are prohibited from doing anything.</li>
+<li>Only an administrator can make a user active or inactive.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessUser._HSAccessUser__make_not_admin">
+<tt class="descname">_HSAccessUser__make_not_admin</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessUser._HSAccessUser__make_not_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: make the user a non-administrator.</p>
+<p>This makes the user a non-administrator if already an administrator, and does nothing otherwise.</p>
+<p>This function is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessUser.get_capabilities" title="HSAccessObjects.HSAccessUser.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a> as capability key &#8216;make_not_admin&#8217;.</p>
+<p>Notes:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Only an administrator can make a user a non-administrator.</li>
+<li><strong>Administrators can do this to themselves, after which they are no longer administrators.</strong></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessUser._HSAccessUser__register_user">
+<tt class="descname">_HSAccessUser__register_user</tt><big>(</big><em>user_login</em>, <em>user_name</em>, <em>user_active=True</em>, <em>user_admin=False</em><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessUser._HSAccessUser__register_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a new user; requires administrative privilege.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user_login</strong> (<em>str</em>) &#8211; iRODS login for the user.</li>
+<li><strong>user_name</strong> (<em>str</em>) &#8211; print name for the new user.</li>
+<li><strong>user_active</strong> (<em>bool</em>) &#8211; whether user is initially active: default is True.</li>
+<li><strong>user_admin</strong> (<em>bool</em>) &#8211; whether user is initially an administrator: default is False.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This registers a new user, which must already exist in iRODS.</p>
+<p>To modify an already registered user, see other methods, including <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessObject__change_name()</span></tt>, etc.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="HSAccessObjects.HSAccessUser.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>hsa</em>, <em>user_uuid=None</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessUser.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessUser.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize a user object</p>
@@ -101,13 +196,10 @@ business logic in order to discover which operations can be done on which object
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>hsa</strong> (<em>HSAccess</em>) &#8211; A raw HSAccess object with non-object interface.</li>
 <li><strong>user_uuid</strong> (<em>str?</em>) &#8211; uuid of the user to represent with this object.</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -132,9 +224,11 @@ specific user it represents. It reads and caches metadata in order to reduce dat
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict of capability pairs of form { &#8216;capability_key&#8217;: bound_method, ... }</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
+</tr>
 </tbody>
 </table>
-<p>This function exposes private methods of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> based upon the 
+<p>This function exposes private methods of <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> based upon the 
 capabilities of the represented user. The format of the return value
 is:</p>
 <div class="highlight-python"><div class="highlight"><pre>{&#39;capability_key&#39;: bound_method, ...}
@@ -152,21 +246,21 @@ is:</p>
 <blockquote>
 <div><ul>
 <li><p class="first">&#8216;register_user&#8217;: register a new user. This requires administrative privilege
-and returns the <a class="reference internal" href="private.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessUser()</span></tt></a> object corresponding to the new user.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessUser__register_user()</span></tt> for details and calling conventions.</p>
+and returns the <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessUser()</span></tt></a> object corresponding to the new user.</p>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessUser._HSAccessUser__register_user" title="HSAccessObjects.HSAccessUser._HSAccessUser__register_user"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessUser__register_user()</span></tt></a> for details and calling conventions.</p>
 </li>
 <li><p class="first">&#8216;make_active&#8217; and &#8216;make_not_active&#8217;: control whether a user is active. This requires 
 administrative privilege. There are no arguments.</p>
 </li>
 <li><p class="first">&#8216;change_name&#8217;: change the name of a user. This requires either administrative 
 privilege or being that user. There is one parameter: the new name.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessUser__change_name()</span></tt> for details.</p>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessUser._HSAccessUser__change_name" title="HSAccessObjects.HSAccessUser._HSAccessUser__change_name"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessUser__change_name()</span></tt></a> for details.</p>
 </li>
 </ul>
 </div></blockquote>
 <p>Note: this is not all a user can do. These are simply the &#8220;protected&#8221; methods that are 
 enabled and disabled according to user privilege. Other methods are available to all users at 
-all times. In general, the private methods of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessObjects.HSAccessUser</span></tt></a> are 
+all times. In general, the private methods of <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessObjects.HSAccessUser</span></tt></a> are 
 exposed in this fashion while the public methods are always available.</p>
 <p>Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
 methods are also protected from being executed inappropriately.</p>
@@ -180,7 +274,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a> instances.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of <a class="reference internal" href="#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a> instances.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;HSAccessGroup&gt;</td>
 </tr>
 </tbody>
 </table>
@@ -195,7 +291,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str: login name of current user</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">login name of current user</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -209,7 +307,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str: print name of current user</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">print name of current user</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -225,7 +325,9 @@ methods are also protected from being executed inappropriately.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of the group to check.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -256,7 +358,9 @@ methods are also protected from being executed inappropriately.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of the resource to check.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -285,7 +389,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessResource" title="HSAccessObjects.HSAccessResource"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt></a> instances.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of <a class="reference internal" href="#HSAccessObjects.HSAccessResource" title="HSAccessObjects.HSAccessResource"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt></a> instances.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;HSAccessResource&gt;</td>
 </tr>
 </tbody>
 </table>
@@ -300,7 +406,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str: uuid of current user</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">uuid of current user</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -314,7 +422,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if current user is active.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if current user is active.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -328,7 +438,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if current user is an administrator</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if current user is an administrator</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -343,8 +455,6 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>indent</strong> (<em>int</em>) &#8211; indentation for printout in two-space units.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -368,7 +478,10 @@ methods are also protected from being executed inappropriately.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">HSAccessGroup: object representing the created group.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">object representing the created group.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HSAccessGroup</p>
 </td>
 </tr>
 </tbody>
@@ -401,7 +514,10 @@ name, they will be distinct.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">HSAccessResource: object representing the created resource.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">object representing the created resource.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HSAccessResource</p>
 </td>
 </tr>
 </tbody>
@@ -420,12 +536,135 @@ title, they will be distinct.</li>
 
 </div>
 <div class="section" id="hsaccessgroup-represent-a-user-group">
-<h1>HSAccessGroup: represent a user group<a class="headerlink" href="#hsaccessgroup-represent-a-user-group" title="Permalink to this headline">¶</a></h1>
+<h2>HSAccessGroup: represent a user group<a class="headerlink" href="#hsaccessgroup-represent-a-user-group" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="HSAccessObjects.HSAccessGroup">
 <em class="property">class </em><tt class="descclassname">HSAccessObjects.</tt><tt class="descname">HSAccessGroup</tt><big>(</big><em>hsa</em>, <em>uuid</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessGroup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represent a group as a python object</p>
 <p>This is a simple reflection interface that informs one as to whether group operations are possible</p>
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__change_name">
+<tt class="descname">_HSAccessGroup__change_name</tt><big>(</big><em>new_name</em><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__change_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the name of a group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_name</strong> (<em>str</em>) &#8211; new name to use.</td>
+</tr>
+</tbody>
+</table>
+<p>User must be owner or administrator.</p>
+<p>This routine is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__get_members">
+<tt class="descname">_HSAccessGroup__get_members</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__get_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get members of the current group as HSAccessUser instances</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of HSAccessUser instances.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;HSAccessUser&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>This is a privileged routine made accessible by <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__get_resources">
+<tt class="descname">_HSAccessGroup__get_resources</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__get_resources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get resources held by group as HSAccessResource instances</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of HSAccessResource instances.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;HSAccessResource&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>This is a privileged routine made accessible by <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__make_discoverable">
+<tt class="descname">_HSAccessGroup__make_discoverable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__make_discoverable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a group discoverable.</p>
+<p>This means that non-members can discover the group in group listings. 
+User must be owner or administrator.</p>
+<p>This routine is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__make_not_discoverable">
+<tt class="descname">_HSAccessGroup__make_not_discoverable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__make_not_discoverable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a group not discoverable.</p>
+<p>This means that non-members cannot discover the group in group listings. 
+User must be owner or administrator.</p>
+<p>This routine is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__make_not_public">
+<tt class="descname">_HSAccessGroup__make_not_public</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__make_not_public" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a group not public.</p>
+<p>This means that non-members cannot see group members.
+User must be owner or administrator.</p>
+<p>This routine is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__make_not_shareable">
+<tt class="descname">_HSAccessGroup__make_not_shareable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__make_not_shareable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a group not shareable.</p>
+<p>This means that non-owners cannot invite group members. 
+User must be owner or administrator.</p>
+<p>This routine is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__make_public">
+<tt class="descname">_HSAccessGroup__make_public</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__make_public" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a group public.</p>
+<p>This means that non-members can see group members.
+User must be owner or administrator.</p>
+<p>This routine is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__make_shareable">
+<tt class="descname">_HSAccessGroup__make_shareable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__make_shareable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a group shareable.</p>
+<p>This means that non-owners can invite group members. 
+User must be owner or administrator.</p>
+<p>This routine is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessGroup._HSAccessGroup__share_with_user">
+<tt class="descname">_HSAccessGroup__share_with_user</tt><big>(</big><em>user</em>, <em>privilege_code</em><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__share_with_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Share a group with a user immediately.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<em>HSAccessUser</em>) &#8211; user to be added to the group.</li>
+<li><strong>privilege_code</strong> (<em>str</em>) &#8211; one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This routine is exposed via <a class="reference internal" href="#HSAccessObjects.HSAccessGroup.get_capabilities" title="HSAccessObjects.HSAccessGroup.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">get_capabilities()</span></tt></a>.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="HSAccessObjects.HSAccessGroup.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>hsa</em>, <em>uuid</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessGroup.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessGroup.__init__" title="Permalink to this definition">¶</a></dt>
@@ -434,13 +673,10 @@ title, they will be distinct.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>hsa</strong> (<em>HSAccess</em>) &#8211; raw access object: instance of HSAccess.</li>
 <li><strong>uuid</strong> (<em>str</em>) &#8211; uuid of group to represent.</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -463,9 +699,11 @@ title, they will be distinct.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict of capability pairs of form { &#8216;capability_key&#8217;: bound_method, ... }</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
+</tr>
 </tbody>
 </table>
-<p>This function exposes private methods of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> based upon the 
+<p>This function exposes private methods of <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> based upon the 
 capabilities of the represented user. The format of the return value
 is:</p>
 <div class="highlight-python"><div class="highlight"><pre>{&#39;capability_key&#39;: bound_method, ...}
@@ -494,27 +732,27 @@ group in public listings. User must be group owner or administrator.</p>
 <li><p class="first">&#8216;make_active&#8217; and &#8216;make_not_active&#8217;: control whether the group is active. This requires 
 administrative privilege.</p>
 </li>
-<li><p class="first">&#8216;get_members&#8217; makes a listing of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> instances representing members of the group.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__get_members()</span></tt> for details.</p>
+<li><p class="first">&#8216;get_members&#8217; makes a listing of <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> instances representing members of the group.</p>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__get_members" title="HSAccessObjects.HSAccessGroup._HSAccessGroup__get_members"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__get_members()</span></tt></a> for details.</p>
 </li>
-<li><p class="first">&#8216;get_resources&#8217; makes a listing of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessResource" title="HSAccessObjects.HSAccessResource"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt></a> instances representing resources 
+<li><p class="first">&#8216;get_resources&#8217; makes a listing of <a class="reference internal" href="#HSAccessObjects.HSAccessResource" title="HSAccessObjects.HSAccessResource"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt></a> instances representing resources 
 shared with the group.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__get_resources()</span></tt> for details.</p>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__get_resources" title="HSAccessObjects.HSAccessGroup._HSAccessGroup__get_resources"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__get_resources()</span></tt></a> for details.</p>
 </li>
 <li><p class="first">&#8216;change_name&#8217;: change the name of the group. User must be either group owner or an administrator. 
 There is one parameter: the new name.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__change_name()</span></tt> for details.</p>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__change_name" title="HSAccessObjects.HSAccessGroup._HSAccessGroup__change_name"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__change_name()</span></tt></a> for details.</p>
 </li>
 <li><p class="first">&#8216;share_with_user&#8217;: add a new user to the group, immediately. User must be group owner or administrator, 
 or group must be shareable.</p>
-<p>There is one parameter: the <a class="reference internal" href="private.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> with which to share the group.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__share_with_user()</span></tt> for details.</p>
+<p>There is one parameter: the <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> with which to share the group.</p>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessGroup._HSAccessGroup__share_with_user" title="HSAccessObjects.HSAccessGroup._HSAccessGroup__share_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__share_with_user()</span></tt></a> for details.</p>
 </li>
 </ul>
 </div></blockquote>
 <p>Note: this is not all a user can do. These are simply the &#8220;protected&#8221; methods that are 
 enabled and disabled according to user privilege. Other methods are available to all users at 
-all times. In general, the private methods of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessObjects.HSAccessGroup</span></tt></a> are 
+all times. In general, the private methods of <a class="reference internal" href="#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessObjects.HSAccessGroup</span></tt></a> are 
 exposed in this fashion while the public methods are always available.</p>
 <p>Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
 methods are also protected from being executed inappropriately.</p>
@@ -528,7 +766,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str: name of current group</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">name of current group</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -544,6 +784,8 @@ methods are also protected from being executed inappropriately.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of HSAccessUser instances.</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;HSAccessUser&gt;</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -556,7 +798,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str: one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -585,7 +829,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str: uuid of current group</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">uuid of current group</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -599,7 +845,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if group is active.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if group is active.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -614,7 +862,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if group is discoverable.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if group is discoverable.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -628,7 +878,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if current user is a member.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if current user is a member.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -642,7 +894,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if group is owned by current user.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if group is owned by current user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -656,7 +910,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if group is public.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if group is public.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -670,7 +926,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if group is readable.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if group is readable.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -684,7 +942,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if group is shareable.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if group is shareable.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -699,7 +959,9 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool: True if group is writeable.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if group is writeable.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -715,8 +977,6 @@ methods are also protected from being executed inappropriately.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>indent</strong> (<em>int</em>) &#8211; indentation for printout in two-space units.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
 </tbody>
 </table>
 <p>Indentation allows hierarchical listings of sub-objects.</p>
@@ -726,12 +986,142 @@ methods are also protected from being executed inappropriately.</p>
 
 </div>
 <div class="section" id="hsaccessresource-represent-a-resource-file">
-<h1>HSAccessResource: represent a resource file<a class="headerlink" href="#hsaccessresource-represent-a-resource-file" title="Permalink to this headline">¶</a></h1>
+<h2>HSAccessResource: represent a resource file<a class="headerlink" href="#hsaccessresource-represent-a-resource-file" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="HSAccessObjects.HSAccessResource">
 <em class="property">class </em><tt class="descclassname">HSAccessObjects.</tt><tt class="descname">HSAccessResource</tt><big>(</big><em>hsa</em>, <em>uuid</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represent a resource as a python object</p>
 <p>This is a simple reflection interface that informs one as to whether resource operations are possible</p>
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__change_title">
+<tt class="descname">_HSAccessResource__change_title</tt><big>(</big><em>new_name</em><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__change_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change title of a resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_name</strong> (<em>str</em>) &#8211; new name to use for title.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__get_groups">
+<tt class="descname">_HSAccessResource__get_groups</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__get_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of HSAccessGroups currently holding this resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of <a class="reference internal" href="#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;HSAccessGroup&gt;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__get_users">
+<tt class="descname">_HSAccessResource__get_users</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__get_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of HSAccessUsers currently holding this resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;HSAccessUser&gt;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__make_discoverable">
+<tt class="descname">_HSAccessResource__make_discoverable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__make_discoverable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource discoverable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__make_immutable">
+<tt class="descname">_HSAccessResource__make_immutable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__make_immutable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource immutable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__make_not_discoverable">
+<tt class="descname">_HSAccessResource__make_not_discoverable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__make_not_discoverable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource not discoverable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__make_not_public">
+<tt class="descname">_HSAccessResource__make_not_public</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__make_not_public" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource not public.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__make_not_shareable">
+<tt class="descname">_HSAccessResource__make_not_shareable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__make_not_shareable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource not shareable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__make_public">
+<tt class="descname">_HSAccessResource__make_public</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__make_public" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource public.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__make_published">
+<tt class="descname">_HSAccessResource__make_published</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__make_published" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource published.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__make_shareable">
+<tt class="descname">_HSAccessResource__make_shareable</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__make_shareable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource shareable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__share_with_group">
+<tt class="descname">_HSAccessResource__share_with_group</tt><big>(</big><em>group</em>, <em>privilege_code</em><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__share_with_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Share this resource with a group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>group</strong> (<em>HSAccessGroup</em>) &#8211; <a class="reference internal" href="#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a> object describing the group</li>
+<li><strong>privilege_code</strong> (<em>str</em>) &#8211; one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource._HSAccessResource__share_with_user">
+<tt class="descname">_HSAccessResource__share_with_user</tt><big>(</big><em>user</em>, <em>privilege_code</em><big>)</big><a class="headerlink" href="#HSAccessObjects.HSAccessResource._HSAccessResource__share_with_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Share this resource with a user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user</strong> (<em>HSAccessUser</em>) &#8211; <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> object describing the user</li>
+<li><strong>privilege_code</strong> (<em>str</em>) &#8211; one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="HSAccessObjects.HSAccessResource.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>hsa</em>, <em>uuid</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.__init__" title="Permalink to this definition">¶</a></dt>
@@ -740,7 +1130,11 @@ methods are also protected from being executed inappropriately.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>hsa</strong> (<em>HSAccess</em>) &#8211; Object describing the current (primitive) session.</li>
+<li><strong>uuid</strong> (<em>str:</em>) &#8211; uuid of resource.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -764,9 +1158,11 @@ resource to save time during rendering.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict of capability pairs of form { &#8216;capability_key&#8217;: bound_method, ... }</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
+</tr>
 </tbody>
 </table>
-<p>This function exposes private methods of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessResource" title="HSAccessObjects.HSAccessResource"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt></a> based upon the 
+<p>This function exposes private methods of <a class="reference internal" href="#HSAccessObjects.HSAccessResource" title="HSAccessObjects.HSAccessResource"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt></a> based upon the 
 capabilities of the current user. The format of the return value
 is:</p>
 <div class="highlight-python"><div class="highlight"><pre>{&#39;capability_key&#39;: bound_method, ...}
@@ -798,36 +1194,247 @@ the resource.  User must be resource owner or administrator.</p>
 <li><p class="first">&#8216;make_immutable&#8217; and &#8216;make_not_immutable&#8217; indicate whether the resource should be considered
 read-only to all users.  User must be resource owner or administrator.</p>
 </li>
-<li><p class="first">&#8216;get_users&#8217; makes a listing of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> instances representing users with 
+<li><p class="first">&#8216;get_users&#8217; makes a listing of <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> instances representing users with 
 access to the resource.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessResource__get_users()</span></tt> for details.</p>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessResource._HSAccessResource__get_users" title="HSAccessObjects.HSAccessResource._HSAccessResource__get_users"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessResource__get_users()</span></tt></a> for details.</p>
 </li>
-<li><p class="first">&#8216;get_groupss&#8217; makes a listing of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a> instances representing groups with 
-access to the resource.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessResource__get_groups()</span></tt> for details.</p>
+<li><p class="first">&#8216;get_groups&#8217; makes a listing of <a class="reference internal" href="#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a> instances representing groups with 
+access to the resource:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">resource</span><span class="o">.</span><span class="n">get_capabilities</span><span class="p">[</span><span class="s">&#39;get_groups&#39;</span><span class="p">]()</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessResource._HSAccessResource__get_groups" title="HSAccessObjects.HSAccessResource._HSAccessResource__get_groups"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessResource__get_groups()</span></tt></a> for details.</p>
 </li>
-<li><p class="first">&#8216;change_name&#8217;: change the name of the group. User must be either group owner or an administrator. 
-There is one parameter: the new name.</p>
+<li><p class="first">&#8216;change_name&#8217;: change the name of the resource. User must be either resource owner or an administrator. 
+There is one parameter: the new name:</p>
+<div class="highlight-python"><div class="highlight"><pre>resource.get_capabilities[&#39;change_name&#39;](*new_name*)
+</pre></div>
+</div>
 <p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessGroup__change_name()</span></tt> for details.</p>
 </li>
 <li><p class="first">&#8216;share_with_user&#8217;: share the resource with a new user, immediately. 
-User must be resource owner or administrator, or resource must be shareable.</p>
-<p>There is one parameter: the <a class="reference internal" href="private.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> with which to share the resource.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessResource__share_with_user()</span></tt> for details.</p>
+User must be resource owner or administrator, or resource must be shareable. 
+There is one parameter: the <a class="reference internal" href="#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> with which to share the resource. Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre>resource.get_capabilities[&#39;share_with_user&#39;](*user_object*, *privilege_word*) 
+</pre></div>
+</div>
+<p>where privilege_word is one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, or &#8216;none&#8217;.</p>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessResource._HSAccessResource__share_with_user" title="HSAccessObjects.HSAccessResource._HSAccessResource__share_with_user"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessResource__share_with_user()</span></tt></a> for details.</p>
 </li>
 <li><p class="first">&#8216;share_with_group&#8217;: share the resource with a new group, immediately. 
-User must be resource owner or administrator, or resource must be shareable.</p>
-<p>There is one parameter: the <a class="reference internal" href="private.html#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a> with which to share the resource.</p>
-<p>See <tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessResource__share_with_group()</span></tt> for details.</p>
+User must be resource owner or administrator, or resource must be shareable. 
+There is one parameter: the <a class="reference internal" href="#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a> with which to share the resource.</p>
+<blockquote>
+<div><p>resource.get_capabilities()[&#8216;share_with_group&#8217;](<em>group_object</em>)</p>
+</div></blockquote>
+<p>See <a class="reference internal" href="#HSAccessObjects.HSAccessResource._HSAccessResource__share_with_group" title="HSAccessObjects.HSAccessResource._HSAccessResource__share_with_group"><tt class="xref py py-meth docutils literal"><span class="pre">_HSAccessResource__share_with_group()</span></tt></a> for details.</p>
 </li>
 </ul>
 </div></blockquote>
 <p>Note: this is not all a user can do. These are simply the &#8220;protected&#8221; methods that are 
 enabled and disabled according to user privilege. Other methods are available to all users at 
-all times. In general, the private methods of <a class="reference internal" href="private.html#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessObjects.HSAccessGroup</span></tt></a> are 
+all times. In general, the private methods of <a class="reference internal" href="#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessObjects.HSAccessGroup</span></tt></a> are 
 exposed in this fashion while the public methods are always available.</p>
 <p>Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
 methods are also protected from being executed inappropriately.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.get_path">
+<tt class="descname">get_path</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.get_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.get_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get file path of the current resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">file path of current resource.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.get_privilege">
+<tt class="descname">get_privilege</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.get_privilege"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.get_privilege" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get privilege of current user over resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">&#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217; (for public resources)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.get_title">
+<tt class="descname">get_title</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.get_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.get_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get title of the current resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">title of current resource.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.get_uuid">
+<tt class="descname">get_uuid</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.get_uuid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.get_uuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get uuid of the current resource.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">uuid of current resource.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.is_discoverable">
+<tt class="descname">is_discoverable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.is_discoverable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.is_discoverable" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if resource is discoverable by the currently authenticated user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if resource is discoverable by the currently authenticated user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.is_immutable">
+<tt class="descname">is_immutable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.is_immutable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.is_immutable" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if resource is immutable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if resource is immutable. This overrides normal ownership privileges.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.is_owned">
+<tt class="descname">is_owned</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.is_owned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.is_owned" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if resource is owned by the currently authenticated user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if resource is owned by the currently authenticated user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.is_public">
+<tt class="descname">is_public</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.is_public"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.is_public" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if resource is public.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if resource is public.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.is_published">
+<tt class="descname">is_published</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.is_published"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.is_published" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if resource is published and has a DOI.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if resource is published and has a DOI</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.is_readable">
+<tt class="descname">is_readable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.is_readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.is_readable" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if resource is readable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if resource is readable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.is_shareable">
+<tt class="descname">is_shareable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.is_shareable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.is_shareable" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if resource is shareable by non-owners.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if resource is shareable by non-owners.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.is_writeable">
+<tt class="descname">is_writeable</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.is_writeable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.is_writeable" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if resource is writeable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if resource is writeable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAccessObjects.HSAccessResource.make_not_published">
+<tt class="descname">make_not_published</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.make_not_published"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.make_not_published" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the current resource not published.</p>
 </dd></dl>
 
 <dl class="method">
@@ -840,8 +1447,6 @@ methods are also protected from being executed inappropriately.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>indent</strong> (<em>int</em>) &#8211; indentation for printout in two-space units.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
 </tbody>
 </table>
 <p>Indentation allows hierarchical listings of sub-objects.</p>
@@ -849,6 +1454,7 @@ methods are also protected from being executed inappropriately.</p>
 
 </dd></dl>
 
+</div>
 </div>
 
 
@@ -859,19 +1465,21 @@ methods are also protected from being executed inappropriately.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">IrodsShare Object Library</a></li>
+<li><a class="reference internal" href="#">IrodsShare Object Library</a><ul>
 <li><a class="reference internal" href="#theory-of-operation">Theory of Operation</a></li>
 <li><a class="reference internal" href="#hsaccessuser-represent-a-user">HSAccessUser: represent a user</a></li>
 <li><a class="reference internal" href="#hsaccessgroup-represent-a-user-group">HSAccessGroup: represent a user group</a></li>
 <li><a class="reference internal" href="#hsaccessresource-represent-a-resource-file">HSAccessResource: represent a resource file</a></li>
+</ul>
+</li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="module.html"
                         title="previous chapter">IrodsShare module documentation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="private.html"
-                        title="next chapter">IrodsShare Object Library: Private Methods</a></p>
+  <p class="topless"><a href="uiobj.html"
+                        title="next chapter">Thoughts on the IrodsShare/Django Object Interface</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/objects.txt"
@@ -904,7 +1512,7 @@ methods are also protected from being executed inappropriately.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="private.html" title="IrodsShare Object Library: Private Methods"
+          <a href="uiobj.html" title="Thoughts on the IrodsShare/Django Object Interface"
              >next</a> |</li>
         <li class="right" >
           <a href="module.html" title="IrodsShare module documentation"

@@ -52,20 +52,1059 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-HSAlib">
-<span id="irodsshare-module-documentation"></span><h1>IrodsShare module documentation<a class="headerlink" href="#module-HSAlib" title="Permalink to this headline">¶</a></h1>
-<p>The HSAccess library implements access control logic for scientific data sharing. It includes</p>
+  <div class="section" id="irodsshare-module-documentation">
+<h1>IrodsShare module documentation<a class="headerlink" href="#irodsshare-module-documentation" title="Permalink to this headline">¶</a></h1>
+<p>The IrodsShare module <a class="reference internal" href="#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a> contains two main classes:</p>
+<ul class="simple">
+<li><tt class="xref py py-class docutils literal"><span class="pre">HSAccessCore</span></tt>: low-level routines for interacting with iRODS directly.</li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">HSAccess</span></tt>: higher level class that inherits from <tt class="xref py py-class docutils literal"><span class="pre">HSAccessCore</span></tt>
+and includes usability features.</li>
+</ul>
+<p>These are the lowest-level routines in the IrodsShare project. For a higher-level interface
+suitable for User Interface development, see <a class="reference internal" href="objects.html#module-HSAccessObjects" title="HSAccessObjects"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessObjects</span></tt></a>.</p>
+<span class="target" id="module-HSAlib"></span><p>The HSAccess library implements access control logic for scientific data sharing. It includes</p>
 <ol class="arabic simple">
 <li>user registration and privilege handling</li>
 <li>group creation and management</li>
 <li>resource registration and access control.</li>
 </ol>
+<div class="section" id="hsaccesscore-irods-hydroshare-communication">
+<h2>HSAccessCore: iRODS/HydroShare communication<a class="headerlink" href="#hsaccesscore-irods-hydroshare-communication" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="HSAlib.HSAccessCore">
 <em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccessCore</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class consists of the core methods that contact iRODS</p>
 <p>Unlike HSAccess, it does not contain helper functions;
 only the functions necessary to the core logic.</p>
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__assert_group_add">
+<tt class="descname">_HSAccessCore__assert_group_add</tt><big>(</big><em>assertion_user_id</em>, <em>group_uuid</em>, <em>group_name</em>, <em>group_active</em>, <em>group_shareable</em>, <em>group_discoverable</em>, <em>group_public</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__assert_group_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add a new group to the registry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>assertion_user_id</strong> (<em>int</em>) &#8211; internal id of requesting user</li>
+<li><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</li>
+<li><strong>group_name</strong> (<em>str</em>) &#8211; name of group</li>
+<li><strong>group_active</strong> (<em>bool</em>) &#8211; whether group is active.</li>
+<li><strong>group_shareable</strong> (<em>bool</em>) &#8211; whether group can be managed by non-owners.</li>
+<li><strong>group_discoverable</strong> (<em>bool</em>) &#8211; whether group is discoverable in listings.</li>
+<li><strong>group_public</strong> (<em>bool</em>) &#8211; whether group members are listable.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<ol class="arabic simple">
+<li>This is not subject to access control.</li>
+<li>An exception is raised if the group uuid already exists.</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__assert_group_update">
+<tt class="descname">_HSAccessCore__assert_group_update</tt><big>(</big><em>assertion_user_id</em>, <em>group_uuid</em>, <em>group_name</em>, <em>group_active</em>, <em>group_shareable</em>, <em>group_discoverable</em>, <em>group_public</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__assert_group_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: update a group record in the registry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>assertion_user_id</strong> (<em>int</em>) &#8211; internal id of requesting user</li>
+<li><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</li>
+<li><strong>group_name</strong> (<em>str</em>) &#8211; name of group</li>
+<li><strong>group_active</strong> (<em>bool</em>) &#8211; group active or retired</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<ol class="arabic simple">
+<li>This is not subject to access control.</li>
+<li>An exception is raised if the group uuid does not exist.</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__assert_resource_add">
+<tt class="descname">_HSAccessCore__assert_resource_add</tt><big>(</big><em>requesting_user_id</em>, <em>resource_uuid</em>, <em>resource_path</em>, <em>resource_title</em>, <em>resource_immutable</em>, <em>resource_published</em>, <em>resource_discoverable</em>, <em>resource_public</em>, <em>resource_shareable</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__assert_resource_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add a new resource to the registry.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_user_id</strong> &#8211; user id of adding person</li>
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</li>
+<li><strong>resource_path</strong> (<em>str</em>) &#8211; path in iRODS</li>
+<li><strong>resource_title</strong> (<em>str</em>) &#8211; human-readable title</li>
+<li><strong>resource_immutable</strong> (<em>bool</em>) &#8211; whether resource is immutable to change</li>
+<li><strong>resource_published</strong> (<em>bool</em>) &#8211; whether resource is published</li>
+<li><strong>resource_discoverable</strong> (<em>bool</em>) &#8211; whether the existence of the resource should be advertised to others</li>
+<li><strong>resource_public</strong> (<em>bool</em>) &#8211; whether the data of the resource should be available to everyone</li>
+<li><strong>resource_shareable</strong> (<em>bool</em>) &#8211; whether resource is shareable by non-owners</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This adds a new and previously non-existent resource to the resource registry. resource_uuid and
+resource_path must be unique. If these are not unique, an exception is raised.</p>
+<p>Note: this routine is not subject to access control restrictions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__assert_resource_update">
+<tt class="descname">_HSAccessCore__assert_resource_update</tt><big>(</big><em>requesting_user_id</em>, <em>resource_uuid</em>, <em>resource_path</em>, <em>resource_title</em>, <em>resource_immutable</em>, <em>resource_published</em>, <em>resource_discoverable</em>, <em>resource_public</em>, <em>resource_shareable</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__assert_resource_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add a new resource to the registry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_user_id</strong> (<em>int</em>) &#8211; user id of adding person</li>
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</li>
+<li><strong>resource_path</strong> (<em>str</em>) &#8211; path in iRODS</li>
+<li><strong>resource_title</strong> (<em>str</em>) &#8211; human-readable title</li>
+<li><strong>resource_immutable</strong> (<em>bool</em>) &#8211; whether resource is immutable</li>
+<li><strong>resource_published</strong> (<em>bool</em>) &#8211; whether resource is published</li>
+<li><strong>resource_discoverable</strong> (<em>bool</em>) &#8211; whether the existence of the resource should be advertised to others</li>
+<li><strong>resource_public</strong> (<em>bool</em>) &#8211; whether the data of the resource should be available to everyone</li>
+<li><strong>resource_shareable</strong> (<em>bool</em>) &#8211; whether resource is shareable by non-owners</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This updates an existing resource to the resource registry. resource_uuid and
+resource_path must be unique and a record for resource_uuid must be present.
+If these requirements are not met, an exception is raised.</p>
+<p>Note: this routine is not subject to access control restrictions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__assert_user_add">
+<tt class="descname">_HSAccessCore__assert_user_add</tt><big>(</big><em>assertion_user_id</em>, <em>user_uuid</em>, <em>user_login</em>, <em>user_name</em>, <em>user_active=True</em>, <em>user_admin=False</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__assert_user_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add a new user record</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>assertion_user_id</strong> (<em>int</em>) &#8211; internal user id of user adding the login name</li>
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user to add</li>
+<li><strong>user_login</strong> (<em>str</em>) &#8211; user login string: must be unique</li>
+<li><strong>user_name</strong> (<em>str</em>) &#8211; user print name</li>
+<li><strong>user_active</strong> (<em>bool</em>) &#8211; whether user is active</li>
+<li><strong>user_admin</strong> (<em>bool</em>) &#8211; whether user is an administrator</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Add a new previously non-existent user record to the registered users. user_uuid and user_login
+must both be independently unique.</p>
+<p>This routine is not subject to access control restrictions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__assert_user_update">
+<tt class="descname">_HSAccessCore__assert_user_update</tt><big>(</big><em>assertion_user_id</em>, <em>user_uuid</em>, <em>user_login</em>, <em>user_name</em>, <em>user_active=True</em>, <em>user_admin=False</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__assert_user_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: update an existing user record</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>user_login</strong> (<em>str</em>) &#8211; login of user to update (primary key)</li>
+<li><strong>assertion_user_id</strong> (<em>int</em>) &#8211; user adding the login name</li>
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; user uuid string: must be unique</li>
+<li><strong>user_name</strong> (<em>str</em>) &#8211; user print name</li>
+<li><strong>user_active</strong> (<em>bool</em>) &#8211; whether user is active</li>
+<li><strong>user_admin</strong> (<em>bool</em>) &#8211; whether user is an administrator</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Update an existing user record in the registered users table. user_uuid and user_login must
+remain independently unique.</p>
+<p>This routine is not subject to access control restrictions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_cumulative_user_privilege_over_group">
+<tt class="descname">_HSAccessCore__get_cumulative_user_privilege_over_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_cumulative_user_privilege_over_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the privilege that is specified for a user over a specific group
+:type user_uuid: str
+:type group_uuid: str
+:param user_uuid: uuid of user for which to obtain privilege
+:param group_uuid: group to which to allow access
+:return: privilege code 1-4
+:rtype: int</p>
+<p>This returns the cumulative user privilege over a group, including whether the group is public if the
+user is not a member. This is a union of privileges from membership and the group public flag.
+Note that there is no ownership conflict in this case because a group cannot be made immutable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_cumulative_user_privilege_over_resource">
+<tt class="descname">_HSAccessCore__get_cumulative_user_privilege_over_resource</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_cumulative_user_privilege_over_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarize privileges of a user over a resource, incorporating resource flags</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource</li>
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">int: privilege number 1-4</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The access privileges are the minimum (most powerful) privilege granted by any one user.
+These include:</p>
+<ol class="arabic">
+<li><p class="first">Privileges granted specifically to the user.</p>
+</li>
+<li><p class="first">Privileges granted via membership in a group.</p>
+</li>
+<li><p class="first">Privileges granted or removed via resource state flags, including</p>
+<blockquote>
+<div><ul class="simple">
+<li>immutable: override write access for a resource.</li>
+<li>public: give read access to everyone.</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+<p>This routine will downgrade owner privileges to read-only for immutable resources.
+Thus it is appropriate for use in iRODS, but not in resource metadata manipulation.
+See also __get_user_privilege_over_resource().</p>
+<p>Note: this routine is not subject to access control. Anyone can read anyone else&#8217;s privileges.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_group_id_from_uuid">
+<tt class="descname">_HSAccessCore__get_group_id_from_uuid</tt><big>(</big><em>group_uuid</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_group_id_from_uuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: translate from group object identifier to database id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group object identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">group_id in HSAccess database, for use in internal functions.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>This returns the private identifier for a group that is used internally as
+a join target. This is an integer for speed. This identifier is never exposed
+to users or administrators of the system.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_group_name_from_uuid">
+<tt class="descname">_HSAccessCore__get_group_name_from_uuid</tt><big>(</big><em>group_uuid</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_group_name_from_uuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: translate from group object identifier to database id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group object identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">group name</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<p>This returns the name of a group from its uuid. Group names are not generally unique and
+cannot be used as keys from which to locate groups.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_privilege_from_group_invite">
+<tt class="descname">_HSAccessCore__get_privilege_from_group_invite</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>group_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_privilege_from_group_invite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether there is an access record for a specific user, group, and asserting user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_id</strong> (<em>int</em>) &#8211; user id of user who needs privilege</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; group id of group to which privilege will be assigned</li>
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; user id of user assigning privilege</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">privilege code 1-4</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_privilege_from_resource_invite">
+<tt class="descname">_HSAccessCore__get_privilege_from_resource_invite</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>resource_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_privilege_from_resource_invite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether there is an access record for a specific user, resource, and asserting user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_id</strong> (<em>int</em>) &#8211; user id of user who needs privilege</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; resource id of resource to which privilege will be assigned</li>
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; user id of user assigning privilege</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">privilege code 1-4</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_privilege_id_from_code">
+<tt class="descname">_HSAccessCore__get_privilege_id_from_code</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_privilege_id_from_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: translate from privilege code to database id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>code</strong> (<em>str:</em>) &#8211; code for privilege level: own, rw, ro, ns</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">privilege_id in database system</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>This routine translates a privilege code into an integer. Current privilege codes include:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>own</dt>
+<dd>owner of resource (1)</dd>
+<dt>rw</dt>
+<dd>read-write (with sharing privilege) (2)</dd>
+<dt>ro</dt>
+<dd>read-only (with sharing privilege) (3)</dd>
+<dt>ns</dt>
+<dd>read-only without privilege to share. (4)</dd>
+</dl>
+</div></blockquote>
+<p>The privilege level for an object is a minimum of all the privilege levels assigned by different people.</p>
+<p>For example, if</p>
+<ul class="simple">
+<li>one owner assigns ownership privilege and, unbeknownst to this owner,</li>
+<li>another owner assigns read-only privilege,</li>
+</ul>
+<p>Then the resulting privilege is &#8220;owner&#8221;.</p>
+<p>Note that although these codes are used consistently for privileges over groups and resources,
+there is no reasonable meaning for</p>
+<ol class="arabic simple">
+<li>group ownership of a resource</li>
+<li>no sharing for a group</li>
+</ol>
+<p>Thus, one may not assert these states.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_resource_id_from_uuid">
+<tt class="descname">_HSAccessCore__get_resource_id_from_uuid</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_resource_id_from_uuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: get resource_id from resource digital identifier (uuid)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource object identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">private resource_id in HSAccess database, for use in internal functions.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>This returns the private and internal unique identifier of the resource object.
+This id is never exposed to users.</p>
+<p>Note: this method is not subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_resource_uuid_from_path">
+<tt class="descname">_HSAccessCore__get_resource_uuid_from_path</tt><big>(</big><em>resource_path</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_resource_uuid_from_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: get resource_uuid from (unique) resource path</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_path</strong> (<em>str</em>) &#8211; str: resource object path in iRODS</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">resource_uuid in HSAccess database, for use in internal functions.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>Paths in iRODS are assumed to be unique. This does the same thing as &#8216;__get_resource_id_from_uuid&#8217;
+but for paths rather than uuids.</p>
+<p>Note: this method is not subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_user_id_from_login">
+<tt class="descname">_HSAccessCore__get_user_id_from_login</tt><big>(</big><em>login</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_user_id_from_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: get user database id from login name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<em>str</em>) &#8211; string login name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">integer user id</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_user_id_from_uuid">
+<tt class="descname">_HSAccessCore__get_user_id_from_uuid</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_user_id_from_uuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: get user database id from user uuid</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">user id for use in internal functions.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<p>The return value of this function is used as the internal key in the
+access control database, but never, ever exposed to users. It is
+an integer for speed of joins.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_user_login_from_uuid">
+<tt class="descname">_HSAccessCore__get_user_login_from_uuid</tt><big>(</big><em>user_uuid=None</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_user_login_from_uuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: get user login name from user uuid e</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">user login name.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<p>This returns the login name for a given user uuid. This is currently an iRODS login and has no
+meaning in the system. It is used as a last resort in &#8216;assert_user&#8217; to insure that we do not
+create users with identical login names, but is otherwise ignored.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_user_logins">
+<tt class="descname">_HSAccessCore__get_user_logins</tt><big>(</big><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_user_logins" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: Get a list of all registered user logins</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of login names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;str&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>Gets a list of user login names. These are used internally as unique
+identifiers but not accepted as command parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_user_privilege_over_group">
+<tt class="descname">_HSAccessCore__get_user_privilege_over_group</tt><big>(</big><em>group_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_user_privilege_over_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the privilege that is specified for a user over a specific group
+:type user_uuid: str
+:type group_uuid: str
+:param user_uuid: uuid of user for which to obtain privilege
+:param group_uuid: group to which to allow access
+:return: privilege number 1-4
+:rtype: int</p>
+<p>This returns the cumulative user privilege over a group, including whether the group is public if the
+user is not a member. This is a union of privileges from membership and the group public flag.
+Note that there is no ownership conflict in this case because a group cannot be made immutable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_user_privilege_over_resource">
+<tt class="descname">_HSAccessCore__get_user_privilege_over_resource</tt><big>(</big><em>resource_uuid</em>, <em>user_uuid=None</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_user_privilege_over_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarize privileges of a user over a resource, without incorporating resource flags</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource</li>
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">privilege number 1-4</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The access privileges are the minimum (most powerful) privilege granted by any one user.
+These include:</p>
+<ol class="arabic simple">
+<li>Privileges granted specifically to the user.</li>
+<li>Privileges granted via membership in a group.</li>
+</ol>
+<p>Note: this routine is not subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__get_user_uuid_from_login">
+<tt class="descname">_HSAccessCore__get_user_uuid_from_login</tt><big>(</big><em>login</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_user_uuid_from_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: get user database id from login name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<em>str</em>) &#8211; string login name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">user uuid</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<p>This returns the user uuid from the login name. While this works reliably
+because login names are unique, this is only used to construct test cases.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__global_reset">
+<tt class="descname">_HSAccessCore__global_reset</tt><big>(</big><em>are_you_sure</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__global_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: Delete all data from the database except for starting situation, for testing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>are_you_sure</strong> (<em>str</em>) &#8211; a string that must have the value &#8220;yes, I&#8217;m sure&#8221;</td>
+</tr>
+</tbody>
+</table>
+<p>This clears the database to an install state. This is used for testing,
+and never in production.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__group_access_to_resource_exists">
+<tt class="descname">_HSAccessCore__group_access_to_resource_exists</tt><big>(</big><em>requesting_id</em>, <em>resource_id</em>, <em>group_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__group_access_to_resource_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: Check whether there is already a privilege record for asserting user, group, and resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>group_id</strong> (<em>int</em>) &#8211; internal group id of affected group</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; internal resource id of affected resource</li>
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; internal id of user requesting change</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8216;share_resource_with_group&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__group_cumulatively_accessible">
+<tt class="descname">_HSAccessCore__group_cumulatively_accessible</tt><big>(</big><em>user_uuid</em>, <em>group_uuid</em>, <em>code</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__group_cumulatively_accessible" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: check whether a group is accessible to a user
+:type user_uuid: str
+:type group_uuid: str
+:type code: str
+:param user_uuid: uuid of user for whom to check privilege (key to users table)
+:param group_uuid: uuid of group for which to check privilege (key to groups table)
+:param code: privilege code (key to privileges table)
+:return: bool: True if group is accessible to user in the provided mode
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__invite_group_user_add">
+<tt class="descname">_HSAccessCore__invite_group_user_add</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>group_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__invite_group_user_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add new user access for a group</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; int: id of user requesting change</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; int: id of user to be enabled</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; int: id of group to be modified</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; int: id of privilege to be installed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__invite_group_user_update">
+<tt class="descname">_HSAccessCore__invite_group_user_update</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>group_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__invite_group_user_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: update user access to a group</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; id of user requesting change</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; id of user to be enabled</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; id of group to be modified</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; id of privilege to be installed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__invite_resource_user_add">
+<tt class="descname">_HSAccessCore__invite_resource_user_add</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>resource_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__invite_resource_user_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add new user access for a resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; int: id of user requesting change</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; int: id of user to be enabled</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; int: id of resource to be modified</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; int: id of privilege to be installed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__invite_resource_user_update">
+<tt class="descname">_HSAccessCore__invite_resource_user_update</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>resource_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__invite_resource_user_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: update user access to a resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; id of user requesting change</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; id of user to be enabled</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; id of resource to be modified</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; id of privilege to be installed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__resource_accessible">
+<tt class="descname">_HSAccessCore__resource_accessible</tt><big>(</big><em>user_uuid</em>, <em>resource_uuid</em>, <em>code</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__resource_accessible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if resource is accessible to a specific user in a specific way</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; user uuid, key to users table</li>
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource uuid: key to resources table</li>
+<li><strong>code</strong> (<em>str</em>) &#8211; privilege code: key to privileges table</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if resource is accessible to user in the mode indicated by code</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This routine checks if a resource is accessible at a given level.
+The codes include:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>own</dt>
+<dd>ownership</dd>
+<dt>rw</dt>
+<dd>read-write</dd>
+<dt>ro</dt>
+<dd>read-only</dd>
+</dl>
+</div></blockquote>
+<p>This is very tricky. This routine returns the protection according to the protection system
+but does not account for flags. If it did, then flagging a resource as immutable would take
+away its owners.</p>
+<p>Actual privilege according to resource flags is accounted for in the routines
+resource_is_readwrite, resource_is_readonly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__resource_cumulatively_accessible">
+<tt class="descname">_HSAccessCore__resource_cumulatively_accessible</tt><big>(</big><em>user_uuid</em>, <em>resource_uuid</em>, <em>code</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__resource_cumulatively_accessible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if resource is accessible in a specific way, combining both user and resource permissions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; user uuid, key to users table</li>
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource uuid: key to resources table</li>
+<li><strong>code</strong> (<em>str</em>) &#8211; privilege code: key to privileges table</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if resource is accessible to user in the mode indicated by code</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This routine checks if a resource is accessible at a given level.
+The codes include:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>own</dt>
+<dd>ownership</dd>
+<dt>rw</dt>
+<dd>read-write</dd>
+<dt>ro</dt>
+<dd>read-only</dd>
+</dl>
+</div></blockquote>
+<p>This is very tricky. This routine returns the protection according to the protection system
+but does not account for flags. If it did, then flagging a resource as immutable would take
+away its owners.</p>
+<p>Actual privilege according to resource flags is accounted for in the routines
+resource_is_readwrite, resource_is_readonly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__share_group_user_add">
+<tt class="descname">_HSAccessCore__share_group_user_add</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>group_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__share_group_user_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add new user access for a group</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; int: id of user requesting change</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; int: id of user to be enabled</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; int: id of group to be modified</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; int: id of privilege to be installed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8216;share_group_with_user&#8217;. It does not have access control.
+There must not already be a privilege record for the user, group, and current user.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__share_group_user_update">
+<tt class="descname">_HSAccessCore__share_group_user_update</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>group_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__share_group_user_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: update user access to a group</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; id of user requesting change</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; id of user to be enabled</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; id of group to be modified</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; id of privilege to be installed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8216;share_group_with_user&#8217;. It does not have access control.
+There must already be a privilege record for the user, group, and current user.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__share_group_with_user">
+<tt class="descname">_HSAccessCore__share_group_with_user</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>group_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__share_group_with_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: unpoliced share of group with user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; internal id of requesting user</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; internal id of user to gain privilege</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; internal id of group to which to grant privilege</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8216;share_group_with_user&#8217;. It does not have access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__share_resource_group_add">
+<tt class="descname">_HSAccessCore__share_resource_group_add</tt><big>(</big><em>requesting_id</em>, <em>group_id</em>, <em>resource_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__share_resource_group_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add a new group sharing record for a resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; id of requesting user</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; id of group to modify</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; id of resource to modify</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; privilege to assign</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8216;share_resource_with_group&#8217;.</p>
+<p>The group sharing record must not exist or an exception is raised.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__share_resource_group_update">
+<tt class="descname">_HSAccessCore__share_resource_group_update</tt><big>(</big><em>requesting_id</em>, <em>group_id</em>, <em>resource_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__share_resource_group_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: update group sharing record for a resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; id of requesting user</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; id of group to modify</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; id of resource to modify</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; privilege to assign</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8216;share_resource_with_group&#8217;.</p>
+<p>The group sharing record must exist or an exception is raised.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__share_resource_user_add">
+<tt class="descname">_HSAccessCore__share_resource_user_add</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>resource_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__share_resource_user_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: add a user record</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; user id of requesting user</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; user id of affected user</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; resource id of affected resource</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; privilege id to assign</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8216;share_resource_with_user&#8217;. If the resource record
+to be updated does not exist, an exception is raised.</p>
+<p>Note: this routine is not subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__share_resource_user_update">
+<tt class="descname">_HSAccessCore__share_resource_user_update</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>resource_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__share_resource_user_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: update a user record</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; user id of requesting user</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; user id of affected user</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; resource id of affected resource</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; privilege id to assign</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8220;share_resource_with_user&#8221;. If the resource record
+to be updated does not exist, an exception is raised.</p>
+<p>Note: this routine is not subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__share_resource_with_user">
+<tt class="descname">_HSAccessCore__share_resource_with_user</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>resource_id</em>, <em>privilege_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__share_resource_with_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Share a resource with a user at a given privilege level.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>int</strong> (<em>privilege_id</em>) &#8211; id of requesting user</li>
+<li><strong>int</strong> &#8211; user id of user to which to grant privilege</li>
+<li><strong>int</strong> &#8211; resource id to which to grant privilege</li>
+<li><strong>int</strong> &#8211; privilege to grant</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__user_access_to_group_exists">
+<tt class="descname">_HSAccessCore__user_access_to_group_exists</tt><big>(</big><em>requesting_id</em>, <em>user_id</em>, <em>group_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__user_access_to_group_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: Test whether there is an access record for a specific user, group, and asserting user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; user id of user assigning privilege</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; user id of user who needs privilege</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; group id of group to which privilege will be assigned</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8216;share_group_with_user&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__user_access_to_resource_exists">
+<tt class="descname">_HSAccessCore__user_access_to_resource_exists</tt><big>(</big><em>user_id</em>, <em>resource_id</em>, <em>asserting_user_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__user_access_to_resource_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: Determine whether there is a record currently sharing the resource, by this user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_id</strong> (<em>int</em>) &#8211; id of user to gain privilege</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; id of resource on which to grant privilege</li>
+<li><strong>asserting_user_id</strong> (<em>int</em>) &#8211; id of user granting privilege</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if there is a current record for this triple</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is a helper routine for &#8220;share_resource_with_user&#8221;.
+Note: this routine is not subject to access control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__user_invite_to_group_exists">
+<tt class="descname">_HSAccessCore__user_invite_to_group_exists</tt><big>(</big><em>requesting_id</em>, <em>group_id</em>, <em>user_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__user_invite_to_group_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether there is an access record for a specific user, group, and asserting user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_id</strong> (<em>int</em>) &#8211; user id of user who needs privilege</li>
+<li><strong>group_id</strong> (<em>int</em>) &#8211; group id of group to which privilege will be assigned</li>
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; user id of user assigning privilege</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if the invitation exists.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="HSAlib.HSAccessCore._HSAccessCore__user_invite_to_resource_exists">
+<tt class="descname">_HSAccessCore__user_invite_to_resource_exists</tt><big>(</big><em>requesting_id</em>, <em>resource_id</em>, <em>user_id</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__user_invite_to_resource_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether there is an access record for a specific user, resource, and asserting user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>user_id</strong> (<em>int</em>) &#8211; user id of user who needs privilege</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; resource id of resource to which privilege will be assigned</li>
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; user id of user assigning privilege</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if there is already an invitation to use a resource.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="HSAlib.HSAccessCore.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#HSAlib.HSAccessCore.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="HSAlib.HSAccessCore.accept_invitation_to_group">
 <tt class="descname">accept_invitation_to_group</tt><big>(</big><em>group_uuid</em>, <em>host_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.accept_invitation_to_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.accept_invitation_to_group" title="Permalink to this definition">¶</a></dt>
@@ -74,13 +1113,10 @@ only the functions necessary to the core logic.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of group for which to accept invitation</li>
 <li><strong>host_uuid</strong> (<em>str</em>) &#8211; user uuid of person who invited you</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -97,13 +1133,10 @@ only the functions necessary to the core logic.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource for which to accept invitation</li>
 <li><strong>host_uuid</strong> (<em>str</em>) &#8211; user uuid of person who invited you</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -121,8 +1154,6 @@ only the functions necessary to the core logic.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>folder_name</strong> (<em>str</em>) &#8211; The name of the folder</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -149,7 +1180,10 @@ Folders are local to the current user.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str: uuid of group just modified; created if necessary.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">uuid of group just modified; created if necessary.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -187,8 +1221,6 @@ then the operation is undertaken on behalf of the stated user.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metadata</strong> &#8211; a metadata record as returned by get_group_metadata</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
 </tbody>
 </table>
 <p>This asserts changes in group metadata subject to the restrictions in &#8216;assert_group&#8217;.
@@ -203,24 +1235,27 @@ It can be used to create new groups as well as to edit group metadata.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resource_path</strong> (<em>str</em>) &#8211; path to resource in iRODS  title</li>
+<li><strong>resource_title</strong> (<em>str</em>) &#8211; human-readable title</li>
+<li><strong>resource_immutable</strong> (<em>bool</em>) &#8211; whether resource is immutable</li>
+<li><strong>resource_published</strong> (<em>bool</em>) &#8211; whether resource is published</li>
+<li><strong>resource_discoverable</strong> (<em>bool</em>) &#8211; whether the existence of the resource should be advertised to others</li>
+<li><strong>resource_public</strong> (<em>bool</em>) &#8211; whether the data of the resource should be available to everyone</li>
+<li><strong>resource_shareable</strong> (<em>bool</em>) &#8211; whether resource is shareable by non-owners</li>
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</li>
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; user identifier of asserting user; omit to use current user.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">resource identifier used</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
+</td>
+</tr>
 </tbody>
 </table>
-<p>;type resource_published: bool
-:type resource_discoverable: bool
-:type resource_public: bool
-:type resource_shareable: bool
-:type resource_uuid: str?
-:type user_uuid: str?
-:param resource_path: path to resource in iRODS  title
-:param resource_title: human-readable title
-:param resource_immutable: whether resource is immutable
-:param resource_published: whether resource is published
-:param resource_discoverable: whether the existence of the resource should be advertised to others
-:param resource_public: whether the data of the resource should be available to everyone
-:param resource_shareable: whether resource is shareable by non-owners
-:param resource_uuid: resource identifier
-:param user_uuid: user identifier of asserting user; omit to use current user.
-:return: str: resource identifier used</p>
 <p>This routine creates or changes resource parameters.</p>
 <p>This is subject to several access control rules:</p>
 <ol class="arabic simple">
@@ -252,13 +1287,10 @@ an exception is raised.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; identifier of resource to put into tag</li>
 <li><strong>tag_name</strong> (<em>str</em>) &#8211; name of the tag</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -276,13 +1308,10 @@ Multiple asserts with different tags apply all of them</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; identifier of resource to put into folder</li>
 <li><strong>folder_name</strong> (<em>str</em>) &#8211; name of the folder</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -301,8 +1330,6 @@ Folders are local to the current user.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metadata</strong> (<em>dict</em>) &#8211; a metadata record as returned by get_resource_metadata</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
 </tbody>
 </table>
 <p>This is a wrapper for &#8216;assert_resource&#8217; that connects it to a return value
@@ -320,8 +1347,6 @@ fields incrementally.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag_name</strong> (<em>str</em>) &#8211; The name of the tag</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
 </tbody>
 </table>
 <p>Uses self.get_uuid(): the identity of the current user.</p>
@@ -337,16 +1362,13 @@ Folders are local to the current user.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>user_login</strong> (<em>str</em>) &#8211; user login name</li>
 <li><strong>user_name</strong> (<em>str</em>) &#8211; str: user print name</li>
 <li><strong>user_active</strong> (<em>bool</em>) &#8211; bool: whether user is active</li>
 <li><strong>user_admin</strong> (<em>bool</em>) &#8211; bool: whether user is an admin</li>
 <li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid to register or update; leave out to register a new user</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -382,8 +1404,6 @@ login is found, that is utilized as a unique key and that record is updated inst
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metadata</strong> (<em>dict&lt;str, str&gt;</em>) &#8211; a metadata record returned by get_user_metadata</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
 </tbody>
 </table>
 <p>Permissible assertions are those permissible to the currently logged-in user.</p>
@@ -404,7 +1424,10 @@ login is found, that is utilized as a unique key and that record is updated inst
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -442,7 +1465,10 @@ This returns one of the following strings:</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, or &#8216;none&#8217;</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -475,6 +1501,8 @@ This returns one of the following strings:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of folder names</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;str&gt;</td>
+</tr>
 </tbody>
 </table>
 <p>Uses self.get_uuid(): current user identity</p>
@@ -490,7 +1518,9 @@ This returns one of the following strings:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dict of group invitations.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
 </tr>
 </tbody>
 </table>
@@ -519,7 +1549,9 @@ List group invitations in the form:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dict of invitations sent by a user</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
 </tr>
 </tbody>
 </table>
@@ -550,6 +1582,8 @@ Note: this has been refactored to report on a single group object</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of dicts describing groups</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List&lt;Dict&gt;</td>
+</tr>
 </tbody>
 </table>
 <dl class="docutils">
@@ -569,6 +1603,8 @@ Note: this has been refactored to report on a single group object</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> &#8211; uuid of group</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict of group metadata</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
 </tr>
 </tbody>
 </table>
@@ -596,7 +1632,9 @@ Note: this has been refactored to report on a single group object</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of all group uuids and names , as dictionary objects</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of all group uuids and names, as dictionary objects</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
 </tr>
 </tbody>
 </table>
@@ -622,6 +1660,8 @@ not limit group visibility; just membership.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of dicts describing groups</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List&lt;Dict&gt;</td>
+</tr>
 </tbody>
 </table>
 <dl class="docutils">
@@ -638,9 +1678,11 @@ not limit group visibility; just membership.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of the group to check</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of the resource to check</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list: structure of resources</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of Dicts describing groups</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List&lt;Dict&gt;</td>
 </tr>
 </tbody>
 </table>
@@ -662,7 +1704,9 @@ not limit group visibility; just membership.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str: login name of current user</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">login name of current user</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -678,7 +1722,9 @@ not limit group visibility; just membership.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; identifier of group to report upon</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">int: number of owners</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of owners</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
 </tbody>
 </table>
@@ -694,7 +1740,9 @@ not limit group visibility; just membership.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; identifier of group to report upon; None reports upon current user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">int: number of groups joined</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of groups joined</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
 </tbody>
 </table>
@@ -711,7 +1759,9 @@ not limit group visibility; just membership.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; identifier of group to report upon; None reports upon current user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">int: number of groups owned</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of groups owned</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
 </tbody>
 </table>
@@ -728,7 +1778,9 @@ not limit group visibility; just membership.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; identifier of resource to report upon</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">int: number of owners</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of owners</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
 </tbody>
 </table>
@@ -744,7 +1796,9 @@ not limit group visibility; just membership.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; identifier of group to report upon; None reports upon current user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">int: number of resources held</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of resources held</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
 </tbody>
 </table>
@@ -761,7 +1815,9 @@ not limit group visibility; just membership.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; identifier of group to report upon; None reports upon current user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">int: number of resources owned</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of resources owned</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
 </tbody>
 </table>
@@ -778,7 +1834,9 @@ not limit group visibility; just membership.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dict of resource invitations.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
 </tr>
 </tbody>
 </table>
@@ -807,7 +1865,9 @@ List resource invitations in the form:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dict of invitations sent by user.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
 </tr>
 </tbody>
 </table>
@@ -835,7 +1895,9 @@ List resource invitations in the form:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier for which to fetch metadata</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dict object containing all metadata for a resource.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
 </tr>
 </tbody>
 </table>
@@ -873,6 +1935,8 @@ of &#8220;who to blame&#8221; for the last change.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict object of contents</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict&lt;str&gt;</td>
+</tr>
 </tbody>
 </table>
 <p>Uses: self.get_uuid(): the current user.
@@ -893,7 +1957,9 @@ This returns a dictionary structure of the form:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of the group to check</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list: structure of resources</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of Dicts of resource info</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List&lt;Dict&gt;</td>
 </tr>
 </tbody>
 </table>
@@ -921,6 +1987,8 @@ This returns a dictionary structure of the form:</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of resources containing dict items</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List&lt;Dict&gt;</td>
+</tr>
 </tbody>
 </table>
 <p>This returns a list of resource dict records, in the format:</p>
@@ -947,6 +2015,8 @@ This returns a dictionary structure of the form:</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict object of contents</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict&lt;str&gt;</td>
+</tr>
 </tbody>
 </table>
 <p>Uses self.get_uuid(): the current user.</p>
@@ -970,6 +2040,8 @@ This returns a dictionary structure of the form:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of tag names</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;str&gt;</td>
+</tr>
 </tbody>
 </table>
 <p>Uses self.get_uuid(): current user identity</p>
@@ -986,6 +2058,8 @@ This returns a dictionary structure of the form:</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user for which to fetch metadata; If None, then return data on current user.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dict of metadata for the login specified</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Dict</td>
 </tr>
 </tbody>
 </table>
@@ -1008,7 +2082,10 @@ The extra data is not utilize in &#8216;assert_user_metadata&#8217;.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, or &#8216;none&#8217;</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -1045,7 +2122,10 @@ This returns one of the following strings:</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -1077,6 +2157,8 @@ This returns one of the following strings:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of user metadata dictionaries</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List&lt;Dict&gt;</td>
+</tr>
 </tbody>
 </table>
 <p>Return format is a list of dictionaries of the form:</p>
@@ -1104,6 +2186,8 @@ This returns one of the following strings:</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of resources containing dict items</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List&lt;Dict&gt;</td>
+</tr>
 </tbody>
 </table>
 <p>This returns a list of user dict records, in the format:</p>
@@ -1126,7 +2210,9 @@ This returns one of the following strings:</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">str: uuid of current user</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">uuid of current user</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -1142,7 +2228,9 @@ This returns one of the following strings:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group object identifier</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether group object identifier is registered</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">whether group object identifier is registered</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1160,7 +2248,9 @@ is valid before performing further actions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: true if group is active.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if group is active.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1176,7 +2266,9 @@ is valid before performing further actions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: true if group is discoverable.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if group is discoverable.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1197,7 +2289,10 @@ is valid before performing further actions.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if group uuid is owned by user uuid</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if group uuid is owned by user uuid</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
 </td>
 </tr>
 </tbody>
@@ -1214,7 +2309,9 @@ is valid before performing further actions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: true if group is discoverable.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if group is discoverable.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1235,7 +2332,10 @@ is valid before performing further actions.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if group uuid is readable by user uuid</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if group uuid is readable by user uuid</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
 </td>
 </tr>
 </tbody>
@@ -1256,7 +2356,10 @@ is valid before performing further actions.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if group uuid is read/write to user uuid</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if group uuid is read/write to user uuid</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
 </td>
 </tr>
 </tbody>
@@ -1273,7 +2376,9 @@ is valid before performing further actions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: true if group is shareable.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if group is shareable.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1290,7 +2395,9 @@ is valid before performing further actions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user, or None to use current authorized user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of dict entries, one per group</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of Dict entries for groups of user.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List&lt;Dict&gt;</td>
 </tr>
 </tbody>
 </table>
@@ -1312,14 +2419,11 @@ is valid before performing further actions.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>group_uuid</strong> &#8211; </li>
 <li><strong>user_uuid</strong> &#8211; </li>
 <li><strong>privilege_code</strong> &#8211; </li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -1334,14 +2438,11 @@ is valid before performing further actions.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> &#8211; </li>
 <li><strong>user_uuid</strong> &#8211; </li>
 <li><strong>privilege_code</strong> &#8211; </li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -1356,13 +2457,10 @@ is valid before performing further actions.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>group_uuid</strong> &#8211; </li>
 <li><strong>host_uuid</strong> &#8211; user uuid of person who invited</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -1378,13 +2476,10 @@ is valid before performing further actions.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> &#8211; </li>
 <li><strong>host_uuid</strong> &#8211; user uuid of person who invited</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -1402,7 +2497,9 @@ is valid before performing further actions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource is registered</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">whether resource is registered</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1421,6 +2518,8 @@ is valid before performing further actions.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as published</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -1435,7 +2534,9 @@ is valid before performing further actions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as immutable</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if resource has been flagged as immutable</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1465,7 +2566,10 @@ issued a data citation.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if user owns resource.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if user owns resource.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
 </td>
 </tr>
 </tbody>
@@ -1487,6 +2591,8 @@ is not subject to overrides from resource flags including &#8216;immutable&#8217
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as published</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -1502,6 +2608,8 @@ is not subject to overrides from resource flags including &#8216;immutable&#8217
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource identifier</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as published</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1521,7 +2629,10 @@ is not subject to overrides from resource flags including &#8216;immutable&#8217
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if user has read-only privilege over resource.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if user has read-only privilege over resource.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
 </td>
 </tr>
 </tbody>
@@ -1543,7 +2654,10 @@ is not subject to overrides from resource flags including &#8216;immutable&#8217
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if user has readwrite privilege over resource.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if user has readwrite privilege over resource.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
 </td>
 </tr>
 </tbody>
@@ -1563,6 +2677,8 @@ is not subject to overrides from resource flags including &#8216;immutable&#8217
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: whether resource has been flagged as published</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -1576,8 +2692,6 @@ is not subject to overrides from resource flags including &#8216;immutable&#8217
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>folder_name</strong> (<em>str</em>) &#8211; The name of the folder</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -1594,8 +2708,6 @@ Folders are local to the current user.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of group to delete</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
@@ -1625,13 +2737,10 @@ there is a band-aid fix that does the cascade in the application.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; identifier of resource to put into tag</li>
 <li><strong>tag_name</strong> (<em>str</em>) &#8211; name of the tag</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -1649,13 +2758,10 @@ This removes an assertion of one tag while leaving the others alone.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; identifier of resource to put into folder</li>
 <li><strong>folder_name</strong> (<em>str</em>) &#8211; name of the folder</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -1672,8 +2778,6 @@ This removes an assertion of one tag while leaving the others alone.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag_name</strong> (<em>str</em>) &#8211; The name of the tag</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
 </tbody>
 </table>
 <p>Uses self.get_uuid(): the identity of the current user.</p>
@@ -1689,14 +2793,11 @@ Folders are local to the current user.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier of group to which privilege should be assigned</li>
 <li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user to whom privilege should be granted</li>
 <li><strong>privilege_code</strong> (<em>str</em>) &#8211; privilege to be granted.</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -1735,14 +2836,11 @@ Folders are local to the current user.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; the resource to be shared</li>
 <li><strong>group_uuid</strong> (<em>str</em>) &#8211; the group with which to share it: self.get_uuid() must be a member.</li>
 <li><strong>privilege_code</strong> (<em>str</em>) &#8211; the privilege to assign: must be less than or equal to self.get_uuid()&#8217;s privilege</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -1771,14 +2869,11 @@ downgraded, but this has not been implemented.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> &#8211; str: uuid of resource to affect (key to resource table)</li>
 <li><strong>user_uuid</strong> &#8211; str: login name of user to gain access (key to users table)</li>
 <li><strong>privilege_code</strong> &#8211; str: privilege to grant (key to privileges table)</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -1801,8 +2896,7 @@ privileges for another user.</li>
 <dd><p>Uninvite a user the current user invited; does not undo other invitations</p>
 <p>Revoke an invitation to join a group
 :param group_uuid: uuid of group
-:param user_uuid: uuid of user
-:return:</p>
+:param user_uuid: uuid of user</p>
 </dd></dl>
 
 <dl class="method">
@@ -1811,8 +2905,7 @@ privileges for another user.</li>
 <dd><p>Uninvite a user the current user invited; does not undo other invitations</p>
 <p>Revoke an invitation to join a resource
 :param resource_uuid: uuid of resource
-:param user_uuid: uuid of user
-:return:</p>
+:param user_uuid: uuid of user</p>
 </dd></dl>
 
 <dl class="method">
@@ -1823,13 +2916,10 @@ privileges for another user.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>group_uuid</strong> (<em>str</em>) &#8211; group identifier of group for which privilege should be removed.</li>
 <li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user for whom privilege should be removed; omit for current user.</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -1850,13 +2940,10 @@ privileges for another user.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource to change</li>
 <li><strong>group_uuid</strong> (<em>str</em>) &#8211; group with whom resource is currently potentially shared</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -1873,13 +2960,10 @@ includes all grants of privilege no matter what the source within the group.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resource_uuid</strong> (<em>str</em>) &#8211; resource to change</li>
 <li><strong>user_uuid</strong> (<em>str</em>) &#8211; user with whom resource is currently shared; omit for current user</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -1904,7 +2988,9 @@ before all sharing is removed. It is possible that a user will have several diff
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool: True if user exists</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if user exists</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1926,7 +3012,10 @@ unintentional exceptions from use of a non-existent uuid.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if the uuid is in the group</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool: True if the uuid is in the group</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
 </td>
 </tr>
 </tbody>
@@ -1945,7 +3034,9 @@ The reason for this is that membership must not account for public groups (which
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if user is active.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1966,7 +3057,9 @@ owner is active.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if user has admin privileges</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
 </tbody>
 </table>
@@ -1980,14 +3073,9 @@ Administrative users can, for example:</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt>
-<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccessCore</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>This class consists of the core methods that contact iRODS</p>
-<p>Unlike HSAccess, it does not contain helper functions;
-only the functions necessary to the core logic.</p>
-</dd></dl>
-
+</div>
+<div class="section" id="hsaccess-convenience-functions">
+<h2>HSAccess: Convenience functions<a class="headerlink" href="#hsaccess-convenience-functions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="HSAlib.HSAccess">
 <em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccess</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccess" title="Permalink to this definition">¶</a></dt>
@@ -2002,7 +3090,9 @@ only the functions necessary to the core logic.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; identifier of group</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested group</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">print name for requested group</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -2018,7 +3108,9 @@ only the functions necessary to the core logic.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; identifier of resource</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested resource</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">print name for requested resource</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -2034,7 +3126,9 @@ only the functions necessary to the core logic.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; identifier of user, None for current user</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str: print name for requested user</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">print name for requested user</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -2042,12 +3136,28 @@ only the functions necessary to the core logic.</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt>
-<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccess</tt><big>(</big><em>irods_user</em>, <em>irods_password</em>, <em>db_database</em>, <em>db_user</em>, <em>db_password</em>, <em>db_host</em>, <em>db_port</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccess"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Access control class for HydroShare Users, Resources, and Groups</p>
+<dt id="HSAlib.HSAccessException">
+<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccessException</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for access-level problems</p>
 </dd></dl>
 
+<dl class="class">
+<dt id="HSAlib.HSAUsageException">
+<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAUsageException</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAUsageException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAUsageException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for parameter usage problems.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="HSAlib.HSAIntegrityException">
+<em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAIntegrityException</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAIntegrityException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAIntegrityException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for database failures.</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -2056,6 +3166,16 @@ only the functions necessary to the core logic.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">IrodsShare module documentation</a><ul>
+<li><a class="reference internal" href="#hsaccesscore-irods-hydroshare-communication">HSAccessCore: iRODS/HydroShare communication</a></li>
+<li><a class="reference internal" href="#hsaccess-convenience-functions">HSAccess: Convenience functions</a></li>
+<li><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="usage.html"
                         title="previous chapter">IrodsShare HSAccess usage</a></p>
