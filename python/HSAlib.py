@@ -133,7 +133,6 @@ class HSAccessCore(object):
         :param user_active: bool: whether user is active
         :param user_admin: bool: whether user is an admin
         :param user_uuid: uuid to register or update; leave out to register a new user
-        :return:
 
         This is used in two forms:
 
@@ -191,7 +190,6 @@ class HSAccessCore(object):
         :param user_name: user print name
         :param user_active: whether user is active
         :param user_admin: whether user is an administrator
-        :return:
 
         Add a new previously non-existent user record to the registered users. user_uuid and user_login
         must both be independently unique.
@@ -220,7 +218,6 @@ class HSAccessCore(object):
         :param user_name: user print name
         :param user_active: whether user is active
         :param user_admin: whether user is an administrator
-        :return:
 
         Update an existing user record in the registered users table. user_uuid and user_login must
         remain independently unique.
@@ -243,7 +240,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit to report on current user
-        :return: bool: True if user exists
+        :return: True if user exists
+        :rtype: bool
 
         This checks a uuid and returns True if it exists. This is used to avoid
         unintentional exceptions from use of a non-existent uuid.
@@ -263,7 +261,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit to report on current user
-        :return: bool
+        :return: True if user has admin privileges 
+        :rtype: bool
 
         This reports whether the given user has administrative privileges.
         Administrative users can, for example:
@@ -271,7 +270,6 @@ class HSAccessCore(object):
         1. register new users with 'assert_user'
 
         2. impersonate a given user and perform selected operations by proxy for the user.
-
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
@@ -285,7 +283,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit to report on current user
-        :return: bool
+        :return: True if user is active.
+        :rtype: bool
 
         This reports whether a given user is active. Inactive users cannot login or access anything,
         but their privileges and owned documents are kept intact. It is legal for a resource or group
@@ -310,6 +309,7 @@ class HSAccessCore(object):
         :type login: str
         :param login: string login name
         :return: integer user id
+        :rtype: int
         """
         self.__cur.execute("select user_id from users where user_login=%s", (login,))
         if self.__cur.rowcount > 1:
@@ -326,7 +326,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit to report on current user
-        :return: int: user id
+        :return: user id for use in internal functions. 
+        :rtype: int
 
         The return value of this function is used as the internal key in the
         access control database, but never, ever exposed to users. It is
@@ -349,7 +350,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit to report on current user
-        :return: str: user login
+        :return: user login name. 
+        :rtype: str
 
         This returns the login name for a given user uuid. This is currently an iRODS login and has no
         meaning in the system. It is used as a last resort in 'assert_user' to insure that we do not
@@ -372,7 +374,8 @@ class HSAccessCore(object):
 
         :type login: str
         :param login: string login name
-        :return: str: user uuid
+        :return: user uuid
+        :rtype: str
 
         This returns the user uuid from the login name. While this works reliably
         because login names are unique, this is only used to construct test cases.
@@ -390,7 +393,8 @@ class HSAccessCore(object):
         """
         PRIVATE: Get a list of all registered user logins
 
-        :return: list: of login names
+        :return: list of login names
+        :rtype: List<str>
 
         Gets a list of user login names. These are used internally as unique
         identifiers but not accepted as command parameters.
@@ -412,6 +416,7 @@ class HSAccessCore(object):
         Get the registered user list
 
         :return: list of user metadata dictionaries
+        :rtype: List<Dict>
 
         Return format is a list of dictionaries of the form::
 
@@ -447,6 +452,7 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param user_uuid: uuid of user for which to fetch metadata; If None, then return data on current user.
         :return: Dict of metadata for the login specified
+        :rtype: Dict
 
         This gives more complete information than 'get_users', including the date of user creation.
         The extra data is not utilize in 'assert_user_metadata'.
@@ -478,7 +484,6 @@ class HSAccessCore(object):
 
         :type metadata: dict<str, str>
         :param metadata: a metadata record returned by get_user_metadata
-        :return:
 
         Permissible assertions are those permissible to the currently logged-in user.
         """
@@ -503,7 +508,8 @@ class HSAccessCore(object):
         """
         Get information on all existing groups
 
-        :return: a list of all group uuids and names , as dictionary objects
+        :return: a list of all group uuids and names, as dictionary objects
+        :rtype: Dict 
 
         This returns a list of elements of the form::
 
@@ -529,6 +535,7 @@ class HSAccessCore(object):
 
         :param user_uuid: the user to report on; omit to report on current user.
         :return: list of dicts describing groups
+        :rtype: List<Dict> 
 
         This returns a list of groups in the following format::
             { 'name': *name of group*, 'uuid': *uuid of group* } ]
@@ -556,6 +563,7 @@ class HSAccessCore(object):
 
         :param group_uuid: the group to report on; omit to report on current user.
         :return: list of dicts describing groups
+        :rtype: List<Dict> 
 
         This returns a list of groups in the following format::
             { 'name': *name of group*, 'uuid': *uuid of group* } ]
@@ -580,6 +588,7 @@ class HSAccessCore(object):
 
         :param group_uuid: uuid of group
         :return: dict of group metadata
+        :rtype: Dict 
 
         This returns a dictionary record with the structure::
 
@@ -622,7 +631,6 @@ class HSAccessCore(object):
         Assert changes in user metadata
 
         :param metadata: a metadata record as returned by get_group_metadata
-        :return:
 
         This asserts changes in group metadata subject to the restrictions in 'assert_group'.
         It can be used to create new groups as well as to edit group metadata.
@@ -643,7 +651,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: group object identifier
-        :return: int: group_id in HSAccess database
+        :return: group_id in HSAccess database, for use in internal functions. 
+        :rtype: int 
 
         This returns the private identifier for a group that is used internally as
         a join target. This is an integer for speed. This identifier is never exposed
@@ -664,7 +673,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: group object identifier
-        :return: str: group name
+        :return: group name
+        :rtype: str 
 
         This returns the name of a group from its uuid. Group names are not generally unique and
         cannot be used as keys from which to locate groups.
@@ -694,7 +704,8 @@ class HSAccessCore(object):
         :param group_public: bool: whether group members are publicly accessible.
         :param group_uuid: str: group identifier, if omitted or unset, then a new group_uuid is created and returned.
         :param user_uuid: user identifier; omit to utilize current user.
-        :return: str: uuid of group just modified; created if necessary.
+        :return: uuid of group just modified; created if necessary.
+        :rtype: str 
 
         This creates a new group subject to several conventions:
 
@@ -769,7 +780,6 @@ class HSAccessCore(object):
         :param group_shareable: whether group can be managed by non-owners.
         :param group_discoverable: whether group is discoverable in listings.
         :param group_public: whether group members are listable.
-        :return:
 
         Notes:
 
@@ -796,7 +806,6 @@ class HSAccessCore(object):
         :param group_uuid: group identifier
         :param group_name: name of group
         :param group_active: group active or retired
-        :return:
 
         Notes:
 
@@ -828,7 +837,6 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: uuid of group to delete
-        :return:
 
         Retractions are handled via database cascade logic. This deletes all information about the
         group, including every resource held with that group.
@@ -862,7 +870,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: group object identifier
-        :return: bool: whether group object identifier is registered
+        :return: whether group object identifier is registered
+        :rtype: bool 
 
         This is used to avoid execution exceptions by ensuring that a group uuid
         is valid before performing further actions.
@@ -879,7 +888,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: group identifier
-        :return: bool: true if group is active.
+        :return: True if group is active.
+        :rtype: bool 
         """
         meta = self.get_group_metadata(group_uuid)
         return meta['active']
@@ -890,7 +900,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: group identifier
-        :return: bool: true if group is shareable.
+        :return: True if group is shareable.
+        :rtype: bool 
 
         If a group is shareable, then users with readwrite privilege can invite members. Otherwise, they cannot.
         """
@@ -903,7 +914,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: group identifier
-        :return: bool: true if group is discoverable.
+        :return: True if group is discoverable.
+        :rtype: bool 
 
         If a group is discoverable, then it appears in the active groups along with its owner contact information.
         """
@@ -916,7 +928,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: group identifier
-        :return: bool: true if group is discoverable.
+        :return: True if group is discoverable.
+        :rtype: bool 
 
         If a group is public, then others can see group members.
         """
@@ -933,7 +946,8 @@ class HSAccessCore(object):
 
         :type resource_uuid: str
         :param resource_uuid:  resource object identifier
-        :return: int: private resource_id in HSAccess database
+        :return: private resource_id in HSAccess database, for use in internal functions. 
+        :rtype: int 
 
         This returns the private and internal unique identifier of the resource object.
         This id is never exposed to users.
@@ -954,7 +968,8 @@ class HSAccessCore(object):
 
         :type resource_path: str
         :param resource_path: str: resource object path in iRODS
-        :return: int: resource_uuid in HSAccess database
+        :return: resource_uuid in HSAccess database, for use in internal functions. 
+        :rtype: int 
 
         Paths in iRODS are assumed to be unique. This does the same thing as '__get_resource_id_from_uuid'
         but for paths rather than uuids.
@@ -975,7 +990,8 @@ class HSAccessCore(object):
 
         :type resource_uuid: str
         :param resource_uuid: resource identifier for which to fetch metadata
-        :return: dict
+        :return: Dict object containing all metadata for a resource. 
+        :rtype: Dict
 
         This returns a dictionary item of the format::
 
@@ -1034,7 +1050,6 @@ class HSAccessCore(object):
 
         :type metadata: dict
         :param metadata: a metadata record as returned by get_resource_metadata
-        :return:
 
         This is a wrapper for 'assert_resource' that connects it to a return value
         format from 'get_resource_metadata'. This can be used to edit resource
@@ -1061,12 +1076,12 @@ class HSAccessCore(object):
         :type resource_title: str
         :type resource_shareable: bool
         :type resource_immutable: bool
-        ;type resource_published: bool
+        :type resource_published: bool
         :type resource_discoverable: bool
         :type resource_public: bool
         :type resource_shareable: bool
-        :type resource_uuid: str?
-        :type user_uuid: str?
+        :type resource_uuid: str
+        :type user_uuid: str
         :param resource_path: path to resource in iRODS  title
         :param resource_title: human-readable title
         :param resource_immutable: whether resource is immutable
@@ -1076,7 +1091,8 @@ class HSAccessCore(object):
         :param resource_shareable: whether resource is shareable by non-owners
         :param resource_uuid: resource identifier
         :param user_uuid: user identifier of asserting user; omit to use current user.
-        :return: str: resource identifier used
+        :return: resource identifier used
+        :rtype: str
 
         This routine creates or changes resource parameters.
 
@@ -1175,13 +1191,13 @@ class HSAccessCore(object):
                               resource_discoverable, resource_public,
                               resource_shareable):
         """
-        PRIVATE: add a new resource to the registry
+        PRIVATE: add a new resource to the registry. 
 
         :type resource_path: str
         :type resource_title: str
         :type resource_shareable: bool
         :type resource_immutable: bool
-        ;type resource_published: bool
+        :type resource_published: bool
         :type resource_discoverable: bool
         :type resource_public: bool
         :type resource_shareable: bool
@@ -1195,7 +1211,6 @@ class HSAccessCore(object):
         :param resource_discoverable: whether the existence of the resource should be advertised to others
         :param resource_public: whether the data of the resource should be available to everyone
         :param resource_shareable: whether resource is shareable by non-owners
-        :return:
 
         This adds a new and previously non-existent resource to the resource registry. resource_uuid and
         resource_path must be unique. If these are not unique, an exception is raised.
@@ -1223,7 +1238,7 @@ class HSAccessCore(object):
         :type resource_path: str
         :type resource_title: str
         :type resource_immutable: bool
-        ;type resource_published: bool
+        :type resource_published: bool
         :type resource_discoverable: bool
         :type resource_public: bool
         :type resource_shareable: bool
@@ -1239,7 +1254,6 @@ class HSAccessCore(object):
         :param resource_discoverable: whether the existence of the resource should be advertised to others
         :param resource_public: whether the data of the resource should be available to everyone
         :param resource_shareable: whether resource is shareable by non-owners
-        :return:
 
         This updates an existing resource to the resource registry. resource_uuid and
         resource_path must be unique and a record for resource_uuid must be present.
@@ -1269,7 +1283,8 @@ class HSAccessCore(object):
 
         :type resource_uuid: str
         :param resource_uuid: resource identifier
-        :return: bool: whether resource is registered
+        :return: whether resource is registered
+        :rtype: bool 
 
         This determines whether a given resource uuid corresponds to an existing resource.
         """
@@ -1285,8 +1300,9 @@ class HSAccessCore(object):
 
         :type resource_uuid: str
         :param resource_uuid:  resource identifier
-        :return: bool: whether resource has been flagged as immutable
-
+        :return: True if resource has been flagged as immutable
+        :rtype: bool 
+ 
         If a resource is immutable:
 
         1. All write access is denied by all users regardless of privilege. This includes
@@ -1310,6 +1326,7 @@ class HSAccessCore(object):
         :type resource_uuid: str
         :param resource_uuid:  resource identifier
         :return: bool: whether resource has been flagged as published
+        :rtype: bool 
         """
         meta = self.get_resource_metadata(resource_uuid)
         return meta['published']
@@ -1321,6 +1338,7 @@ class HSAccessCore(object):
         :type resource_uuid: str
         :param resource_uuid:  resource identifier
         :return: bool: whether resource has been flagged as published
+        :rtype: bool 
         """
         meta = self.get_resource_metadata(resource_uuid)
         return meta['discoverable']
@@ -1332,6 +1350,7 @@ class HSAccessCore(object):
         :type resource_uuid: str
         :param resource_uuid:  resource identifier
         :return: bool: whether resource has been flagged as published
+        :rtype: bool 
         """
         meta = self.get_resource_metadata(resource_uuid)
         return meta['public']
@@ -1343,6 +1362,7 @@ class HSAccessCore(object):
         :type resource_uuid: str
         :param resource_uuid:  resource identifier
         :return: bool: whether resource has been flagged as published
+        :rtype: bool 
         """
         meta = self.get_resource_metadata(resource_uuid)
         return meta['shareable']
@@ -1355,8 +1375,9 @@ class HSAccessCore(object):
         PRIVATE: translate from privilege code to database id
 
         :type code: str:
-        :param code: str: code for privilege level: own, rw, ro, ns
-        :return: int: privilege_id in database system
+        :param code: code for privilege level: own, rw, ro, ns
+        :return: privilege_id in database system
+        :rtype: int 
 
         This routine translates a privilege code into an integer. Current privilege codes include:
 
@@ -1422,7 +1443,8 @@ class HSAccessCore(object):
         :param resource_uuid:
         :type resource_uuid: str
         :param resource_uuid: uuid of resource
-        :return: str
+        :return: one of 'own', 'rw', 'ro', 'none' 
+        :rtype: str 
 
         This returns one of the following strings:
 
@@ -1456,7 +1478,8 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param resource_uuid: uuid of resource
         :param user_uuid: uuid of user; omit to report on current user
-        :return: int: privilege number 1-4
+        :return: privilege number 1-4
+        :rtype: int 
 
         The access privileges are the minimum (most powerful) privilege granted by any one user.
         These include:
@@ -1502,7 +1525,8 @@ class HSAccessCore(object):
         :type resource_uuid: str
         :param resource_uuid: uuid of resource
         :param user_uuid: uuid of user; omit to report on current user
-        :return: str
+        :return: one of 'own', 'rw', 'ro', or 'none' 
+        :rtype: str 
 
         This checks for both user resource permissions and resource flags.
         This returns one of the following strings:
@@ -1598,6 +1622,7 @@ class HSAccessCore(object):
         :param resource_uuid: resource uuid: key to resources table
         :param code: privilege code: key to privileges table
         :return: bool: True if resource is accessible to user in the mode indicated by code
+        :rtype: bool 
 
         This routine checks if a resource is accessible at a given level.
         The codes include:
@@ -1637,6 +1662,7 @@ class HSAccessCore(object):
         :param resource_uuid: resource uuid: key to resources table
         :param code: privilege code: key to privileges table
         :return: bool: True if resource is accessible to user in the mode indicated by code
+        :rtype: bool 
 
         This routine checks if a resource is accessible at a given level.
         The codes include:
@@ -1676,6 +1702,7 @@ class HSAccessCore(object):
         :param resource_uuid: resource identifier for resource to be checked for access
         :param user_uuid: uuid of user whose privileges should be checked; omit to check current user
         :return: bool: True if user owns resource.
+        :rtype: bool 
 
         This routine is a bit strange, because ownership -- unlike read/write and read-only privileges --
         is not subject to overrides from resource flags including 'immutable' and 'public".
@@ -1695,6 +1722,7 @@ class HSAccessCore(object):
         :param resource_uuid: resource identifier for resource to be checked for access
         :param user_uuid: uuid of user whose privileges should be checked; omit to check current user
         :return: bool: True if user has readwrite privilege over resource.
+        :rtype: bool 
 
         This is subject to resource override flags including 'immutable' and 'public'.
         """
@@ -1711,6 +1739,7 @@ class HSAccessCore(object):
         :param resource_uuid: resource identifier for resource to be checked for access
         :param user_uuid: uuid of user whose privileges should be checked; omit to check current user
         :return: bool: True if user has read-only privilege over resource.
+        :rtype: bool 
 
         This is subject to resource override flags including 'immutable' and 'public'.
         """
@@ -1737,7 +1766,6 @@ class HSAccessCore(object):
         :param resource_uuid: str: uuid of resource to affect (key to resource table)
         :param user_uuid: str: login name of user to gain access (key to users table)
         :param privilege_code: str: privilege to grant (key to privileges table)
-        :return:
 
         This shares a resource with a user other than self. The current user is implicitly
         the initiator of the sharing.
@@ -1780,7 +1808,7 @@ class HSAccessCore(object):
         :param user_id int: user id of user to which to grant privilege
         :param resource_id int: resource id to which to grant privilege
         :param privilege_id int: privilege to grant
-        :return:None
+
         """
         #  sufficient privileges present to share this resource
         if self.__user_access_to_resource_exists(user_id, resource_id, requesting_id):
@@ -1799,11 +1827,12 @@ class HSAccessCore(object):
 
         :type user_id: int
         :type resource_id: int
-        :type asserting_user_id
+        :type asserting_user_id: int
         :param user_id: id of user to gain privilege
         :param resource_id: id of resource on which to grant privilege
         :param asserting_user_id: id of user granting privilege
-        :return: bool: True if there is a current record for this triple
+        :return: True if there is a current record for this triple
+        :rtype: bool 
 
         This is a helper routine for "share_resource_with_user".
         Note: this routine is not subject to access control.
@@ -1831,7 +1860,6 @@ class HSAccessCore(object):
         :param user_id: user id of affected user
         :param resource_id: resource id of affected resource
         :param privilege_id: privilege id to assign
-        :return:
 
         This is a helper routine for "share_resource_with_user". If the resource record
         to be updated does not exist, an exception is raised.
@@ -1856,7 +1884,6 @@ class HSAccessCore(object):
         :param user_id: user id of affected user
         :param resource_id: resource id of affected resource
         :param privilege_id: privilege id to assign
-        :return:
 
         This is a helper routine for 'share_resource_with_user'. If the resource record
         to be updated does not exist, an exception is raised.
@@ -1875,7 +1902,6 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param resource_uuid: resource to change
         :param user_uuid: user with whom resource is currently shared; omit for current user
-        :return:
 
         Note: since sharing is cumulative, each user sharing a document with another must separately retract sharing
         before all sharing is removed. It is possible that a user will have several different paths to a resource.
@@ -1930,7 +1956,6 @@ class HSAccessCore(object):
         :param resource_uuid: the resource to be shared
         :param group_uuid: the group with which to share it: self.get_uuid() must be a member.
         :param privilege_code: the privilege to assign: must be less than or equal to self.get_uuid()'s privilege
-        :return:
 
         Share a resource with a group as the current user.
 
@@ -1985,7 +2010,6 @@ class HSAccessCore(object):
         :param group_id: internal group id of affected group
         :param resource_id: internal resource id of affected resource
         :param requesting_id: internal id of user requesting change
-        :return:
 
         This is a helper routine for 'share_resource_with_group'.
         """
@@ -2012,7 +2036,6 @@ class HSAccessCore(object):
         :param group_id: id of group to modify
         :param resource_id: id of resource to modify
         :param privilege_id: privilege to assign
-        :return:
 
         This is a helper routine for 'share_resource_with_group'.
 
@@ -2036,7 +2059,6 @@ class HSAccessCore(object):
         :param group_id: id of group to modify
         :param resource_id: id of resource to modify
         :param privilege_id: privilege to assign
-        :return:
 
         This is a helper routine for 'share_resource_with_group'.
 
@@ -2054,7 +2076,6 @@ class HSAccessCore(object):
         :type group_uuid: str
         :param resource_uuid: resource to change
         :param group_uuid: group with whom resource is currently potentially shared
-        :return:
 
         Only a group owner or administrator may revoke all privileges over a resource.  This
         includes all grants of privilege no matter what the source within the group.
@@ -2082,6 +2103,7 @@ class HSAccessCore(object):
         :param user_uuid: uuid of a valid user, omit to check current user
         :param group_uuid: group uuid of a valid group
         :return: bool: True if the uuid is in the group
+        :rtype: bool 
 
         Note: this uses user_group_privilege whereas access uses cumulative_user_group_privilege.
         The reason for this is that membership must not account for public groups (which is most of them).
@@ -2208,7 +2230,8 @@ class HSAccessCore(object):
         :type group_uuid: str
         :param group_uuid: uuid of group
         :param user_uuid: uuid of user; omit to report on current user
-        :return: str
+        :return: one of 'own', 'rw', 'ro', 'none' 
+        :rtype: str 
 
         This checks for both user group permissions and group flags, including group_public.
         This returns one of the following strings:
@@ -2243,7 +2266,8 @@ class HSAccessCore(object):
         :type group_uuid: str
         :param group_uuid: uuid of group
         :param user_uuid: uuid of user; omit to report on current user
-        :return: str
+        :return: one of 'own', 'rw', 'ro', or 'none' 
+        :rtype: str 
 
         This checks for both user group permissions and group flags, including group_public.
         This returns one of the following strings:
@@ -2278,7 +2302,8 @@ class HSAccessCore(object):
         :type group_uuid: str
         :param user_uuid: uuid of user for which to obtain privilege
         :param group_uuid: group to which to allow access
-        :return: int: privilege code 1-4
+        :return: privilege code 1-4
+        :rtype: int
 
         This returns the cumulative user privilege over a group, including whether the group is public if the
         user is not a member. This is a union of privileges from membership and the group public flag.
@@ -2311,7 +2336,8 @@ class HSAccessCore(object):
         :type group_uuid: str
         :param user_uuid: uuid of user for which to obtain privilege
         :param group_uuid: group to which to allow access
-        :return: int: privilege code 1-4
+        :return: privilege number 1-4
+        :rtype: int
 
         This returns the cumulative user privilege over a group, including whether the group is public if the
         user is not a member. This is a union of privileges from membership and the group public flag.
@@ -2344,6 +2370,7 @@ class HSAccessCore(object):
         :param group_uuid: uuid of group for which to check privilege (key to groups table)
         :param code: privilege code (key to privileges table)
         :return: bool: True if group is accessible to user in the provided mode
+        :rtype: bool 
         """
         requested_priv = self.__get_privilege_id_from_code(code)
         actual_priv = self.__get_cumulative_user_privilege_over_group(group_uuid, user_uuid)
@@ -2366,6 +2393,7 @@ class HSAccessCore(object):
         :param user_uuid: uuid of user to check
         :param group_uuid: group uuid of group to check
         :return: bool: True if group uuid is owned by user uuid
+        :rtype: bool 
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
@@ -2381,6 +2409,7 @@ class HSAccessCore(object):
         :param user_uuid: uuid of user to check
         :param group_uuid: group uuid of group to check
         :return: bool: True if group uuid is read/write to user uuid
+        :rtype: bool 
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
@@ -2396,6 +2425,7 @@ class HSAccessCore(object):
         :param user_uuid: uuid of user to check
         :param group_uuid: group uuid of group to check
         :return: bool: True if group uuid is readable by user uuid
+        :rtype: bool 
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
@@ -2409,7 +2439,6 @@ class HSAccessCore(object):
         :param group_uuid:
         :param user_uuid:
         :param privilege_code:
-        :return: None
         """
         user_id = self.__get_user_id_from_uuid(user_uuid)
         privilege_id = self.__get_privilege_id_from_code(privilege_code)
@@ -2445,7 +2474,6 @@ class HSAccessCore(object):
         :param user_id: id of user to be enabled
         :param group_id: id of group to be modified
         :param privilege_id: id of privilege to be installed
-        :return: None
         """
         self.__cur.execute("""update user_invitations_to_group set privilege_id = %s,
                               assertion_time=CURRENT_TIMESTAMP
@@ -2466,7 +2494,6 @@ class HSAccessCore(object):
         :param user_id: int: id of user to be enabled
         :param group_id: int: id of group to be modified
         :param privilege_id: int: id of privilege to be installed
-        :return: None
         """
         self.__cur.execute("""insert into user_invitations_to_group values (DEFAULT, %s, %s, %s, %s, DEFAULT)""",
                            (user_id, group_id, privilege_id, requesting_id))
@@ -2483,7 +2510,8 @@ class HSAccessCore(object):
         :param user_id: user id of user who needs privilege
         :param group_id: group id of group to which privilege will be assigned
         :param requesting_id: user id of user assigning privilege
-        :return:
+        :return: True if the invitation exists. 
+        :rtype: bool 
         """
         self.__cur.execute("""select privilege_id from user_invitations_to_group
                               where user_id=%s and group_id=%s
@@ -2506,7 +2534,8 @@ class HSAccessCore(object):
         :param user_id: user id of user who needs privilege
         :param group_id: group id of group to which privilege will be assigned
         :param requesting_id: user id of user assigning privilege
-        :return:
+        :return: privilege code 1-4
+        :rtype: int 
         """
         self.__cur.execute(
             """select privilege_id from user_invitations_to_group where user_id=%s and group_id=%s
@@ -2528,7 +2557,6 @@ class HSAccessCore(object):
         Revoke an invitation to join a group
         :param group_uuid: uuid of group
         :param user_uuid: uuid of user
-        :return:
         """
         user_id = self.__get_user_id_from_uuid(user_uuid)
         group_id = self.__get_group_id_from_uuid(group_uuid)
@@ -2549,7 +2577,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit for current user.
-        :return:
+        :return: Dict of group invitations. 
+        :rtype: Dict 
 
         This is from the point of view of the invited user.
         List group invitations in the form::
@@ -2595,7 +2624,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit for current user.
-        :return:
+        :return: Dict of invitations sent by a user 
+        :rtype: Dict 
 
         This is from the point of view of the inviting user. List group invitations in the form::
 
@@ -2648,7 +2678,6 @@ class HSAccessCore(object):
         :type host_uuid: str
         :param group_uuid: uuid of group for which to accept invitation
         :param host_uuid: user uuid of person who invited you
-        :return:
 
         Accept an invitation to a group previously made by another user via
         'invite_user_to_group'
@@ -2671,7 +2700,6 @@ class HSAccessCore(object):
 
         :param group_uuid:
         :param host_uuid: user uuid of person who invited
-        :return:
 
         Refuse an invitation created with 'invite_user_to_group'.
         """
@@ -2695,7 +2723,6 @@ class HSAccessCore(object):
         :param resource_uuid:
         :param user_uuid:
         :param privilege_code:
-        :return: None
         """
         user_id = self.__get_user_id_from_uuid(user_uuid)
         privilege_id = self.__get_privilege_id_from_code(privilege_code)
@@ -2731,7 +2758,6 @@ class HSAccessCore(object):
         :param user_id: id of user to be enabled
         :param resource_id: id of resource to be modified
         :param privilege_id: id of privilege to be installed
-        :return: None
         """
         self.__cur.execute("""update user_invitations_to_resource set privilege_id = %s,
                               assertion_time=CURRENT_TIMESTAMP
@@ -2752,7 +2778,6 @@ class HSAccessCore(object):
         :param user_id: int: id of user to be enabled
         :param resource_id: int: id of resource to be modified
         :param privilege_id: int: id of privilege to be installed
-        :return: None
         """
         self.__cur.execute("""insert into user_invitations_to_resource values (DEFAULT, %s, %s, %s, %s, DEFAULT)""",
                            (user_id, resource_id, privilege_id, requesting_id))
@@ -2769,7 +2794,8 @@ class HSAccessCore(object):
         :param user_id: user id of user who needs privilege
         :param resource_id: resource id of resource to which privilege will be assigned
         :param requesting_id: user id of user assigning privilege
-        :return:
+        :return: True if there is already an invitation to use a resource. 
+        :rtype: bool 
         """
         self.__cur.execute("""select privilege_id from user_invitations_to_resource
                               where user_id=%s and resource_id=%s
@@ -2792,7 +2818,8 @@ class HSAccessCore(object):
         :param user_id: user id of user who needs privilege
         :param resource_id: resource id of resource to which privilege will be assigned
         :param requesting_id: user id of user assigning privilege
-        :return:
+        :return: privilege code 1-4
+        :rtype: int 
         """
         self.__cur.execute(
             """select privilege_id from user_invitations_to_resource where user_id=%s and resource_id=%s
@@ -2814,7 +2841,6 @@ class HSAccessCore(object):
         Revoke an invitation to join a resource
         :param resource_uuid: uuid of resource
         :param user_uuid: uuid of user
-        :return:
         """
         user_id = self.__get_user_id_from_uuid(user_uuid)
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
@@ -2835,7 +2861,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit for current user.
-        :return:
+        :return: Dict of resource invitations. 
+        :rtype: Dict 
 
         This is from the point of view of the invited user.
         List resource invitations in the form::
@@ -2880,7 +2907,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user; omit for current user.
-        :return:
+        :return: Dict of invitations sent by user. 
+        :rtype: Dict 
 
         This is from the point of view of the inviting user. List resource invitations in the form::
 
@@ -2927,7 +2955,6 @@ class HSAccessCore(object):
         :type host_uuid: str
         :param resource_uuid: uuid of resource for which to accept invitation
         :param host_uuid: user uuid of person who invited you
-        :return:
 
         Accept an invitation to a resource previously made by another user via
         'invite_user_to_resource'
@@ -2950,7 +2977,6 @@ class HSAccessCore(object):
 
         :param resource_uuid:
         :param host_uuid: user uuid of person who invited
-        :return:
 
         Refuse an invitation created with 'invite_user_to_resource'.
         """
@@ -2976,7 +3002,6 @@ class HSAccessCore(object):
         :param group_uuid: group identifier of group to which privilege should be assigned
         :param user_uuid: uuid of user to whom privilege should be granted
         :param privilege_code: privilege to be granted.
-        :return: None
 
         This routine has been replaced by the invite/accept/refuse/uninvite interface, including:
         * invite_user_to_group (for inviter)
@@ -3029,7 +3054,6 @@ class HSAccessCore(object):
         :param requesting_id: user id of user assigning privilege
         :param user_id: user id of user who needs privilege
         :param group_id: group id of group to which privilege will be assigned
-        :return: None
 
         This is a helper routine for 'share_group_with_user'
         """
@@ -3054,7 +3078,6 @@ class HSAccessCore(object):
         :param requesting_id: internal id of requesting user
         :param user_id: internal id of user to gain privilege
         :param group_id: internal id of group to which to grant privilege
-        :return:
 
         This is a helper routine for 'share_group_with_user'. It does not have access control.
         """
@@ -3075,7 +3098,6 @@ class HSAccessCore(object):
         :param user_id: id of user to be enabled
         :param group_id: id of group to be modified
         :param privilege_id: id of privilege to be installed
-        :return: None
 
         This is a helper routine for 'share_group_with_user'. It does not have access control.
         There must already be a privilege record for the user, group, and current user.
@@ -3098,7 +3120,6 @@ class HSAccessCore(object):
         :param user_id: int: id of user to be enabled
         :param group_id: int: id of group to be modified
         :param privilege_id: int: id of privilege to be installed
-        :return: None
 
         This is a helper routine for 'share_group_with_user'. It does not have access control.
         There must not already be a privilege record for the user, group, and current user.
@@ -3116,7 +3137,6 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param group_uuid: group identifier of group for which privilege should be removed.
         :param user_uuid: uuid of user for whom privilege should be removed; omit for current user.
-        :return: None
 
         There are three conditions under which one can unshare a group with a user, either:
 
@@ -3160,6 +3180,7 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param user_uuid: uuid of user; omit for current user.
         :return: List of resources containing dict items
+        :rtype: List<Dict> 
 
         This returns a list of resource dict records, in the format::
 
@@ -3195,6 +3216,7 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param user_uuid: uuid of user; omit for current user.
         :return: List of resources containing dict items
+        :rtype: List<Dict> 
 
         This returns a list of user dict records, in the format::
 
@@ -3227,7 +3249,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: uuid of the group to check
-        :return: list: structure of resources
+        :return: List of Dicts of resource info
+        :rtype: List<Dict> 
 
         This returns a list of resources accessible to a specific group, in the format::
 
@@ -3260,9 +3283,10 @@ class HSAccessCore(object):
         """
         Retrieve resources accessible to a specific group.
 
-        :type group_uuid: str
-        :param group_uuid: uuid of the group to check
-        :return: list: structure of resources
+        :type resource_uuid: str
+        :param resource_uuid: uuid of the resource to check
+        :return: List of Dicts describing groups
+        :rtype: List<Dict> 
 
         This returns a list of groups that can access a resource, in the format:
 
@@ -3296,7 +3320,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: uuid of user, or None to use current authorized user
-        :return: list of dict entries, one per group
+        :return: List of Dict entries for groups of user. 
+        :rtype: List<Dict> 
 
         This returns a list of dictionaries, each of the form::
 
@@ -3330,7 +3355,6 @@ class HSAccessCore(object):
 
         :type folder_name: str
         :param folder_name: The name of the folder
-        :return: None
 
         Uses self.get_uuid(): the identity of the current user.
         Folders are local to the current user.
@@ -3343,7 +3367,6 @@ class HSAccessCore(object):
 
         :type folder_name: str
         :param folder_name: The name of the folder
-        :return: None
 
         Uses: self.get_uuid(): the identity of the current user.
         Folders are local to the current user.
@@ -3358,7 +3381,6 @@ class HSAccessCore(object):
         :type folder_name: str
         :param resource_uuid: identifier of resource to put into folder
         :param folder_name: name of the folder
-        :return: None
 
         Uses self.get_uuid(): the identity of the current user.
         Folders are local to the current user.
@@ -3373,7 +3395,6 @@ class HSAccessCore(object):
         :type folder_name: str
         :param resource_uuid: identifier of resource to put into folder
         :param folder_name: name of the folder
-        :return: None
         """
         return
 
@@ -3382,6 +3403,7 @@ class HSAccessCore(object):
         STUB: Return a list of folders for this user
 
         :return: A list of folder names
+        :rtype: List<str> 
 
         Uses self.get_uuid(): current user identity
         """
@@ -3394,6 +3416,7 @@ class HSAccessCore(object):
         :type folder: str
         :param folder: the optional name of a folder to use as the top of the hierarchy
         :return: A dict object of contents
+        :rtype: Dict<str> 
 
         Uses self.get_uuid(): the current user.
 
@@ -3417,7 +3440,6 @@ class HSAccessCore(object):
 
         :type tag_name: str
         :param tag_name: The name of the tag
-        :return: None
 
         Uses self.get_uuid(): the identity of the current user.
 
@@ -3432,7 +3454,6 @@ class HSAccessCore(object):
 
         :type tag_name: str
         :param tag_name: The name of the tag
-        :return: None
 
         Uses self.get_uuid(): the identity of the current user.
 
@@ -3449,7 +3470,6 @@ class HSAccessCore(object):
         :type tag_name: str
         :param resource_uuid: identifier of resource to put into tag
         :param tag_name: name of the tag
-        :return: None
 
         Uses self.get_uuid(): the identity of the current user.
         Tags are local to the current user.
@@ -3465,7 +3485,6 @@ class HSAccessCore(object):
         :type tag_name: str
         :param resource_uuid: identifier of resource to put into tag
         :param tag_name: name of the tag
-        :return: None
 
         Uses self.get_uuid(): the identity of the current user.
         Tags are local to the current user.
@@ -3478,6 +3497,7 @@ class HSAccessCore(object):
         STUB: Return a list of tags for this user
 
         :return: A list of tag names
+        :rtype: List<str> 
 
         Uses self.get_uuid(): current user identity
         """
@@ -3490,6 +3510,7 @@ class HSAccessCore(object):
         :type tag: str
         :param tag: the name of a tag to use
         :return: A dict object of contents
+        :rtype: Dict<str> 
 
         Uses: self.get_uuid(): the current user.
         This returns a dictionary structure of the form::
@@ -3510,7 +3531,8 @@ class HSAccessCore(object):
 
         :type resource_uuid: str
         :param resource_uuid: identifier of resource to report upon
-        :return: int: number of owners
+        :return: number of owners
+        :rtype: int
         """
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
         return self.__get_number_of_resource_owners_by_id(resource_id)
@@ -3527,7 +3549,8 @@ class HSAccessCore(object):
 
         :type group_uuid: str
         :param group_uuid: identifier of group to report upon
-        :return: int: number of owners
+        :return: number of owners
+        :rtype: int
         """
         group_id = self.__get_group_id_from_uuid(group_uuid)
         return self.__get_number_of_group_owners_by_id(group_id)
@@ -3544,7 +3567,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: identifier of group to report upon; None reports upon current user
-        :return: int: number of resources owned
+        :return: number of resources owned
+        :rtype: int
 
         Note: this reports on any user independent of the privilege of the current user.
         """
@@ -3563,7 +3587,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: identifier of group to report upon; None reports upon current user
-        :return: int: number of groups owned
+        :return: number of groups owned
+        :rtype: int
 
         Note: this reports on any user independent of the privilege of the current user.
         """
@@ -3582,7 +3607,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: identifier of group to report upon; None reports upon current user
-        :return: int: number of resources held
+        :return: number of resources held
+        :rtype: int
 
         Note: this reports on any user independent of the privilege of the current user.
         """
@@ -3604,7 +3630,8 @@ class HSAccessCore(object):
 
         :type user_uuid: str
         :param user_uuid: identifier of group to report upon; None reports upon current user
-        :return: int: number of groups joined
+        :return: number of groups joined
+        :rtype: int
 
         Note: this reports on any user independent of the privilege of the current user.
         """
@@ -3626,7 +3653,8 @@ class HSAccessCore(object):
         """
         Returns the uuid of the current user
 
-        :return: str: uuid of current user
+        :return: uuid of current user
+        :rtype: str
         """
         return self.__user_uuid
 
@@ -3634,7 +3662,8 @@ class HSAccessCore(object):
         """
         Returns the (iRODS) login name of the current user
 
-        :return: str: login name of current user
+        :return: login name of current user
+        :rtype: str
         """
         return self.__irods_user
 
@@ -3843,7 +3872,8 @@ class HSAccess(HSAccessCore):
 
         :type user_uuid: str
         :param user_uuid: identifier of user, None for current user
-        :return: str: print name for requested user
+        :return: print name for requested user
+        :rtype: str
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
@@ -3856,7 +3886,8 @@ class HSAccess(HSAccessCore):
 
         :type resource_uuid: str
         :param resource_uuid: identifier of resource
-        :return: str: print name for requested resource
+        :return: print name for requested resource
+        :rtype: str
         """
         meta = self.get_resource_metadata(resource_uuid)
         return meta['title'] + '(' + meta['uuid'] + ')'
@@ -3867,7 +3898,8 @@ class HSAccess(HSAccessCore):
 
         :type group_uuid: str
         :param group_uuid: identifier of group
-        :return: str: print name for requested group
+        :return: print name for requested group
+        :rtype: str
         """
         meta = self.get_group_metadata(group_uuid)
         return meta['name'] + '(' + meta['uuid'] + ')'

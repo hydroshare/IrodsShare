@@ -36,7 +36,6 @@ class HSAccessUser(object):
         :type user_uuid: str?
         :param hsa: A raw HSAccess object with non-object interface. 
         :param user_uuid: uuid of the user to represent with this object. 
-        :return: None
 
         This stores a primitive HSAccess object as a sub-object and then stores context as to what
         specific user it represents. It reads and caches metadata in order to reduce database calls. 
@@ -53,7 +52,8 @@ class HSAccessUser(object):
         """ 
         Get the uuid of the user that this object represents. 
 
-        :return: str: uuid of current user
+        :return: uuid of current user
+        :rtype: str
         """
         return self.__uuid
 
@@ -61,7 +61,8 @@ class HSAccessUser(object):
         """ 
         Get the login name in iRODS of the user that this object represents. 
 
-        :return: str: login name of current user
+        :return: login name of current user
+        :rtype: str
         """
         return self.__meta['login']
 
@@ -69,7 +70,8 @@ class HSAccessUser(object):
         """ 
         Get the print name of the user that this object represents. 
 
-        :return: str: print name of current user
+        :return: print name of current user
+        :rtype: str
         """
         return self.__meta['name']
 
@@ -77,7 +79,8 @@ class HSAccessUser(object):
         """ 
         Return True if user is administrator
 
-        :return: bool: True if current user is an administrator
+        :return: True if current user is an administrator
+        :rtype: bool 
         """
         return self.__meta['admin']
 
@@ -85,7 +88,8 @@ class HSAccessUser(object):
         """ 
         Return True if user is active now. 
 
-        :return: bool: True if current user is active. 
+        :return: True if current user is active. 
+        :rtype: bool 
         """
         return self.__meta['active']
 
@@ -95,7 +99,8 @@ class HSAccessUser(object):
 
         :type resource_uuid: str
         :param resource_uuid: uuid of the resource to check. 
-        :return: str: one of 'own', 'rw', 'ro', 'none'.
+        :return: one of 'own', 'rw', 'ro', 'none'.
+        :rtype: str
 
         This returns one of the following codes: 
 
@@ -123,7 +128,8 @@ class HSAccessUser(object):
 
         :type group_uuid: str
         :param group_uuid: uuid of the group to check. 
-        :return: str: one of 'own', 'rw', 'ro', 'none'.
+        :return: one of 'own', 'rw', 'ro', 'none'.
+        :rtype: str
 
         This returns one of the following codes: 
 
@@ -152,7 +158,6 @@ class HSAccessUser(object):
 
         :type new_name: str
         :param new_name: new name to assign. 
-        :return: None
 
         This function is exposed via :py:meth:`get_capabilities` as capability key 'change_name'. 
         """
@@ -162,8 +167,6 @@ class HSAccessUser(object):
     def __make_active(self):
         """ 
         PRIVATE: make the user active. 
-
-        :return: None
 
         This makes the user active if not, and does nothing if already active. 
 
@@ -183,8 +186,6 @@ class HSAccessUser(object):
         """ 
         PRIVATE: make the user inactive. 
 
-        :return: None
-
         This makes the user inactive if active, and does nothing if already inactive.
 
         This function is exposed via :py:meth:`get_capabilities` as capability key 'make_not_active'. 
@@ -203,8 +204,6 @@ class HSAccessUser(object):
         """ 
         PRIVATE: make the user an administrator. 
 
-        :return: None
-
         This makes the user an administrator if not, and does nothing if already an administrator. 
 
         This function is exposed via :py:meth:`get_capabilities` as capability key 'make_admin'. 
@@ -221,8 +220,6 @@ class HSAccessUser(object):
     def __make_not_admin(self):
         """ 
         PRIVATE: make the user a non-administrator. 
-
-        :return: None
 
         This makes the user a non-administrator if already an administrator, and does nothing otherwise. 
 
@@ -275,7 +272,8 @@ class HSAccessUser(object):
         :param group_shareable: whether the group is shareable, which allows non-owners to invite members. 
         :param group_discoverable: whether the group is discoverable in group listings. 
         :param group_public: whether the group is public, which allows all users to see members. 
-        :return: HSAccessGroup: object representing the created group. 
+        :return: object representing the created group. 
+        :rtype: HSAccessGroup 
 
         Some notes: 
             
@@ -308,7 +306,8 @@ class HSAccessUser(object):
         :param resource_discoverable: whether the resource is discoverable in resource listings. 
         :param resource_public: whether the resource is public, which allows all users to read it. 
         :param resource_shareable: whether the resource is shareable, which allows non-owners to share with others. 
-        :return: HSAccessResource: object representing the created resource. 
+        :return: object representing the created resource. 
+        :rtype: HSAccessResource
 
         Some notes: 
             
@@ -331,6 +330,7 @@ class HSAccessUser(object):
         Get groups accessible to a user, along with requisite action links
 
         :return: List of :py:class:`HSAccessGroup` instances. 
+        :rtype: List<HSAccessGroup>
 
         This gets the list of groups accessible to the current user, as objects. 
         """
@@ -346,6 +346,7 @@ class HSAccessUser(object):
         Get a list of accessible resources, along wih requisite action links
 
         :return: List of :py:class:`HSAccessResource` instances. 
+        :rtype: List<HSAccessResource>
 
         This gets the list of resources accessible to the current user, as objects. 
         """
@@ -378,6 +379,7 @@ class HSAccessUser(object):
         Get the capabilities of this particular user. 
 
         :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+        :rtype: Dict
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the 
         capabilities of the represented user. The format of the return value
@@ -447,7 +449,6 @@ class HSAccessUser(object):
 
         :type indent: int
         :param indent: indentation for printout in two-space units. 
-        :return: None
 
         Indentation allows hierarchical listings of sub-objects. 
         """ 
@@ -494,7 +495,6 @@ class HSAccessGroup(object):
         :type uuid: str
         :param hsa: raw access object: instance of HSAccess. 
         :param uuid: uuid of group to represent. 
-        :returns: None
         """
         self.__hsa = hsa
         self.__uuid = uuid
@@ -507,7 +507,8 @@ class HSAccessGroup(object):
         """ 
         Get the uuid of the group that this object represents. 
 
-        :return: str: uuid of current group
+        :return: uuid of current group
+        :rtype: str
         """
         return self.__uuid
 
@@ -515,7 +516,8 @@ class HSAccessGroup(object):
         """
         Get privilege of current user over group. 
 
-        :return: str: one of 'own', 'rw', 'ro', 'none'.
+        :return: one of 'own', 'rw', 'ro', 'none'.
+        :rtype: str
 
         This returns one of the following codes: 
 
@@ -541,7 +543,8 @@ class HSAccessGroup(object):
         """ 
         Get the name of the group that this object represents. 
 
-        :return: str: name of current group
+        :return: name of current group
+        :rtype: str
         """
         return self.__meta['name']
 
@@ -551,6 +554,7 @@ class HSAccessGroup(object):
         Get owners of the current group as HSAccessUser instances 
 
         :return: List of HSAccessUser instances. 
+        :rtype: List<HSAccessUser> 
         """
         mems = self.__hsa.get_group_members(self.__uuid)
         results = []
@@ -564,6 +568,7 @@ class HSAccessGroup(object):
         Get members of the current group as HSAccessUser instances 
 
         :return: List of HSAccessUser instances. 
+        :rtype: List<HSAccessUser> 
 
         This is a privileged routine made accessible by :py:meth:`get_capabilities`. 
         """
@@ -578,6 +583,7 @@ class HSAccessGroup(object):
         Get resources held by group as HSAccessResource instances 
 
         :return: List of HSAccessResource instances. 
+        :rtype: List<HSAccessResource> 
 
         This is a privileged routine made accessible by :py:meth:`get_capabilities`. 
         """
@@ -592,7 +598,8 @@ class HSAccessGroup(object):
         """
         Return True if group is readable (i.e., members are exposed). 
 
-        :return: bool: True if group is readable. 
+        :return: True if group is readable. 
+        :rtype: bool
         """
         return self.__priv_cum == 'ro' or self.__priv_cum == 'rw' or self.__priv_cum == 'own'
 
@@ -600,7 +607,8 @@ class HSAccessGroup(object):
         """
         Return True if group is writeable (i.e., user can add members). 
 
-        :return: bool: True if group is writeable.
+        :return: True if group is writeable.
+        :rtype: bool
         """
         return self.__priv_cum == 'rw' or self.__priv_cum == 'own'
 
@@ -608,7 +616,8 @@ class HSAccessGroup(object):
         """
         Return True if group is owned by the current user.
 
-        :return: bool: True if group is owned by current user. 
+        :return: True if group is owned by current user. 
+        :rtype: bool
         """
         return self.__priv_cum == 'own'
 
@@ -616,7 +625,8 @@ class HSAccessGroup(object):
         """
         Return True if group is discoverable by non-members. 
 
-        :return: bool: True if group is discoverable. 
+        :return: True if group is discoverable. 
+        :rtype: bool
         """
         return self.__meta['discoverable']
 
@@ -624,7 +634,8 @@ class HSAccessGroup(object):
         """
         Return True if group members are exposed to non-members. 
 
-        :return: bool: True if group is public. 
+        :return: True if group is public. 
+        :rtype: bool
         """
         return self.__meta['public']
 
@@ -632,7 +643,8 @@ class HSAccessGroup(object):
         """
         Return True if group is active. 
 
-        :return: bool: True if group is active. 
+        :return: True if group is active. 
+        :rtype: bool
 
         Note: inactive groups do not affect privilege over resources. 
         """
@@ -642,7 +654,8 @@ class HSAccessGroup(object):
         """
         Return True if group is shareable. 
 
-        :return: bool: True if group is shareable. 
+        :return: True if group is shareable. 
+        :rtype: bool
 
         If a group is shareable, non-owners can invite new members. 
         """
@@ -652,7 +665,8 @@ class HSAccessGroup(object):
         """
         Return True if current user is a member of the group. 
 
-        :return: bool: True if current user is a member. 
+        :return: True if current user is a member. 
+        :rtype: bool
         """
         return self.__member
 
@@ -661,6 +675,7 @@ class HSAccessGroup(object):
         Get the capabilities of our user over this group. 
 
         :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+        :rtype: Dict 
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the 
         capabilities of the represented user. The format of the return value
@@ -757,7 +772,6 @@ class HSAccessGroup(object):
 
         :type new_name: str
         :param new_name: new name to use. 
-        :return: None
 
         User must be owner or administrator. 
 
@@ -769,8 +783,6 @@ class HSAccessGroup(object):
     def __make_shareable(self):
         """
         Make a group shareable. 
-
-        :return: None
 
         This means that non-owners can invite group members. 
         User must be owner or administrator. 
@@ -784,8 +796,6 @@ class HSAccessGroup(object):
         """
         Make a group not shareable. 
 
-        :return: None
-
         This means that non-owners cannot invite group members. 
         User must be owner or administrator. 
 
@@ -797,8 +807,6 @@ class HSAccessGroup(object):
     def __make_public(self):
         """
         Make a group public. 
-
-        :return: None
 
         This means that non-members can see group members.
         User must be owner or administrator. 
@@ -812,8 +820,6 @@ class HSAccessGroup(object):
         """
         Make a group not public. 
 
-        :return: None
-
         This means that non-members cannot see group members.
         User must be owner or administrator. 
 
@@ -826,8 +832,6 @@ class HSAccessGroup(object):
         """
         Make a group discoverable. 
 
-        :return: None
-
         This means that non-members can discover the group in group listings. 
         User must be owner or administrator. 
 
@@ -839,8 +843,6 @@ class HSAccessGroup(object):
     def __make_not_discoverable(self):
         """
         Make a group not discoverable. 
-
-        :return: None
 
         This means that non-members cannot discover the group in group listings. 
         User must be owner or administrator. 
@@ -859,7 +861,6 @@ class HSAccessGroup(object):
         :type privilege_code: str
         :param user: user to be added to the group. 
         :param privilege_code: one of 'own', 'rw', 'ro', 'none'. 
-        :return: None
 
         This routine is exposed via :py:meth:`get_capabilities`.
         """
@@ -896,7 +897,6 @@ class HSAccessGroup(object):
 
         :type indent: int
         :param indent: indentation for printout in two-space units. 
-        :return: None
 
         Indentation allows hierarchical listings of sub-objects. 
         """ 
@@ -938,6 +938,7 @@ class HSAccessGroupInvitation(HSAccessGroup):
         Get the capabilities of our user over this invitation. 
 
         :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+        :rtype: Dict 
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the 
         capabilities of the represented user. The format of the return value
@@ -964,9 +965,15 @@ class HSAccessGroupInvitation(HSAccessGroup):
         return {'accept': self.__accept, 'refuse': self.__refuse}
 
     def __accept(self):
+        """
+        Accept an invitation to a group. 
+        """
         self.__hsa.accept_invitation_to_group(self.__uuid, self.__inviting_user_uuid)
 
     def __refuse(self):
+        """
+        Refuse an invitation to a group. 
+        """
         self.__hsa.refuse_invitation_to_group(self.__uuid, self.__inviting_user_uuid)
 
 
@@ -981,8 +988,9 @@ class HSAccessResource(object):
         Initialize a resource object
 
         :type hsa: HSAccess
-        :type uuid: str: uuid of resource. 
-        :returns: None
+        :type uuid: str: 
+        :param hsa: Object describing the current (primitive) session.
+        :param uuid: uuid of resource. 
 
         This builds a resource object from a resource uuid, and caches the state of the 
         resource to save time during rendering. 
@@ -995,40 +1003,113 @@ class HSAccessResource(object):
 
     # these routines are available to all users
     def get_uuid(self):
+        """
+        Get uuid of the current resource. 
+       
+        :return: uuid of current resource. 
+        :rtype: str
+        """
         return self.__uuid
 
     def get_title(self):
+        """
+        Get title of the current resource. 
+       
+        :return: title of current resource. 
+        :rtype: str
+        """
         return self.__meta['title']
 
     def get_path(self):
+        """
+        Get file path of the current resource. 
+       
+        :return: file path of current resource. 
+        :rtype: str
+        """
         return self.__meta['path']
 
     def get_privilege(self):
+        """
+        Get privilege of current user over resource.
+       
+        :return: 'own', 'rw', 'ro', 'none' (for public resources) 
+        :rtype: str
+        """
         return self.__priv_cum
 
     def is_readable(self):
+        """
+        True if resource is readable.
+       
+        :return: True if resource is readable 
+        :rtype: int
+        """
+
         return self.__priv_cum == 'ro' or self.__priv_cum == 'rw' or self.__priv_cum == 'ro'
 
     def is_writeable(self):
+        """
+        True if resource is writeable.
+       
+        :return: True if resource is writeable 
+        :rtype: int
+        """
         return self.__priv_cum == 'rw' or self.__priv_cum == 'own'
 
     # immutability can override cumulative ownership; must check separately.
     def is_owned(self):
+        """
+        True if resource is owned by the currently authenticated user. 
+       
+        :return: True if resource is owned by the currently authenticated user. 
+        :rtype: int
+        """
         return self.__priv_prim == 'own'
 
     def is_discoverable(self):
+        """
+        True if resource is discoverable by the currently authenticated user. 
+       
+        :return: True if resource is discoverable by the currently authenticated user. 
+        :rtype: int
+        """
         return self.__meta['discoverable']
 
     def is_public(self):
+        """
+        True if resource is public.
+       
+        :return: True if resource is public.
+        :rtype: int
+        """
         return self.__meta['public']
 
     def is_published(self):
+        """
+        True if resource is published and has a DOI. 
+       
+        :return: True if resource is published and has a DOI
+        :rtype: int
+        """
         return self.__meta['published']
 
     def is_shareable(self):
+        """
+        True if resource is shareable by non-owners. 
+       
+        :return: True if resource is shareable by non-owners. 
+        :rtype: int
+        """
         return self.__meta['shareable']
 
     def is_immutable(self):
+        """
+        True if resource is immutable. 
+       
+        :return: True if resource is immutable. This overrides normal ownership privileges. 
+        :rtype: int
+        """
         return self.__meta['immutable']
 
     def get_capabilities(self):
@@ -1036,6 +1117,7 @@ class HSAccessResource(object):
         Get the capabilities of our user over this resource. 
 
         :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+        :rtype: Dict 
 
         This function exposes private methods of :py:class:`HSAccessResource` based upon the 
         capabilities of the current user. The format of the return value
@@ -1074,27 +1156,35 @@ class HSAccessResource(object):
 
               See :py:meth:`_HSAccessResource__get_users` for details. 
 
-            * 'get_groupss' makes a listing of :py:class:`HSAccessGroup` instances representing groups with 
-              access to the resource. 
+            * 'get_groups' makes a listing of :py:class:`HSAccessGroup` instances representing groups with 
+              access to the resource::
+
+                resource.get_capabilities['get_groups']()
 
               See :py:meth:`_HSAccessResource__get_groups` for details. 
 
-            * 'change_name': change the name of the group. User must be either group owner or an administrator. 
-              There is one parameter: the new name. 
+            * 'change_name': change the name of the resource. User must be either resource owner or an administrator. 
+              There is one parameter: the new name::
+
+                resource.get_capabilities['change_name'](*new_name*)
               
               See :py:meth:`_HSAccessGroup__change_name` for details. 
 
             * 'share_with_user': share the resource with a new user, immediately. 
               User must be resource owner or administrator, or resource must be shareable. 
+              There is one parameter: the :py:class:`HSAccessUser` with which to share the resource. Usage::
 
-              There is one parameter: the :py:class:`HSAccessUser` with which to share the resource. 
+                resource.get_capabilities['share_with_user'](*user_object*, *privilege_word*) 
               
+              where privilege_word is one of 'own', 'rw', 'ro', or 'none'. 
+
               See :py:meth:`_HSAccessResource__share_with_user` for details. 
 
             * 'share_with_group': share the resource with a new group, immediately. 
               User must be resource owner or administrator, or resource must be shareable. 
-
               There is one parameter: the :py:class:`HSAccessGroup` with which to share the resource. 
+
+                resource.get_capabilities()['share_with_group'](*group_object*)
               
               See :py:meth:`_HSAccessResource__share_with_group` for details. 
 
@@ -1146,6 +1236,12 @@ class HSAccessResource(object):
     # "__" routines are limited via access control
 
     def __get_users(self):
+        """
+        Get the list of HSAccessUsers currently holding this resource. 
+
+        :return: List of :py:class:`HSAccessUser`
+        :rtype: List<HSAccessUser> 
+        """
         users = self.__hsa.get_users_holding_resource(self.__uuid)
         result = []
         for u in users:
@@ -1153,6 +1249,12 @@ class HSAccessResource(object):
         return result
 
     def __get_groups(self):
+        """
+        Get the list of HSAccessGroups currently holding this resource. 
+
+        :return: List of :py:class:`HSAccessGroup`
+        :rtype: List<HSAccessGroup> 
+        """
         groups = self.__hsa.get_groups_holding_resource(self.__uuid)
         result = []
         for u in groups:
@@ -1160,51 +1262,102 @@ class HSAccessResource(object):
         return result
 
     def __change_title(self, new_name):
+        """
+        Change title of a resource.
+
+        :param new_name: new name to use for title. 
+        :type new_name: str
+        """
         self.__meta['title'] = new_name
         self.__hsa.assert_resource_metadata(self.__meta)
 
     def __make_shareable(self):
+        """
+        Make the current resource shareable. 
+        """
         self.__hsa.make_resource_shareable(self.__uuid)
         self.__meta['shareable'] = True
 
     def __make_not_shareable(self):
+        """
+        Make the current resource not shareable. 
+        """
         self.__hsa.make_resource_not_shareable(self.__uuid)
         self.__meta['shareable'] = False
 
     def __make_public(self):
-            self.__hsa.make_resource_public(self.__uuid)
-            self.__meta['public'] = True
+        """
+        Make the current resource public. 
+        """
+        self.__hsa.make_resource_public(self.__uuid)
+        self.__meta['public'] = True
 
     def __make_not_public(self):
+        """
+        Make the current resource not public. 
+        """
         self.__hsa.make_resource_not_public(self.__uuid)
         self.__meta['public'] = False
 
     def __make_published(self):
-            self.__hsa.make_resource_published(self.__uuid)
-            self.__meta['published'] = True
+        """
+        Make the current resource published. 
+        """
+        self.__hsa.make_resource_published(self.__uuid)
+        self.__meta['published'] = True
 
     def make_not_published(self):
+        """
+        Make the current resource not published. 
+        """
         self.__hsa.make_resource_not_published(self.__uuid)
         self.__meta['published'] = False
 
     def __make_discoverable(self):
-            self.__hsa.make_resource_public(self.__uuid)
-            self.__meta['public'] = True
+        """
+        Make the current resource discoverable. 
+        """
+        self.__hsa.make_resource_public(self.__uuid)
+        self.__meta['public'] = True
 
     def __make_not_discoverable(self):
+        """
+        Make the current resource not discoverable. 
+        """
         self.__hsa.make_resource_not_public(self.__uuid)
         self.__meta['public'] = False
 
     def __make_immutable(self):
-            self.__hsa.make_resource_immutable(self.__uuid)
-            self.__meta['immutable'] = True
+        """
+        Make the current resource immutable. 
+        """
+        self.__hsa.make_resource_immutable(self.__uuid)
+        self.__meta['immutable'] = True
 
     # need to store allowable privilege codes somewhere
-    def __share_with_user(self, user_uuid, privilege_code):
-        self.__hsa.share_resource_with_user(self.__uuid, user_uuid, privilege_code)
+    def __share_with_user(self, user, privilege_code):
+        """
+        Share this resource with a user.
 
-    def __share_with_group(self, group_uuid, privilege_code):
-        self.__hsa.share_resource_with_group(self.__uuid, group_uuid, privilege_code)
+        :param user: :py:class:`HSAccessUser` object describing the user 
+        :param privilege_code: one of 'own', 'rw', 'ro', 'none'. 
+        :type user: HSAccessUser
+        :type privilege_code: str
+
+        """
+        self.__hsa.share_resource_with_user(self.__uuid, user.get_uuid(), privilege_code)
+
+    def __share_with_group(self, group, privilege_code):
+        """
+        Share this resource with a group.
+
+        :param group: :py:class:`HSAccessGroup` object describing the group 
+        :param privilege_code: one of 'own', 'rw', 'ro', 'none'. 
+        :type group: HSAccessGroup
+        :type privilege_code: str
+
+        """
+        self.__hsa.share_resource_with_group(self.__uuid, group.get_uuid(), privilege_code)
 
     def __spaces(self, indent=0):
         s = ""
@@ -1218,7 +1371,6 @@ class HSAccessResource(object):
 
         :type indent: int
         :param indent: indentation for printout in two-space units. 
-        :return: None
 
         Indentation allows hierarchical listings of sub-objects. 
         """ 

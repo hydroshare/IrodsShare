@@ -15,7 +15,6 @@ Contents:
    module
    objects
    uiobj
-   private
 
 
 Indices and tables
