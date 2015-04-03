@@ -478,11 +478,11 @@ class HSAccessUser(object):
         :rtype: List
         """
         return [
-            'register_user', 'register_group', 'register_resource',
-            'make_admin', 'make_not_admin',
-            'make_active', 'make_not_active',
-            'change_name'
-        ]
+                'register_user', 'register_group', 'register_resource',
+                'make_admin', 'make_not_admin',
+                'make_active', 'make_not_active',
+                'change_name'
+               ]
 
     @staticmethod
     def __spaces(indent=0):
@@ -825,7 +825,7 @@ class HSAccessGroup(object):
         Return a list of methods exposed by get_capabilities
 
         :return: List of method names for private methods exposed by get_capabilities.
-        ;rtype: List
+        :rtype: List
 
         This returns the possible capabilities that can be enabled (or not) via
         the access control system.
