@@ -15,6 +15,7 @@ Contents:
    module
    objects
    uiobj
+   uiprim
 
 
 Indices and tables
