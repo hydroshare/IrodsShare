@@ -224,6 +224,16 @@
 
 <span class="sd">        :todo: check logic for what a user can change.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># anti-bug main arguments</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_name is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_login</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_login is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_active</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_active is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_admin</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_admin is not boolean&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__user_uuid</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;User uuid does not exist&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_is_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__user_uuid</span><span class="p">)):</span>
@@ -238,6 +248,9 @@
             <span class="k">except</span> <span class="n">HSAException</span><span class="p">:</span>
                 <span class="n">user_uuid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
         <span class="c"># print &quot;resource uuid is&quot;, resource_uuid</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
 
         <span class="n">assert_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__user_uuid</span><span class="p">)</span>
 
@@ -323,6 +336,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_user_metadata</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">True</span>
@@ -348,6 +363,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_user_metadata</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;admin&#39;</span><span class="p">]</span>
 
@@ -369,6 +386,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_user_metadata</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;active&#39;</span><span class="p">]</span>
 
@@ -410,6 +429,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;select user_id from users where user_uuid=</span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">user_uuid</span><span class="p">,))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HSAIntegrityException</span><span class="p">(</span><span class="s">&quot;More than one record for a specific user uuid&quot;</span><span class="p">)</span>
@@ -434,6 +455,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;select user_login from users where user_uuid=</span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">user_uuid</span><span class="p">,))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HSAIntegrityException</span><span class="p">(</span><span class="s">&quot;More than one record for a specific user uuid&quot;</span><span class="p">)</span>
@@ -455,6 +478,9 @@
 <span class="sd">        This returns the user uuid from the login name. While this works reliably</span>
 <span class="sd">        because login names are unique, this is only used to construct test cases.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">login</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;login is not a string&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;select user_uuid from users where user_login=</span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">login</span><span class="p">,))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HSAIntegrityException</span><span class="p">(</span><span class="s">&quot;More than one record for a specific user login&quot;</span><span class="p">)</span>
@@ -534,6 +560,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select u.user_login, u.user_uuid, u.user_name, u.user_active, u.user_admin,</span>
 <span class="s">          a.user_login as user_assertion_login, a.user_uuid as user_assertion_uuid, u.assertion_time</span>
 <span class="s">          from users u left join users a on u.assertion_user_id = a.user_id</span>
@@ -617,6 +645,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select g.group_uuid, g.group_name, x.privilege_code</span>
 <span class="s">                          from groups g</span>
 <span class="s">                          left join user_membership_in_group m on m.group_id=g.group_id</span>
@@ -643,6 +673,8 @@
 <span class="sd">        This returns a list of groups in the following format::</span>
 <span class="sd">            { &#39;name&#39;: *name of group*, &#39;uuid&#39;: *uuid of group* } ]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select u.user_uuid, u.user_name, x.privilege_code</span>
 <span class="s">                              from groups g</span>
 <span class="s">                              left join user_group_privilege p on p.group_id=g.group_id</span>
@@ -680,6 +712,8 @@
 
 <span class="sd">        This value can be edited and used as an argument to &#39;assert_group_metadata&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select g.group_uuid, g.group_name,</span>
 <span class="s">          g.group_active, g.group_shareable, g.group_discoverable, g.group_public,</span>
 <span class="s">          a.user_login as user_assertion_login, a.user_uuid as user_assertion_uuid, g.assertion_time</span>
@@ -733,6 +767,8 @@
 <span class="sd">        a join target. This is an integer for speed. This identifier is never exposed</span>
 <span class="sd">        to users or administrators of the system.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;select group_id from groups where group_uuid=</span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">group_uuid</span><span class="p">,))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HSAIntegrityException</span><span class="p">(</span><span class="s">&quot;More than one record for a specific group uuid&quot;</span><span class="p">)</span>
@@ -754,6 +790,8 @@
 <span class="sd">        This returns the name of a group from its uuid. Group names are not generally unique and</span>
 <span class="sd">        cannot be used as keys from which to locate groups.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_metadata</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
 
@@ -801,8 +839,22 @@
 
 <span class="sd">        :todo: ensure that regular users cannot change too much!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># anti-bug main arguments</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_name is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_active</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_active is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_shareable</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_shareable is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_discoverable</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_discoverable is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_public</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_public is not boolean&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_exists</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;User uuid does not exist&quot;</span><span class="p">)</span>
 
@@ -812,6 +864,9 @@
 
         <span class="k">if</span> <span class="n">group_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">group_uuid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
 
         <span class="n">assert_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_exists</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">):</span>
@@ -922,9 +977,9 @@
 
 <span class="sd">        1. Only the owner of the group or an administrator can do this.</span>
 
-<span class="sd">        :todo: fix cascade logic in database so that this always works correctly. Currently</span>
-<span class="sd">               there is a band-aid fix that does the cascade in the application.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="c"># only an owner or administrator can retract a group</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_is_admin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span> \
                 <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_is_owned</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()):</span>
@@ -951,6 +1006,8 @@
 <span class="sd">        This is used to avoid execution exceptions by ensuring that a group uuid</span>
 <span class="sd">        is valid before performing further actions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_group_metadata</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">True</span>
@@ -966,6 +1023,8 @@
 <span class="sd">        :return: True if group is active.</span>
 <span class="sd">        :rtype: bool </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_metadata</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;active&#39;</span><span class="p">]</span>
 </div>
@@ -980,6 +1039,8 @@
 
 <span class="sd">        If a group is shareable, then users with readwrite privilege can invite members. Otherwise, they cannot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_metadata</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;shareable&#39;</span><span class="p">]</span>
 </div>
@@ -994,6 +1055,8 @@
 
 <span class="sd">        If a group is discoverable, then it appears in the active groups along with its owner contact information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_metadata</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;discoverable&#39;</span><span class="p">]</span>
 </div>
@@ -1008,6 +1071,8 @@
 
 <span class="sd">        If a group is public, then others can see group members.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_metadata</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;public&#39;</span><span class="p">]</span>
 
@@ -1029,6 +1094,8 @@
 
 <span class="sd">        Note: this method is not subject to access control.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;select resource_id from resources where resource_uuid=</span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">resource_uuid</span><span class="p">,))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HSAIntegrityException</span><span class="p">(</span><span class="s">&quot;More than one record for a specific resource uuid&quot;</span><span class="p">)</span>
@@ -1091,6 +1158,9 @@
 <span class="sd">        of &quot;who to blame&quot; for the last change.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select r.resource_uuid, r.resource_path,</span>
 <span class="s">          r.resource_title, r.resource_immutable, r.resource_published,</span>
 <span class="s">          r.resource_discoverable, r.resource_public,</span>
@@ -1196,8 +1266,26 @@
 <span class="sd">        as an administrator. If admin privileges are not present in this case,</span>
 <span class="sd">        an exception is raised.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># anti-bug usage by requireing argument types</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_title</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_title is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_path</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_path is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_shareable</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_shareable is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_discoverable</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_discoverable is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_public</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_public is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_published</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_published is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_immutable</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_immutable is not boolean&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_exists</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;User uuid does not exist&quot;</span><span class="p">)</span>
         <span class="n">requesting_user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
@@ -1213,6 +1301,10 @@
                 <span class="n">resource_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_uuid_from_path</span><span class="p">(</span><span class="n">resource_path</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">HSAException</span><span class="p">:</span>
                 <span class="n">resource_uuid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="c"># print &quot;resource uuid is&quot;, resource_uuid</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">):</span>
             <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resource_metadata</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
@@ -1369,6 +1461,9 @@
 <span class="sd">        1. Only the owner of the group or an administrator can do this.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="c"># only an owner or administrator can retract a group</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_is_admin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span> \
                 <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_is_owned</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()):</span>
@@ -1392,6 +1487,9 @@
 
 <span class="sd">        This determines whether a given resource uuid corresponds to an existing resource.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_resource_metadata</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">True</span>
@@ -1419,7 +1517,9 @@
 <span class="sd">        The spirit of the immutable flag is that the affected resource&#39;s landing page can then safely be</span>
 <span class="sd">        issued a data citation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># print &quot;checking that &quot; + login + &quot; exists&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resource_metadata</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;immutable&#39;</span><span class="p">]</span>
 </div>
@@ -1432,6 +1532,9 @@
 <span class="sd">        :return: bool: whether resource has been flagged as published</span>
 <span class="sd">        :rtype: bool </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resource_metadata</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;published&#39;</span><span class="p">]</span>
 </div>
@@ -1444,6 +1547,8 @@
 <span class="sd">        :return: bool: whether resource has been flagged as published</span>
 <span class="sd">        :rtype: bool </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resource_metadata</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;discoverable&#39;</span><span class="p">]</span>
 </div>
@@ -1468,6 +1573,9 @@
 <span class="sd">        :return: bool: whether resource has been flagged as published</span>
 <span class="sd">        :rtype: bool </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resource_metadata</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;shareable&#39;</span><span class="p">]</span>
 
@@ -1544,7 +1652,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get privilege code for user over a resource</span>
 
-<span class="sd">        :param resource_uuid:</span>
 <span class="sd">        :type resource_uuid: str</span>
 <span class="sd">        :param resource_uuid: uuid of resource</span>
 <span class="sd">        :return: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39; </span>
@@ -1568,6 +1675,9 @@
 
 <span class="sd">                No privilege over resource</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">pnum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_privilege_over_resource</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pnum</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_OWN</span> <span class="ow">and</span> <span class="n">pnum</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_NONE</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_CODES</span><span class="p">[</span><span class="n">pnum</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -1578,7 +1688,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Summarize privileges of a user over a resource, without incorporating resource flags</span>
 
-<span class="sd">        :type resource_uuid: str</span>
 <span class="sd">        :type user_uuid: str</span>
 <span class="sd">        :param resource_uuid: uuid of resource</span>
 <span class="sd">        :param user_uuid: uuid of user; omit to report on current user</span>
@@ -1594,9 +1703,6 @@
 
 <span class="sd">        Note: this routine is not subject to access control.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
-
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_privilege_over_resource_by_id</span><span class="p">(</span><span class="n">resource_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
@@ -1627,7 +1733,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get privilege code for user over a resource</span>
 
-<span class="sd">        :param resource_uuid:</span>
 <span class="sd">        :type resource_uuid: str</span>
 <span class="sd">        :param resource_uuid: uuid of resource</span>
 <span class="sd">        :param user_uuid: uuid of user; omit to report on current user</span>
@@ -1653,6 +1758,13 @@
 
 <span class="sd">                No privilege over resource</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">pnum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_cumulative_user_privilege_over_resource</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">,</span> <span class="n">user_uuid</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pnum</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_OWN</span> <span class="ow">and</span> <span class="n">pnum</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_NONE</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_CODES</span><span class="p">[</span><span class="n">pnum</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -1688,8 +1800,6 @@
 
 <span class="sd">        Note: this routine is not subject to access control. Anyone can read anyone else&#39;s privileges.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
 
@@ -1817,6 +1927,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__resource_accessible</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span> <span class="n">resource_uuid</span><span class="p">,</span> <span class="s">&#39;own&#39;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="HSAccessCore.resource_is_readwrite"><a class="viewcode-back" href="../module.html#HSAlib.HSAccessCore.resource_is_readwrite">[docs]</a>    <span class="k">def</span> <span class="nf">resource_is_readwrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_uuid</span><span class="p">,</span> <span class="n">user_uuid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -1834,6 +1949,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__resource_cumulatively_accessible</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span> <span class="n">resource_uuid</span><span class="p">,</span> <span class="s">&#39;rw&#39;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="HSAccessCore.resource_is_readable"><a class="viewcode-back" href="../module.html#HSAlib.HSAccessCore.resource_is_readable">[docs]</a>    <span class="k">def</span> <span class="nf">resource_is_readable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_uuid</span><span class="p">,</span> <span class="n">user_uuid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -1851,6 +1971,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__resource_cumulatively_accessible</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span> <span class="n">resource_uuid</span><span class="p">,</span> <span class="s">&#39;ro&#39;</span><span class="p">)</span>
 
     <span class="c">###########################################################</span>
@@ -1869,9 +1994,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Share a specific resource with a specific user</span>
 
-<span class="sd">        :param resource_uuid: str: uuid of resource to affect (key to resource table)</span>
-<span class="sd">        :param user_uuid: str: login name of user to gain access (key to users table)</span>
-<span class="sd">        :param privilege_code: str: privilege to grant (key to privileges table)</span>
+<span class="sd">        :type resource_uuid: str</span>
+<span class="sd">        :type user_uuid: str</span>
+<span class="sd">        :type privilege_code: str</span>
+<span class="sd">        :param resource_uuid: uuid of resource to affect (key to resource table)</span>
+<span class="sd">        :param user_uuid: login name of user to gain access (key to users table)</span>
+<span class="sd">        :param privilege_code: privilege to grant (key to privileges table)</span>
 
 <span class="sd">        This shares a resource with a user other than self. The current user is implicitly</span>
 <span class="sd">        the initiator of the sharing.</span>
@@ -1888,6 +2016,11 @@
 <span class="sd">        4. An administrative user may arbitrarily change sharing parameters.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="c"># requested privilege id</span>
         <span class="n">privilege_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_privilege_id_from_code</span><span class="p">(</span><span class="n">privilege_code</span><span class="p">)</span>
@@ -1901,9 +2034,13 @@
             <span class="c"># use join to access privilege records</span>
             <span class="n">user_priv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_privilege_over_resource</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_RO</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has no access to resource&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has no privilege over resource&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="n">privilege_id</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has less privilege to resource than required&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has insufficient privilege over resource&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_uuid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">():</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_is_owned</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_number_of_resource_owners</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;Cannot remove last owner of resource&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__share_resource_with_user</span><span class="p">(</span><span class="n">requesting_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">resource_id</span><span class="p">,</span> <span class="n">privilege_id</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">__share_resource_with_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requesting_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">resource_id</span><span class="p">,</span> <span class="n">privilege_id</span><span class="p">):</span>
@@ -2026,6 +2163,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="c"># assert_id = self.__get_user_id_from_uuid(self.get_uuid())</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
@@ -2086,6 +2228,11 @@
 <span class="sd">        for the object.  It is possible to downgrade privilege assigned by a user whose privilege has been</span>
 <span class="sd">        downgraded, but this has not been implemented.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="n">privilege_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_privilege_id_from_code</span><span class="p">(</span><span class="n">privilege_code</span><span class="p">)</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
@@ -2190,6 +2337,11 @@
 <span class="sd">        Only a group owner or administrator may revoke all privileges over a resource.  This</span>
 <span class="sd">        includes all grants of privilege no matter what the source within the group.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="c"># assert_id = self.__get_user_id_from_uuid(self.get_uuid())</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
@@ -2220,6 +2372,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select privilege_id from user_group_privilege</span>
@@ -2247,6 +2403,8 @@
     <span class="c">#     &quot;&quot;&quot;</span>
     <span class="c">#     if user_uuid is None:</span>
     <span class="c">#         user_uuid = self.get_uuid()</span>
+    <span class="c">#     if type(user_uuid) is not str:</span>
+    <span class="c">#         raise HSAUsageException(&quot;user_uuid is not a string&quot;)</span>
     <span class="c">#     user_id = self.__get_user_id_from_uuid(user_uuid)</span>
     <span class="c">#     group_id = self.__get_group_id_from_uuid(group_uuid)</span>
     <span class="c">#     self.__cur.execute(&quot;&quot;&quot;select id from user_membership_in_group where user_id=%s and group_id=%s&quot;&quot;&quot;,</span>
@@ -2270,6 +2428,8 @@
     <span class="c">#     &quot;&quot;&quot;</span>
     <span class="c">#     if user_uuid is None:</span>
     <span class="c">#         user_uuid = self.get_uuid()</span>
+    <span class="c">#     if type(user_uuid) is not str:</span>
+    <span class="c">#         raise HSAUsageException(&quot;user_uuid is not a string&quot;)</span>
     <span class="c">#     # if not self.user_is_active(self.get_uuid()):</span>
     <span class="c">#     #     raise HSAUsageException(&quot;User login &#39;&quot;+self.__get_user_login_from_uuid(self.get_uuid())</span>
     <span class="c">#     #     +&quot;&#39; is not active&quot;)</span>
@@ -2292,6 +2452,8 @@
     <span class="c">#     &quot;&quot;&quot;</span>
     <span class="c">#     if user_uuid is None:</span>
     <span class="c">#         user_uuid = self.get_uuid()</span>
+    <span class="c">#     if type(user_uuid) is not str:</span>
+    <span class="c">#         raise HSAUsageException(&quot;user_uuid is not a string&quot;)</span>
     <span class="c">#     requesting_id = self.__get_user_id_from_uuid(self.get_uuid())</span>
     <span class="c">#     user_id = self.__get_user_id_from_uuid(user_uuid)</span>
     <span class="c">#     group_id = self.__get_group_id_from_uuid(group_uuid)</span>
@@ -2362,6 +2524,13 @@
 
 <span class="sd">                No privilege over resource</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">pnum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_cumulative_user_privilege_over_group</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">,</span> <span class="n">user_uuid</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pnum</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_OWN</span> <span class="ow">and</span> <span class="n">pnum</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_NONE</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_CODES</span><span class="p">[</span><span class="n">pnum</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -2398,6 +2567,12 @@
 
 <span class="sd">                No privilege over resource</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">pnum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_privilege_over_group</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">,</span> <span class="n">user_uuid</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pnum</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_OWN</span> <span class="ow">and</span> <span class="n">pnum</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_NONE</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_CODES</span><span class="p">[</span><span class="n">pnum</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -2419,8 +2594,6 @@
 <span class="sd">        user is not a member. This is a union of privileges from membership and the group public flag.</span>
 <span class="sd">        Note that there is no ownership conflict in this case because a group cannot be made immutable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="c"># THIS IS THE QUERY THAT DETERMINES GROUP ACCESS</span>
@@ -2453,8 +2626,6 @@
 <span class="sd">        user is not a member. This is a union of privileges from membership and the group public flag.</span>
 <span class="sd">        Note that there is no ownership conflict in this case because a group cannot be made immutable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="c"># THIS IS THE QUERY THAT DETERMINES GROUP ACCESS</span>
@@ -2507,6 +2678,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__group_cumulatively_accessible</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">,</span> <span class="s">&#39;own&#39;</span><span class="p">)</span>
 
     <span class="c"># can invite members to group</span></div>
@@ -2523,6 +2698,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__group_cumulatively_accessible</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">,</span> <span class="s">&#39;rw&#39;</span><span class="p">)</span>
 
     <span class="c"># minimal group membership: can see members but cannot add/invite them</span></div>
@@ -2539,6 +2718,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__group_cumulatively_accessible</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">,</span> <span class="s">&#39;ro&#39;</span><span class="p">)</span>
 
     <span class="c"># CLI: hs invite ....</span></div>
@@ -2550,6 +2733,8 @@
 <span class="sd">        :param user_uuid:</span>
 <span class="sd">        :param privilege_code:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">privilege_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_privilege_id_from_code</span><span class="p">(</span><span class="n">privilege_code</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
@@ -2563,9 +2748,10 @@
             <span class="n">user_priv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_cumulative_user_privilege_over_group</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_RO</span><span class="p">:</span>  <span class="c"># read-only or no-sharing</span>
                 <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User does not have permission to invite members&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="n">privilege_id</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has insufficient privilege over group&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="n">privilege_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has insufficient privilege over group&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_uuid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;Cannot invite self to group&quot;</span><span class="p">)</span>
         <span class="c"># sufficient privileges present to share this resource</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__user_invite_to_group_exists</span><span class="p">(</span><span class="n">requesting_id</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__invite_group_user_update</span><span class="p">(</span><span class="n">requesting_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">privilege_id</span><span class="p">)</span>
@@ -2668,6 +2854,8 @@
 <span class="sd">        :param group_uuid: uuid of group</span>
 <span class="sd">        :param user_uuid: uuid of user</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="n">requesting_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span>
@@ -2676,7 +2864,7 @@
     <span class="k">def</span> <span class="nf">__uninvite_user_to_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requesting_id</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__user_invite_to_group_exists</span><span class="p">(</span><span class="n">requesting_id</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;delete from user_invitations_to_group where user_id=</span><span class="si">%s</span><span class="s"></span>
-<span class="s">                              and group_id=</span><span class="si">%s</span><span class="s"> and assertion_user_id=</span><span class="si">%s</span><span class="s">&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="s">                               and group_id=</span><span class="si">%s</span><span class="s"> and assertion_user_id=</span><span class="si">%s</span><span class="s">&quot;&quot;&quot;</span><span class="p">,</span>
                                <span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">requesting_id</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -2706,6 +2894,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select g.group_uuid, g.group_name, p.privilege_code,</span>
 <span class="s">                              a.user_uuid, a.user_name, a.user_login</span>
 <span class="s">                              from user_invitations_to_group i</span>
@@ -2753,6 +2943,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select u.user_uuid, u.user_name, u.user_login,</span>
 <span class="s">                                     g.group_uuid, g.group_name,</span>
 <span class="s">                                     p.privilege_code,</span>
@@ -2792,6 +2984,10 @@
 <span class="sd">        Accept an invitation to a group previously made by another user via</span>
 <span class="sd">        &#39;invite_user_to_group&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">host_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;host_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="n">requesting_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">host_uuid</span><span class="p">)</span>
@@ -2813,6 +3009,10 @@
 
 <span class="sd">        Refuse an invitation created with &#39;invite_user_to_group&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">host_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;host_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="n">requesting_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">host_uuid</span><span class="p">)</span>
@@ -2834,6 +3034,11 @@
 <span class="sd">        :param user_uuid:</span>
 <span class="sd">        :param privilege_code:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">privilege_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_privilege_id_from_code</span><span class="p">(</span><span class="n">privilege_code</span><span class="p">)</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
@@ -2847,9 +3052,10 @@
             <span class="n">user_priv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_cumulative_user_privilege_over_resource</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_RO</span><span class="p">:</span>  <span class="c"># read-only or no-sharing</span>
                 <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User does not have permission to invite members&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="n">privilege_id</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has insufficient privilege over resource&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="n">privilege_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has insufficient privilege over resource&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span> <span class="o">==</span> <span class="n">user_uuid</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;Cannot invite self to resource&quot;</span><span class="p">)</span>
         <span class="c"># sufficient privileges present to share this resource</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__user_invite_to_resource_exists</span><span class="p">(</span><span class="n">requesting_id</span><span class="p">,</span> <span class="n">resource_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__invite_resource_user_update</span><span class="p">(</span><span class="n">requesting_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">resource_id</span><span class="p">,</span> <span class="n">privilege_id</span><span class="p">)</span>
@@ -2952,6 +3158,11 @@
 <span class="sd">        :param resource_uuid: uuid of resource</span>
 <span class="sd">        :param user_uuid: uuid of user</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="n">requesting_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span>
@@ -2990,6 +3201,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select g.resource_uuid, g.resource_title, p.privilege_code, a.user_uuid, a.user_name, a.user_login</span>
 <span class="s">                              from user_invitations_to_resource i</span>
 <span class="s">                              left join resources g on i.resource_id=g.resource_id</span>
@@ -3036,6 +3249,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select g.resource_uuid, g.resource_title, p.privilege_code, u.user_uuid, u.user_name, u.user_login</span>
 <span class="s">                              from user_invitations_to_resource i</span>
 <span class="s">                              left join resources g on i.resource_id=g.resource_id</span>
@@ -3069,6 +3284,11 @@
 <span class="sd">        Accept an invitation to a resource previously made by another user via</span>
 <span class="sd">        &#39;invite_user_to_resource&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">host_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;host_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="n">requesting_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">host_uuid</span><span class="p">)</span>
@@ -3090,6 +3310,11 @@
 
 <span class="sd">        Refuse an invitation created with &#39;invite_user_to_resource&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">host_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;host_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="n">requesting_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">host_uuid</span><span class="p">)</span>
@@ -3133,6 +3358,10 @@
 
 <span class="sd">        :todo: not safe from removing last owner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">privilege_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_privilege_id_from_code</span><span class="p">(</span><span class="n">privilege_code</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
@@ -3144,11 +3373,15 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_is_admin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())):</span>
             <span class="c"># use join to access privilege records</span>
             <span class="n">user_priv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_cumulative_user_privilege_over_group</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_RO</span><span class="p">:</span>  <span class="c"># read-only or no-sharing</span>
-                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User lacks read/write privilege for group&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="n">privilege_id</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has insufficient privilege for group&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__PRIVILEGE_RO</span><span class="p">:</span>  <span class="c"># read-only or no-sharing</span>
+                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has no privilege for group&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_priv</span> <span class="o">&gt;</span> <span class="n">privilege_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;User has insufficient privilege for group&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user_uuid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_is_owned</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_number_of_group_owners</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">HSAccessException</span><span class="p">(</span><span class="s">&quot;Cannot remove last owner of group&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__share_group_with_user</span><span class="p">(</span><span class="n">requesting_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">group_id</span><span class="p">,</span> <span class="n">privilege_id</span><span class="p">)</span>
         <span class="c"># for now, couple group membership with group privilege; the following is obsolete</span>
         <span class="c"># self.assert_user_in_group(group_uuid, user_uuid)</span>
@@ -3258,7 +3491,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
-
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="c"># these serve as argument checks</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
@@ -3304,6 +3540,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select distinct r.resource_uuid, r.resource_title, r.resource_path, p.privilege_code</span>
 <span class="s">          from user_resource_privilege u</span>
@@ -3338,6 +3576,9 @@
 
 <span class="sd">        Note: this is not currently subject to access control.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select distinct u.user_uuid, u.user_name, u.user_login, p.privilege_code</span>
 <span class="s">          from user_resource_privilege urp</span>
@@ -3372,6 +3613,8 @@
 
 <span class="sd">        Note: this is not subject to access control.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select DISTINCT r.resource_title, r.resource_uuid, r.resource_path, q.privilege_code</span>
 <span class="s">                              from resources r</span>
@@ -3407,6 +3650,9 @@
 
 <span class="sd">        Note: this is not subject to access control.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select DISTINCT g.group_name, g.group_uuid, q.privilege_code</span>
 <span class="s">                              from group_resource_privilege p</span>
@@ -3445,6 +3691,8 @@
         <span class="c"># default to irods user if no uuid given</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select distinct g.group_uuid, g.group_name</span>
 <span class="s">                              from user_membership_in_group m left join groups g on m.group_id=g.group_id</span>
@@ -3643,6 +3891,9 @@
 <span class="sd">        :return: number of owners</span>
 <span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">resource_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_resource_id_from_uuid</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_number_of_resource_owners_by_id</span><span class="p">(</span><span class="n">resource_id</span><span class="p">)</span>
 </div>
@@ -3661,6 +3912,8 @@
 <span class="sd">        :return: number of owners</span>
 <span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">group_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_group_id_from_uuid</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_number_of_group_owners_by_id</span><span class="p">(</span><span class="n">group_id</span><span class="p">)</span>
 </div>
@@ -3683,6 +3936,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select count(distinct resource_id) as count from user_resource_privilege</span>
 <span class="s">                              where user_id=</span><span class="si">%s</span><span class="s"> and privilege_id=1&quot;&quot;&quot;</span><span class="p">,</span>
@@ -3703,6 +3958,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select count(distinct group_id) as count from user_group_privilege</span>
 <span class="s">                              where user_id=</span><span class="si">%s</span><span class="s"> and privilege_id=1&quot;&quot;&quot;</span><span class="p">,</span>
@@ -3723,6 +3980,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot;select count(distinct resource_id) as count from user_resource_privilege</span>
 <span class="s">                              where user_id=</span><span class="si">%s</span><span class="s">&quot;&quot;&quot;</span><span class="p">,</span>
@@ -3746,6 +4005,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_exists</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;User uuid does not exist&quot;</span><span class="p">)</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_id_from_uuid</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
@@ -3986,6 +4247,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">user_uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_user_metadata</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;uuid&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span>
 </div>
@@ -3998,6 +4261,9 @@
 <span class="sd">        :return: print name for requested resource</span>
 <span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;resource_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_resource_metadata</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;uuid&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span>
 </div>
@@ -4010,6 +4276,8 @@
 <span class="sd">        :return: print name for requested group</span>
 <span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_metadata</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="n">meta</span><span class="p">[</span><span class="s">&#39;uuid&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span></div></div>
 </pre></div>

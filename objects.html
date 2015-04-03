@@ -66,7 +66,7 @@ object itself.</p>
 </div>
 <p>One can call a bound method via the following pattern:</p>
 <div class="highlight-python"><div class="highlight"><pre>caps = Objects.get_capabilities()
-if &#39;method&#39; in caps:
+if &#39;method&#39; in caps.keys():
     caps[&#39;method&#39;](...method arguments...)
 </pre></div>
 </div>
@@ -299,6 +299,22 @@ methods are also protected from being executed inappropriately.</p>
 </table>
 </dd></dl>
 
+<dl class="staticmethod">
+<dt id="HSAccessObjects.HSAccessUser.get_methods">
+<em class="property">static </em><tt class="descname">get_methods</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessUser.get_methods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessUser.get_methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of method names exposed by get_capabilities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of method names returned by get_capabilities.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="HSAccessObjects.HSAccessUser.get_name">
 <tt class="descname">get_name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessUser.get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessUser.get_name" title="Permalink to this definition">¶</a></dt>
@@ -317,13 +333,13 @@ methods are also protected from being executed inappropriately.</p>
 
 <dl class="method">
 <dt id="HSAccessObjects.HSAccessUser.get_privilege_over_group">
-<tt class="descname">get_privilege_over_group</tt><big>(</big><em>group_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessUser.get_privilege_over_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessUser.get_privilege_over_group" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_privilege_over_group</tt><big>(</big><em>group</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessUser.get_privilege_over_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessUser.get_privilege_over_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the privilege code for the privilege that this user holds over a given group.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> (<em>str</em>) &#8211; uuid of the group to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>group_uuid</strong> &#8211; HSAccessGroup describing the group to check.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</td>
 </tr>
@@ -350,13 +366,13 @@ methods are also protected from being executed inappropriately.</p>
 
 <dl class="method">
 <dt id="HSAccessObjects.HSAccessUser.get_privilege_over_resource">
-<tt class="descname">get_privilege_over_resource</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessUser.get_privilege_over_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessUser.get_privilege_over_resource" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_privilege_over_resource</tt><big>(</big><em>resource</em><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessUser.get_privilege_over_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessUser.get_privilege_over_resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the privilege code for the privilege that this user holds over a given resource</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of the resource to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource</strong> (<em>HSAccessResource</em>) &#8211; HSAccessResource object representing the resource to check.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;.</td>
 </tr>
@@ -756,6 +772,24 @@ all times. In general, the private methods of <a class="reference internal" href
 exposed in this fashion while the public methods are always available.</p>
 <p>Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
 methods are also protected from being executed inappropriately.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="HSAccessObjects.HSAccessGroup.get_methods">
+<em class="property">static </em><tt class="descname">get_methods</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessGroup.get_methods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessGroup.get_methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of methods exposed by get_capabilities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of method names for private methods exposed by get_capabilities.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List</td>
+</tr>
+</tbody>
+</table>
+<p>This returns the possible capabilities that can be enabled (or not) via
+the access control system.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1237,6 +1271,22 @@ all times. In general, the private methods of <a class="reference internal" href
 exposed in this fashion while the public methods are always available.</p>
 <p>Note that violating privacy mechanisms and executing methods directly accomplishes nothing, as these 
 methods are also protected from being executed inappropriately.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="HSAccessObjects.HSAccessResource.get_methods">
+<em class="property">static </em><tt class="descname">get_methods</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAccessObjects.html#HSAccessResource.get_methods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAccessObjects.HSAccessResource.get_methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of method names exposed by get_capabilities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of method names returned by get_capabilities.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">List</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">

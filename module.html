@@ -572,7 +572,7 @@ Note that there is no ownership conflict in this case because a group cannot be 
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource</li>
+<li><strong>resource_uuid</strong> &#8211; uuid of resource</li>
 <li><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit to report on current user</li>
 </ul>
 </td>
@@ -1439,8 +1439,7 @@ This returns one of the following strings:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; </li>
-<li><strong>resource_uuid</strong> &#8211; uuid of resource</li>
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource</li>
 <li><strong>user_uuid</strong> &#8211; uuid of user; omit to report on current user</li>
 </ul>
 </td>
@@ -2096,17 +2095,11 @@ This returns one of the following strings:</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; </li>
-<li><strong>resource_uuid</strong> &#8211; uuid of resource</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">one of &#8216;own&#8217;, &#8216;rw&#8217;, &#8216;ro&#8217;, &#8216;none&#8217;</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
-</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -2718,15 +2711,6 @@ group, including every resource held with that group.</p>
 <ol class="arabic simple">
 <li>Only the owner of the group or an administrator can do this.</li>
 </ol>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Todo:</th><td class="field-body">fix cascade logic in database so that this always works correctly. Currently
-there is a band-aid fix that does the cascade in the application.</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -2891,9 +2875,9 @@ downgraded, but this has not been implemented.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resource_uuid</strong> &#8211; str: uuid of resource to affect (key to resource table)</li>
-<li><strong>user_uuid</strong> &#8211; str: login name of user to gain access (key to users table)</li>
-<li><strong>privilege_code</strong> &#8211; str: privilege to grant (key to privileges table)</li>
+<li><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource to affect (key to resource table)</li>
+<li><strong>user_uuid</strong> (<em>str</em>) &#8211; login name of user to gain access (key to users table)</li>
+<li><strong>privilege_code</strong> (<em>str</em>) &#8211; privilege to grant (key to privileges table)</li>
 </ul>
 </td>
 </tr>

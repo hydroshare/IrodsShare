@@ -25,10 +25,10 @@ describes the private methods to which a user has access.
 
 Also, the primitive statistics functions 
 
-* :py:meth:`HSAccess.get_number_of_groups_of_user`
-* :py:meth:`HSAccess.get_number_of_groups_owned_by_user`
-* :py:meth:`HSAccess.get_number_of_resources_held_by_user`
-* :py:meth:`HSAccess.get_number_of_resources_owned_by_user`
+* :py:meth:`HSAlib.HSAccess.get_number_of_groups_of_user`
+* :py:meth:`HSAlib.HSAccess.get_number_of_groups_owned_by_user`
+* :py:meth:`HSAlib.HSAccess.get_number_of_resources_held_by_user`
+* :py:meth:`HSAlib.HSAccess.get_number_of_resources_owned_by_user`
 
 are designed for reporting statistics on the user's home page. 
 

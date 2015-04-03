@@ -66,6 +66,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hsa</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">hsa</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccess</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;hsa is not an instance of HSAccess&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span> <span class="o">=</span> <span class="n">hsa</span>
 
 
@@ -89,8 +91,13 @@
 <span class="sd">        This stores a primitive HSAccess object as a sub-object and then stores context as to what</span>
 <span class="sd">        specific user it represents. It reads and caches metadata in order to reduce database calls. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">hsa</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccess</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;hsa is not an instance of HSAccess&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span> <span class="o">=</span> <span class="n">hsa</span>
         <span class="k">if</span> <span class="n">user_uuid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span> <span class="o">=</span> <span class="n">user_uuid</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span>
@@ -142,12 +149,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;active&#39;</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="HSAccessUser.get_privilege_over_resource"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessUser.get_privilege_over_resource">[docs]</a>    <span class="k">def</span> <span class="nf">get_privilege_over_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_uuid</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccessUser.get_privilege_over_resource"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessUser.get_privilege_over_resource">[docs]</a>    <span class="k">def</span> <span class="nf">get_privilege_over_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the privilege code for the privilege that this user holds over a given resource</span>
 
-<span class="sd">        :type resource_uuid: str</span>
-<span class="sd">        :param resource_uuid: uuid of the resource to check. </span>
+<span class="sd">        :type resource: HSAccessResource</span>
+<span class="sd">        :param resource: HSAccessResource object representing the resource to check.</span>
 <span class="sd">        :return: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;.</span>
 <span class="sd">        :rtype: str</span>
 
@@ -169,14 +176,16 @@
 
 <span class="sd">                No privilege over resource</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_user_privilege_over_resource</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccessResource</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;Argument is not a resource&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_user_privilege_over_resource</span><span class="p">(</span><span class="n">resource</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="HSAccessUser.get_privilege_over_group"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessUser.get_privilege_over_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_privilege_over_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">):</span>
+<div class="viewcode-block" id="HSAccessUser.get_privilege_over_group"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessUser.get_privilege_over_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_privilege_over_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the privilege code for the privilege that this user holds over a given group. </span>
 
-<span class="sd">        :type group_uuid: str</span>
-<span class="sd">        :param group_uuid: uuid of the group to check. </span>
+<span class="sd">        :type group: HSAccesGroup</span>
+<span class="sd">        :param group_uuid: HSAccessGroup describing the group to check.</span>
 <span class="sd">        :return: one of &#39;own&#39;, &#39;rw&#39;, &#39;ro&#39;, &#39;none&#39;.</span>
 <span class="sd">        :rtype: str</span>
 
@@ -198,7 +207,10 @@
 
 <span class="sd">                No privilege over group; user cannot see members of the group. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_user_privilege_over_group</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccessGroup</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;Argument is not a group&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_user_privilege_over_group</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">())</span>
 
     <span class="c"># &quot;__&quot; routines require privilege that is determined by get_capabilities</span></div>
     <span class="k">def</span> <span class="nf">__change_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">):</span>
@@ -302,7 +314,16 @@
 <span class="sd">       </span>
 <span class="sd">        To modify an already registered user, see other methods, including :py:meth:`_HSAccessObject__change_name`, etc. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">assert_user</span><span class="p">(</span><span class="n">user_login</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span>  <span class="n">user_active</span><span class="p">,</span> <span class="n">user_admin</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_login</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_login is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_name is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_active</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_active is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_admin</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_admin is not boolean&quot;</span><span class="p">)</span>
+
+        <span class="n">uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">assert_user</span><span class="p">(</span><span class="n">user_login</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">user_active</span><span class="p">,</span> <span class="n">user_admin</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">HSAccessUser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)</span>
 
     <span class="c"># anyone can register a group</span>
@@ -331,6 +352,16 @@
 <span class="sd">           </span>
 <span class="sd">            * Anyone can create a group; this is not a privileged action. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_name is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_active</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_active is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_shareable</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_shareable is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_discoverable</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_discoverable is not boolean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_public</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_public is not boolean&quot;</span><span class="p">)</span>
         <span class="n">uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">assert_group</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">group_active</span><span class="p">,</span> <span class="n">group_shareable</span><span class="p">,</span>
                                        <span class="n">group_discoverable</span><span class="p">,</span> <span class="n">group_public</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">HSAccessGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)</span>
@@ -481,12 +512,29 @@
                 <span class="n">capabilities</span><span class="p">[</span><span class="s">&#39;make_active&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_active</span>
             <span class="n">capabilities</span><span class="p">[</span><span class="s">&#39;change_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__change_name</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">:</span>
+        <span class="c"># if the user is the currently logged-in user</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">user_is_admin</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">:</span>
             <span class="n">capabilities</span><span class="p">[</span><span class="s">&#39;change_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__change_name</span>
 
         <span class="k">return</span> <span class="n">capabilities</span>
 </div>
-    <span class="k">def</span> <span class="nf">__spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="HSAccessUser.get_methods"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessUser.get_methods">[docs]</a>    <span class="k">def</span> <span class="nf">get_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of method names exposed by get_capabilities</span>
+
+<span class="sd">        :return: List of method names returned by get_capabilities.</span>
+<span class="sd">        :rtype: List</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+                <span class="s">&#39;register_user&#39;</span><span class="p">,</span> <span class="s">&#39;register_group&#39;</span><span class="p">,</span> <span class="s">&#39;register_resource&#39;</span><span class="p">,</span>
+                <span class="s">&#39;make_admin&#39;</span><span class="p">,</span> <span class="s">&#39;make_not_admin&#39;</span><span class="p">,</span>
+                <span class="s">&#39;make_active&#39;</span><span class="p">,</span> <span class="s">&#39;make_not_active&#39;</span><span class="p">,</span>
+                <span class="s">&#39;change_name&#39;</span>
+               <span class="p">]</span>
+</div>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__spaces</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">indent</span><span class="p">)]:</span>
             <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;  &#39;</span>
@@ -545,6 +593,11 @@
 <span class="sd">        :param hsa: raw access object: instance of HSAccess. </span>
 <span class="sd">        :param uuid: uuid of group to represent. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">hsa</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccess</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;hsa is not an instance of HSAccess&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span> <span class="o">=</span> <span class="n">hsa</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span> <span class="o">=</span> <span class="n">uuid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_group_metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
@@ -815,6 +868,25 @@
 
         <span class="k">return</span> <span class="n">capabilities</span>
 </div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="HSAccessGroup.get_methods"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessGroup.get_methods">[docs]</a>    <span class="k">def</span> <span class="nf">get_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of methods exposed by get_capabilities</span>
+
+<span class="sd">        :return: List of method names for private methods exposed by get_capabilities.</span>
+<span class="sd">        :rtype: List</span>
+
+<span class="sd">        This returns the possible capabilities that can be enabled (or not) via</span>
+<span class="sd">        the access control system.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="s">&#39;make_public&#39;</span><span class="p">,</span> <span class="s">&#39;make_not_public&#39;</span><span class="p">,</span>
+            <span class="s">&#39;make_discoverable&#39;</span><span class="p">,</span> <span class="s">&#39;make_not_discoverable&#39;</span><span class="p">,</span>
+            <span class="s">&#39;make_shareable&#39;</span><span class="p">,</span> <span class="s">&#39;make_not_shareable&#39;</span><span class="p">,</span>
+            <span class="s">&#39;get_members&#39;</span><span class="p">,</span> <span class="s">&#39;get_resources&#39;</span><span class="p">,</span>
+            <span class="s">&#39;share_with_user&#39;</span>
+        <span class="p">]</span>
+</div>
     <span class="k">def</span> <span class="nf">__change_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change the name of a group.</span>
@@ -934,7 +1006,8 @@
     <span class="c"># ## ERROR ###                                                 u[&#39;inviting_user_uuid&#39;])]</span>
     <span class="c"># ## ERROR ###     return results</span>
 
-    <span class="k">def</span> <span class="nf">__spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__spaces</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">indent</span><span class="p">)]:</span>
             <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;  &#39;</span>
@@ -976,6 +1049,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hsa</span><span class="p">,</span> <span class="n">user_uuid</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">,</span> <span class="n">inviting_user_uuid</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">hsa</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccess</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;hsa is not an instance of HSAccess&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group_uuid is not a string&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">inviting_user_uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;inviting_user_uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="n">HSAccessGroup</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hsa</span><span class="p">,</span> <span class="n">group_uuid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__inviting_user_uuid</span> <span class="o">=</span> <span class="n">inviting_user_uuid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__target_user_uuid</span> <span class="o">=</span> <span class="n">user_uuid</span>
@@ -1025,6 +1107,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">refuse_invitation_to_group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inviting_user_uuid</span><span class="p">)</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of method names exposed by get_capabilities</span>
+
+<span class="sd">        :return: List of method names returned by get_capabilities.</span>
+<span class="sd">        :rtype: List</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s">&#39;accept&#39;</span><span class="p">,</span> <span class="s">&#39;refuse&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="HSAccessResource"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource">[docs]</a><span class="k">class</span> <span class="nc">HSAccessResource</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1044,6 +1135,11 @@
 <span class="sd">        This builds a resource object from a resource uuid, and caches the state of the </span>
 <span class="sd">        resource to save time during rendering. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">hsa</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccess</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;hsa is not an instance of HSAccess&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;uuid is not a string&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span> <span class="o">=</span> <span class="n">hsa</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span> <span class="o">=</span> <span class="n">uuid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">get_resource_metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">)</span>
@@ -1281,7 +1377,25 @@
             <span class="n">capabilities</span><span class="p">[</span><span class="s">&#39;share_with_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__share_with_group</span>
 
         <span class="k">return</span> <span class="n">capabilities</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="HSAccessResource.get_methods"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessResource.get_methods">[docs]</a>    <span class="k">def</span> <span class="nf">get_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of method names exposed by get_capabilities</span>
 
+<span class="sd">        :return: List of method names returned by get_capabilities.</span>
+<span class="sd">        :rtype: List</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="s">&#39;share_with_user&#39;</span><span class="p">,</span> <span class="s">&#39;share_with_group&#39;</span><span class="p">,</span>
+            <span class="s">&#39;change_title&#39;</span><span class="p">,</span>
+            <span class="s">&#39;get_users&#39;</span><span class="p">,</span> <span class="s">&#39;get_groups&#39;</span><span class="p">,</span>
+            <span class="s">&#39;make_published&#39;</span><span class="p">,</span>
+            <span class="s">&#39;make_shareable&#39;</span><span class="p">,</span> <span class="s">&#39;make_not_shareable&#39;</span><span class="p">,</span>
+            <span class="s">&#39;make_public&#39;</span><span class="p">,</span> <span class="s">&#39;make_not_public&#39;</span><span class="p">,</span>
+            <span class="s">&#39;make_discoverable&#39;</span><span class="p">,</span> <span class="s">&#39;make_not_discoverable&#39;</span><span class="p">,</span>
+            <span class="s">&#39;make_immutable&#39;</span>
+        <span class="p">]</span>
     <span class="c"># &quot;__&quot; routines are limited via access control</span>
 </div>
     <span class="k">def</span> <span class="nf">__get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1317,6 +1431,9 @@
 <span class="sd">        :param new_name: new name to use for title. </span>
 <span class="sd">        :type new_name: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;new_name is not a string&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">assert_resource_metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__meta</span><span class="p">)</span>
 
@@ -1394,6 +1511,10 @@
 <span class="sd">        :type privilege_code: str</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccessUser</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;user is not an HSAccessUser&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">privilege_code</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;privilege_code is not a string&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">share_resource_with_user</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">(),</span> <span class="n">privilege_code</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__share_with_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">privilege_code</span><span class="p">):</span>
@@ -1406,9 +1527,15 @@
 <span class="sd">        :type privilege_code: str</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">HSAccessGroup</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;group is not an HSAccessGroup&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">privilege_code</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HSAUsageException</span><span class="p">(</span><span class="s">&quot;privilege_code is not a string&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">share_resource_with_group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">(),</span> <span class="n">privilege_code</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__spaces</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">indent</span><span class="p">)]:</span>
             <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;  &#39;</span>
@@ -1441,14 +1568,14 @@
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_users</span><span class="p">():</span>
             <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">__spaces</span><span class="p">(</span><span class="n">indent</span><span class="o">+</span><span class="mi">3</span><span class="p">),</span> \
                 <span class="s">&quot;uuid: &quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">(),</span> \
-                <span class="s">&quot; priv: &quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_privilege_over_resource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">),</span> \
+                <span class="s">&quot; priv: &quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_privilege_over_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> \
                 <span class="s">&quot; name: &quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
 
         <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">__spaces</span><span class="p">(</span><span class="n">indent</span><span class="p">),</span> <span class="s">&quot;  get_groups(): &quot;</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_groups</span><span class="p">():</span>
             <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">__spaces</span><span class="p">(</span><span class="n">indent</span><span class="o">+</span><span class="mi">3</span><span class="p">),</span> \
                 <span class="s">&quot;uuid: &quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">(),</span> \
-                <span class="s">&quot; priv: &quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_privilege_over_group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">()),</span> \
+                <span class="s">&quot; priv: &quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_privilege_over_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> \
                 <span class="s">&quot; name: &quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
 </pre></div></div></div>
 
