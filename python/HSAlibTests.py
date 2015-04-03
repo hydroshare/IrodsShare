@@ -649,6 +649,11 @@ class T08ResourceFlags(unittest.TestCase):
         self.assertFalse(ha.resource_is_readwrite(context['resources']['chewies']))
         self.assertFalse(ha.resource_is_owned(context['resources']['chewies']))
 
+        # test whether we can retract a resource
+        ha = startup('dog')
+        ha.retract_resource(context['resources']['chewies'])
+        self.assertFalse(ha.resource_exists(context['resources']['chewies']),
+                    "resource still exists after being retracted")
 
 class T09GroupSharing(unittest.TestCase):
     def test(self):
