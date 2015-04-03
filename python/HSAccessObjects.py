@@ -17,6 +17,8 @@ class HSAccessObject(object):
     """
 
     def __init__(self, hsa):
+        if type(hsa) is not HSAccess:
+            raise HSAUsageException("hsa is not an instance of HSAccess")
         self.__hsa = hsa
 
 
@@ -40,8 +42,13 @@ class HSAccessUser(object):
         This stores a primitive HSAccess object as a sub-object and then stores context as to what
         specific user it represents. It reads and caches metadata in order to reduce database calls. 
         """
+        if type(hsa) is not HSAccess:
+            raise HSAUsageException("hsa is not an instance of HSAccess")
+
         self.__hsa = hsa
         if user_uuid is not None:
+            if type(user_uuid) is not str:
+                raise HSAUsageException("user_uuid is not a string")
             self.__uuid = user_uuid
         else:
             self.__uuid = self.__hsa.get_uuid()
@@ -93,12 +100,12 @@ class HSAccessUser(object):
         """
         return self.__meta['active']
 
-    def get_privilege_over_resource(self, resource_uuid):
+    def get_privilege_over_resource(self, resource):
         """ 
         Get the privilege code for the privilege that this user holds over a given resource
 
-        :type resource_uuid: str
-        :param resource_uuid: uuid of the resource to check. 
+        :type resource: HSAccessResource
+        :param resource: HSAccessResource object representing the resource to check.
         :return: one of 'own', 'rw', 'ro', 'none'.
         :rtype: str
 
@@ -120,14 +127,16 @@ class HSAccessUser(object):
 
                 No privilege over resource
         """
-        return self.__hsa.get_user_privilege_over_resource(resource_uuid)
+        if type(resource) is not HSAccessResource:
+            raise HSAUsageException("Argument is not a resource")
+        return self.__hsa.get_user_privilege_over_resource(resource.get_uuid())
 
-    def get_privilege_over_group(self, group_uuid):
+    def get_privilege_over_group(self, group):
         """ 
         Get the privilege code for the privilege that this user holds over a given group. 
 
-        :type group_uuid: str
-        :param group_uuid: uuid of the group to check. 
+        :type group: HSAccesGroup
+        :param group_uuid: HSAccessGroup describing the group to check.
         :return: one of 'own', 'rw', 'ro', 'none'.
         :rtype: str
 
@@ -149,7 +158,10 @@ class HSAccessUser(object):
 
                 No privilege over group; user cannot see members of the group. 
         """
-        return self.__hsa.get_user_privilege_over_group(group_uuid)
+        if type(group) is not HSAccessGroup:
+            raise HSAUsageException("Argument is not a group")
+
+        return self.__hsa.get_user_privilege_over_group(group.get_uuid())
 
     # "__" routines require privilege that is determined by get_capabilities
     def __change_name(self, new_name):
@@ -253,7 +265,16 @@ class HSAccessUser(object):
        
         To modify an already registered user, see other methods, including :py:meth:`_HSAccessObject__change_name`, etc. 
         """
-        uuid = self.__hsa.assert_user(user_login, user_name,  user_active, user_admin)
+        if type(user_login) is not str:
+            raise HSAUsageException("user_login is not a string")
+        if type(user_name) is not str:
+            raise HSAUsageException("user_name is not a string")
+        if type(user_active) is not bool:
+            raise HSAUsageException("user_active is not boolean")
+        if type(user_admin) is not bool:
+            raise HSAUsageException("user_admin is not boolean")
+
+        uuid = self.__hsa.assert_user(user_login, user_name, user_active, user_admin)
         return HSAccessUser(self.__hsa, uuid)
 
     # anyone can register a group
@@ -282,6 +303,16 @@ class HSAccessUser(object):
            
             * Anyone can create a group; this is not a privileged action. 
         """
+        if type(group_name) is not str:
+            raise HSAUsageException("group_name is not a string")
+        if type(group_active) is not bool:
+            raise HSAUsageException("group_active is not boolean")
+        if type(group_shareable) is not bool:
+            raise HSAUsageException("group_shareable is not boolean")
+        if type(group_discoverable) is not bool:
+            raise HSAUsageException("group_discoverable is not boolean")
+        if type(group_public) is not bool:
+            raise HSAUsageException("group_public is not boolean")
         uuid = self.__hsa.assert_group(group_name, group_active, group_shareable,
                                        group_discoverable, group_public)
         return HSAccessGroup(self.__hsa, uuid)
@@ -432,12 +463,29 @@ class HSAccessUser(object):
                 capabilities['make_active'] = self.__make_active
             capabilities['change_name'] = self.__change_name
 
-        if self.__hsa.get_uuid() == self.__uuid:
+        # if the user is the currently logged-in user
+        if self.__hsa.user_is_admin() or self.__hsa.get_uuid() == self.__uuid:
             capabilities['change_name'] = self.__change_name
 
         return capabilities
 
-    def __spaces(self, indent=0):
+    @staticmethod
+    def get_methods(self):
+        """
+        Get a list of method names exposed by get_capabilities
+
+        :return: List of method names returned by get_capabilities.
+        :rtype: List
+        """
+        return [
+            'register_user', 'register_group', 'register_resource',
+            'make_admin', 'make_not_admin',
+            'make_active', 'make_not_active',
+            'change_name'
+        ]
+
+    @staticmethod
+    def __spaces(indent=0):
         s = ""
         for i in [n for n in range(1, indent)]:
             s += '  '
@@ -496,6 +544,11 @@ class HSAccessGroup(object):
         :param hsa: raw access object: instance of HSAccess. 
         :param uuid: uuid of group to represent. 
         """
+        if type(hsa) is not HSAccess:
+            raise HSAUsageException("hsa is not an instance of HSAccess")
+        if type(uuid) is not str:
+            raise HSAUsageException("uuid is not a string")
+
         self.__hsa = hsa
         self.__uuid = uuid
         self.__meta = self.__hsa.get_group_metadata(self.__uuid)
@@ -766,6 +819,25 @@ class HSAccessGroup(object):
 
         return capabilities
 
+    @staticmethod
+    def get_methods(self):
+        """
+        Return a list of methods exposed by get_capabilities
+
+        :return: List of method names for private methods exposed by get_capabilities.
+        ;rtype: List
+
+        This returns the possible capabilities that can be enabled (or not) via
+        the access control system.
+        """
+        return [
+            'make_public', 'make_not_public',
+            'make_discoverable', 'make_not_discoverable',
+            'make_shareable', 'make_not_shareable',
+            'get_members', 'get_resources',
+            'share_with_user'
+        ]
+
     def __change_name(self, new_name):
         """
         Change the name of a group.
@@ -885,7 +957,8 @@ class HSAccessGroup(object):
     # ## ERROR ###                                                 u['inviting_user_uuid'])]
     # ## ERROR ###     return results
 
-    def __spaces(self, indent=0):
+    @staticmethod
+    def __spaces(indent=0):
         s = ""
         for i in [n for n in range(1, indent)]:
             s += '  '
@@ -927,6 +1000,15 @@ class HSAccessGroupInvitation(HSAccessGroup):
     """
 
     def __init__(self, hsa, user_uuid, group_uuid, inviting_user_uuid):
+        if type(hsa) is not HSAccess:
+            raise HSAUsageException("hsa is not an instance of HSAccess")
+        if type(user_uuid) is not str:
+            raise HSAUsageException("user_uuid is not a string")
+        if type(group_uuid) is not str:
+            raise HSAUsageException("group_uuid is not a string")
+        if type(inviting_user_uuid) is not str:
+            raise HSAUsageException("inviting_user_uuid is not a string")
+
         HSAccessGroup.__init__(self, hsa, group_uuid)
         self.__inviting_user_uuid = inviting_user_uuid
         self.__target_user_uuid = user_uuid
@@ -976,6 +1058,15 @@ class HSAccessGroupInvitation(HSAccessGroup):
         """
         self.__hsa.refuse_invitation_to_group(self.__uuid, self.__inviting_user_uuid)
 
+    @staticmethod
+    def get_methods(self):
+        """
+        Get a list of method names exposed by get_capabilities
+
+        :return: List of method names returned by get_capabilities.
+        :rtype: List
+        """
+        return ['accept', 'refuse']
 
 class HSAccessResource(object):
     """
@@ -995,6 +1086,11 @@ class HSAccessResource(object):
         This builds a resource object from a resource uuid, and caches the state of the 
         resource to save time during rendering. 
         """
+        if type(hsa) is not HSAccess:
+            raise HSAUsageException("hsa is not an instance of HSAccess")
+        if type(uuid) is not str:
+            raise HSAUsageException("uuid is not a string")
+
         self.__hsa = hsa
         self.__uuid = uuid
         self.__meta = self.__hsa.get_resource_metadata(self.__uuid)
@@ -1233,6 +1329,24 @@ class HSAccessResource(object):
 
         return capabilities
 
+    @staticmethod
+    def get_methods(self):
+        """
+        Get a list of method names exposed by get_capabilities
+
+        :return: List of method names returned by get_capabilities.
+        :rtype: List
+        """
+        return [
+            'share_with_user', 'share_with_group',
+            'change_title',
+            'get_users', 'get_groups',
+            'make_published',
+            'make_shareable', 'make_not_shareable',
+            'make_public', 'make_not_public',
+            'make_discoverable', 'make_not_discoverable',
+            'make_immutable'
+        ]
     # "__" routines are limited via access control
 
     def __get_users(self):
@@ -1268,6 +1382,9 @@ class HSAccessResource(object):
         :param new_name: new name to use for title. 
         :type new_name: str
         """
+        if type(new_name) is not str:
+            raise HSAUsageException("new_name is not a string")
+
         self.__meta['title'] = new_name
         self.__hsa.assert_resource_metadata(self.__meta)
 
@@ -1345,6 +1462,10 @@ class HSAccessResource(object):
         :type privilege_code: str
 
         """
+        if type(user) is not HSAccessUser:
+            raise HSAUsageException("user is not an HSAccessUser")
+        if type(privilege_code) is not str:
+            raise HSAUsageException("privilege_code is not a string")
         self.__hsa.share_resource_with_user(self.__uuid, user.get_uuid(), privilege_code)
 
     def __share_with_group(self, group, privilege_code):
@@ -1357,9 +1478,15 @@ class HSAccessResource(object):
         :type privilege_code: str
 
         """
+        if type(group) is not HSAccessGroup:
+            raise HSAUsageException("group is not an HSAccessGroup")
+        if type(privilege_code) is not str:
+            raise HSAUsageException("privilege_code is not a string")
+
         self.__hsa.share_resource_with_group(self.__uuid, group.get_uuid(), privilege_code)
 
-    def __spaces(self, indent=0):
+    @staticmethod
+    def __spaces(indent=0):
         s = ""
         for i in [n for n in range(1, indent)]:
             s += '  '
@@ -1392,13 +1519,13 @@ class HSAccessResource(object):
         for n in self.__get_users():
             print self.__spaces(indent+3), \
                 "uuid: ", n.get_uuid(), \
-                " priv: ", n.get_privilege_over_resource(self.__uuid), \
+                " priv: ", n.get_privilege_over_resource(self), \
                 " name: ", n.get_name()
 
         print self.__spaces(indent), "  get_groups(): "
         for n in self.__get_groups():
             print self.__spaces(indent+3), \
                 "uuid: ", n.get_uuid(), \
-                " priv: ", n.get_privilege_over_group(self.__uuid, n.get_uuid()), \
+                " priv: ", n.get_privilege_over_resource(self), \
                 " name: ", n.get_name()
 

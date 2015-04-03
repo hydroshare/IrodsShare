@@ -16,7 +16,7 @@ The return value of get_capabilities() is a Dict of key-value pairs::
 One can call a bound method via the following pattern::
 
         caps = Objects.get_capabilities()
-        if 'method' in caps: 
+        if 'method' in caps.keys(): 
             caps['method'](...method arguments...) 
 
 where each method has arguments documented in the get_capabilities() documentation for the specific object. 
