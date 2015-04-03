@@ -727,7 +727,7 @@ class T11ProgrammingErrors(unittest.TestCase):
             self.assertTrue(e.value == 'User login does not exist')
 
         try:
-            ha._HSAccessCore__get_user_uuid_from_login('nonsense')
+            ha.get_user_uuid_from_login('nonsense')
             self.fail("managed to get non-existent login 'nonsense'")
         except HSAlib.HSAUsageException as e:
             self.assertTrue(e.value == 'User login does not exist')

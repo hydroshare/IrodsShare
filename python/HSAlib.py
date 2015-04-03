@@ -40,7 +40,11 @@ import uuid
 
 class HSAException(Exception):
     """
-    Exception class for HSAccess class: documents prohibited actions according to HSAccess engine logic
+    Generic Base Exception class for HSAccess class.
+
+    *This exception is a generic base class and is never directly raised.*
+    See subclasses HSAccessException, HSUsageException, and HSIntegrityException
+    for details.
     """
     def __init__(self, value):
         """
@@ -54,7 +58,10 @@ class HSAException(Exception):
 
 class HSAccessException(HSAException):
     """
-    Exception class for access-level problems
+    Exception class for access control.
+
+    This exception is raised when the access control system denies a user request.
+    It can safely be caught to probe whether an operation is permitted.
     """
     def __str__(self):
         return repr("HS Access Exception: " + self.value)
@@ -65,6 +72,14 @@ class HSAccessException(HSAException):
 class HSAUsageException(HSAException):
     """
     Exception class for parameter usage problems.
+
+    This exception is raised when a routine is called with invalid parameters.
+    This includes references to non-existent resources, groups, and users.
+
+    This is typically a programming error and should be entered into
+    issue tracker and resolved.
+
+    *Catching this exception is not recommended.*
     """
     def __str__(self):
         return repr("HS Usage Exception: " + self.value)
@@ -75,6 +90,15 @@ class HSAUsageException(HSAException):
 class HSAIntegrityException(HSAException):
     """
     Exception class for database failures.
+    This is an "anti-bugging" exception that should *never* be raised unless something
+    is very seriously wrong with database configuration. This exception is only raised
+    if the database fails to meet integrity constraints.
+
+    *This cannot be a programming error.* In fact, it can only happen if the schema
+    for the database itself becomes corrupt. The only way to address this is to
+    repair the schema.
+
+    *Catching this exception is not recommended.*
     """
 
     def __str__(self):
@@ -90,11 +114,13 @@ class HSAccessCore(object):
     Unlike HSAccess, it does not contain helper functions;
     only the functions necessary to the core logic.
     """
-    __PRIVILEGE_NONE = 4          # code that no privilege is asserted
+
     __PRIVILEGE_OWN = 1             # owner of thing
     __PRIVILEGE_RW = 2              # can read and write thing
     __PRIVILEGE_RO = 3              # can read thing
+    __PRIVILEGE_NONE = 4            # code that no privilege is asserted
     __PRIVILEGE_CODES = ['own', 'rw', 'ro', 'none']
+
     def __init__(self, irods_user, irods_password,
                  db_database, db_user, db_password, db_host, db_port):
         try:
@@ -109,7 +135,7 @@ class HSAccessCore(object):
         except:
             raise HSAIntegrityException("unable to connect to the database")
         self.__user_id = self.__get_user_id_from_login(irods_user)
-        self.__user_uuid = self.__get_user_uuid_from_login(irods_user)
+        self.__user_uuid = self.get_user_uuid_from_login(irods_user)
 
     def __del__(self):
         if self.__conn is not None:
@@ -159,7 +185,7 @@ class HSAccessCore(object):
         if user_uuid is None:
             # try the other keys to see if it is defined
             try:
-                user_uuid = self.__get_user_uuid_from_login(user_login)
+                user_uuid = self.get_user_uuid_from_login(user_login)
             except HSAException:
                 user_uuid = uuid.uuid4().hex
         # print "resource uuid is", resource_uuid
@@ -368,7 +394,7 @@ class HSAccessCore(object):
             raise HSAUsageException("User uuid does not exist")
 
     # get a specific login uuid for use in requesting actions
-    def __get_user_uuid_from_login(self, login):
+    def get_user_uuid_from_login(self, login):
         """
         PRIVATE: get user database id from login name
 
@@ -1274,6 +1300,35 @@ class HSAccessCore(object):
                             requesting_user_id, resource_uuid))
         self.__conn.commit()
 
+    # CLI: hs delete resource
+    # unsure whether this should be a possibility;
+    # consider deactivate_group instead.
+
+    def retract_resource(self, resource_uuid):
+        """
+        Delete a resource and all privilege information
+
+        :type resource_uuid: str
+        :param resource_uuid: uuid of resource to delete
+
+        Retractions are handled via database cascade logic (ON DELETE CASCADE).
+        This deletes all information about the resource, including all privilege
+        over it.
+
+        Restrictions:
+
+        1. Only the owner of the group or an administrator can do this.
+
+        """
+        # only an owner or administrator can retract a group
+        if not self.user_is_admin(self.get_uuid()) \
+                and not self.resource_is_owned(resource_uuid, self.get_uuid()):
+            raise HSAccessException("Regular user must own resource")
+        resource_id = self.__get_resource_id_from_uuid(resource_uuid)
+        # no longer needed: cascade logic enables this
+        # self.__cur.execute("""delete from user_access_to_resource where group_id=%s""", (group_id,))
+        self.__cur.execute("""delete from resources where resource_id=%s""", (resource_id,))
+
     ###########################################################
     # resource state
     ###########################################################
@@ -1513,10 +1568,12 @@ class HSAccessCore(object):
         else:
             # print "no privilege"
             return self.__PRIVILEGE_NONE  # no privilege
+
     ###########################################################
     # cumulative resource privilege interface includes resource-local
     # flags that override user flags for data access.
     ###########################################################
+
     def get_cumulative_user_privilege_over_resource(self, resource_uuid, user_uuid=None):
         """
         Get privilege code for user over a resource
@@ -1804,10 +1861,14 @@ class HSAccessCore(object):
         """
         Share a resource with a user at a given privilege level.
 
-        :param requesting_id int: id of requesting user
-        :param user_id int: user id of user to which to grant privilege
-        :param resource_id int: resource id to which to grant privilege
-        :param privilege_id int: privilege to grant
+        :type requesting_id: int
+        :type user_id: int
+        :type resource_id: int
+        :type privilege_id: int
+        :param requesting_id: id of requesting user
+        :param user_id: user id of user to which to grant privilege
+        :param resource_id: resource id to which to grant privilege
+        :param privilege_id: privilege to grant
 
         """
         #  sufficient privileges present to share this resource
@@ -2989,7 +3050,6 @@ class HSAccessCore(object):
         else:
             raise HSAccessException("No resource invitation for user")
 
-
     #  for now, couple group membership with group privilege
     # self.assert_user_in_group(group_uuid, user_uuid)
     def share_group_with_user(self, group_uuid, user_uuid, privilege_code='ro'):
@@ -3213,8 +3273,8 @@ class HSAccessCore(object):
         """
         Make a list of resources held by user, sorted by title
 
-        :type user_uuid: str
-        :param user_uuid: uuid of user; omit for current user.
+        :type resource_uuid: str
+        :param resource_uuid: uuid of user; omit for current user.
         :return: List of resources containing dict items
         :rtype: List<Dict> 
 

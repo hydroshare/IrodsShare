@@ -356,23 +356,23 @@ class HSAccessUser(object):
             result += [HSAccessResource(self.__hsa, g['uuid'])]
         return result
 
-    ### ERROR ### def get_group_invitations(self):
-    ### ERROR ###   """
-    ### ERROR ###   Get a list of invitations to join groups, with "accept" and "refuse" buttons
-    ### ERROR ###   """
-    ### ERROR ###   invites = self.__hsa.get_group_invitations_for_user(self.__uuid)
-    ### ERROR ###   results = []
-    ### ERROR ###   for i in invites:
-    ### ERROR ###       results += [HSAccessGroupInvitation(self.__hsa,
-    ### ERROR ###                                           self.__uuid,
-    ### ERROR ###                                           i['group_uuid'],
-    ### ERROR ###                                           i['inviting_user_uuid'])]
+    # ## ERROR ### def get_group_invitations(self):
+    # ## ERROR ###   """
+    # ## ERROR ###   Get a list of invitations to join groups, with "accept" and "refuse" buttons
+    # ## ERROR ###   """
+    # ## ERROR ###   invites = self.__hsa.get_group_invitations_for_user(self.__uuid)
+    # ## ERROR ###   results = []
+    # ## ERROR ###   for i in invites:
+    # ## ERROR ###       results += [HSAccessGroupInvitation(self.__hsa,
+    # ## ERROR ###                                           self.__uuid,
+    # ## ERROR ###                                           i['group_uuid'],
+    # ## ERROR ###                                           i['inviting_user_uuid'])]
 
-    ### ERROR ### def get_resource_invitations(self):
-    ### ERROR ###     """
-    ### ERROR ###     Get a list of all invitations to own resources, with "accept" and "reject" buttons
-    ### ERROR ###     """
-    ### ERROR ###     pass
+    # ## ERROR ### def get_resource_invitations(self):
+    # ## ERROR ###     """
+    # ## ERROR ###     Get a list of all invitations to own resources, with "accept" and "reject" buttons
+    # ## ERROR ###     """
+    # ## ERROR ###     pass
 
     def get_capabilities(self):
         """
@@ -866,24 +866,24 @@ class HSAccessGroup(object):
         """
         self.__hsa.share_group_with_user(self.__uuid, user.get_uuid(), privilege_code)
 
-    ### ERROR ### def __invite_user(self, user, privilege_code):
-    ### ERROR ###     self.__hsa.invite_user_to_group(self.__uuid, user.get_uuid(), privilege_code)
+    # ## ERROR ### def __invite_user(self, user, privilege_code):
+    # ## ERROR ###     self.__hsa.invite_user_to_group(self.__uuid, user.get_uuid(), privilege_code)
 
-    ### ERROR ### def get_invited_users(self):
-    ### ERROR ###     # this returns ALL invitations sent by the user.
-    ### ERROR ###     # we want the ones for this group specifically
-    ### ERROR ###     # THIS IS DEFINITELY WRONG
-    ### ERROR ###     invites = self.__hsa.get_group_invitations_sent_by_user()
-    ### ERROR ###     pprint(invites)
-    ### ERROR ###     results = []
-    ### ERROR ###     for u in invites:
-    ### ERROR ###         # limit to this specific group
-    ### ERROR ###         if u['group_uuid'] is self.__uuid:
-    ### ERROR ###             results += [HSAccessGroupInvitation(self.__hsa,
-    ### ERROR ###                                                 u['user_uuid'],
-    ### ERROR ###                                                 u['group_uuid'],
-    ### ERROR ###                                                 u['inviting_user_uuid'])]
-    ### ERROR ###     return results
+    # ## ERROR ### def get_invited_users(self):
+    # ## ERROR ###     # this returns ALL invitations sent by the user.
+    # ## ERROR ###     # we want the ones for this group specifically
+    # ## ERROR ###     # THIS IS DEFINITELY WRONG
+    # ## ERROR ###     invites = self.__hsa.get_group_invitations_sent_by_user()
+    # ## ERROR ###     pprint(invites)
+    # ## ERROR ###     results = []
+    # ## ERROR ###     for u in invites:
+    # ## ERROR ###         # limit to this specific group
+    # ## ERROR ###         if u['group_uuid'] is self.__uuid:
+    # ## ERROR ###             results += [HSAccessGroupInvitation(self.__hsa,
+    # ## ERROR ###                                                 u['user_uuid'],
+    # ## ERROR ###                                                 u['group_uuid'],
+    # ## ERROR ###                                                 u['inviting_user_uuid'])]
+    # ## ERROR ###     return results
 
     def __spaces(self, indent=0):
         s = ""
