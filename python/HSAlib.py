@@ -1852,9 +1852,13 @@ class HSAccessCore(object):
             # use join to access privilege records
             user_priv = self.__get_user_privilege_over_resource(resource_uuid)
             if user_priv > self.__PRIVILEGE_RO:
-                raise HSAccessException("User has no access to resource")
+                raise HSAccessException("User has no privilege over resource")
             if user_priv > privilege_id:
-                raise HSAccessException("User has less privilege to resource than required")
+                raise HSAccessException("User has insufficient privilege over resource")
+            if user_uuid == self.get_uuid():
+                if self.resource_is_owned(resource_uuid):
+                    if self.get_number_of_resource_owners(resource_uuid) == 1:
+                        raise HSAccessException("Cannot remove last owner of resource")
         self.__share_resource_with_user(requesting_id, user_id, resource_id, privilege_id)
 
     def __share_resource_with_user(self, requesting_id, user_id, resource_id, privilege_id):
@@ -2514,9 +2518,10 @@ class HSAccessCore(object):
             user_priv = self.__get_cumulative_user_privilege_over_group(group_uuid)
             if user_priv >= self.__PRIVILEGE_RO:  # read-only or no-sharing
                 raise HSAccessException("User does not have permission to invite members")
-            else:
-                if user_priv > privilege_id:
-                    raise HSAccessException("User has insufficient privilege over group")
+            if user_priv > privilege_id:
+                raise HSAccessException("User has insufficient privilege over group")
+            if user_uuid == self.get_uuid():
+                raise HSAccessException("Cannot invite self to group")
         # sufficient privileges present to share this resource
         if self.__user_invite_to_group_exists(requesting_id, group_id, user_id):
             self.__invite_group_user_update(requesting_id, user_id, group_id, privilege_id)
@@ -2627,7 +2632,7 @@ class HSAccessCore(object):
     def __uninvite_user_to_group(self, requesting_id, group_id, user_id):
         if self.__user_invite_to_group_exists(requesting_id, group_id, user_id):
             self.__cur.execute("""delete from user_invitations_to_group where user_id=%s
-                              and group_id=%s and assertion_user_id=%s""",
+                               and group_id=%s and assertion_user_id=%s""",
                                (user_id, group_id, requesting_id))
             self.__conn.commit()
 
@@ -2798,9 +2803,10 @@ class HSAccessCore(object):
             user_priv = self.__get_cumulative_user_privilege_over_resource(resource_uuid)
             if user_priv >= self.__PRIVILEGE_RO:  # read-only or no-sharing
                 raise HSAccessException("User does not have permission to invite members")
-            else:
-                if user_priv > privilege_id:
-                    raise HSAccessException("User has insufficient privilege over resource")
+            if user_priv > privilege_id:
+                raise HSAccessException("User has insufficient privilege over resource")
+            if self.get_uuid() == user_uuid:
+                raise HSAccessException("Cannot invite self to resource")
         # sufficient privileges present to share this resource
         if self.__user_invite_to_resource_exists(requesting_id, resource_id, user_id):
             self.__invite_resource_user_update(requesting_id, user_id, resource_id, privilege_id)
@@ -3095,11 +3101,15 @@ class HSAccessCore(object):
         if not (self.user_is_admin(self.get_uuid())):
             # use join to access privilege records
             user_priv = self.__get_cumulative_user_privilege_over_group(group_uuid)
-            if user_priv >= self.__PRIVILEGE_RO:  # read-only or no-sharing
-                raise HSAccessException("User lacks read/write privilege for group")
-            else:
-                if user_priv > privilege_id:
-                    raise HSAccessException("User has insufficient privilege for group")
+            if user_priv > self.__PRIVILEGE_RO:  # read-only or no-sharing
+                raise HSAccessException("User has no privilege for group")
+            if user_priv > privilege_id:
+                raise HSAccessException("User has insufficient privilege for group")
+        if user_uuid == self.get_uuid():
+            if self.group_is_owned(group_uuid):
+                if self.get_number_of_group_owners(group_uuid) == 1:
+                    raise HSAccessException("Cannot remove last owner of group")
+
         self.__share_group_with_user(requesting_id, user_id, group_id, privilege_id)
         # for now, couple group membership with group privilege; the following is obsolete
         # self.assert_user_in_group(group_uuid, user_uuid)

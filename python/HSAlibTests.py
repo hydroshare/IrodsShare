@@ -219,7 +219,6 @@ class T04CreateGroup(unittest.TestCase):
         except HSAlib.HSAUsageException as e:
             self.assertTrue("Group uuid does not exist" == e.value)
 
-
 class T05ProtectResource(unittest.TestCase):
     def test(self):
         global context
@@ -364,7 +363,7 @@ class T06ProtectGroup(unittest.TestCase):
             self.fail("non-members should not be able to add users to a group")
         except HSAlib.HSAException as e:
             # print e.value
-            self.assertTrue(e.value == "User lacks read/write privilege for group")
+            self.assertTrue(e.value == "User has insufficient privilege for group")
 
         # now share with dog and let's compare the states
         ha = startup('cat')
@@ -472,6 +471,7 @@ class T07InviteToGroup(unittest.TestCase):
         self.assertFalse(ha.group_is_owned(group_carnivores))
         self.assertFalse(ha.group_is_readwrite(group_carnivores))
         self.assertTrue(ha.group_is_readable(group_carnivores))
+
 
 class T07InviteToResource(unittest.TestCase):
     def test(self):
@@ -653,7 +653,8 @@ class T08ResourceFlags(unittest.TestCase):
         ha = startup('dog')
         ha.retract_resource(context['resources']['chewies'])
         self.assertFalse(ha.resource_exists(context['resources']['chewies']),
-                    "resource still exists after being retracted")
+                                            "resource still exists after being retracted")
+
 
 class T09GroupSharing(unittest.TestCase):
     def test(self):
@@ -705,6 +706,7 @@ class T09GroupSharing(unittest.TestCase):
         ha.unshare_resource_with_group(context['resources']['scratching'], context['groups']['felines'])
         self.assertTrue(len(ha.get_resources_held_by_group(context['groups']['felines'])) == 0)
 
+
 class T10GroupFlags(unittest.TestCase):
     def test(self):
         global context
@@ -715,9 +717,38 @@ class T10GroupFlags(unittest.TestCase):
             self.fail("non-owner should not be able to change sharing")
         except HSAlib.HSAccessException as e:
             self.assertTrue(e.value == "Regular user must own group")
+        try:
+            ha.make_group_not_discoverable(context['groups']['felines'])
+            self.fail("non-owner should not be able to change discoverability")
+        except HSAlib.HSAccessException as e:
+            self.assertTrue(e.value == "Regular user must own group")
 
 
-class T11ProgrammingErrors(unittest.TestCase):
+class T11PreserveOwnership(unittest.TestCase):
+    def test(self):
+        global context
+        ha = startup('dog')
+        self.assertTrue(ha.group_is_owned(context['groups']['felines']))
+        self.assertTrue(ha.get_number_of_group_owners(context['groups']['felines']) == 1)
+        # meta = ha.get_group_metadata(context['groups']['felines'])
+        try:
+            # try to downgrade your own privilege
+            ha.share_group_with_user(context['groups']['felines'], context['users']['dog'], 'ro')
+            self.fail("should not be able to remove sole owner")
+        except HSAlib.HSAccessException as e:
+            self.assertTrue(e.value == 'Cannot remove last owner of group')
+
+        self.assertTrue(ha.resource_is_owned(context['resources']['bones']))
+        self.assertTrue(ha.get_number_of_resource_owners(context['resources']['bones']) == 1)
+        # meta = ha.get_resource_metadata(context['resources']['bones'])
+        try:
+            # try to downgrade your own privilege
+            ha.share_resource_with_user(context['resources']['bones'], context['users']['dog'], 'ro')
+            self.fail("should not be able to remove sole owner")
+        except HSAlib.HSAccessException as e:
+            self.assertTrue(e.value == 'Cannot remove last owner of resource')
+
+class T12ProgrammingErrors(unittest.TestCase):
     def test(self):
         global context
 
