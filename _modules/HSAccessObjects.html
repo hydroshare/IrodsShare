@@ -405,23 +405,23 @@
             <span class="n">result</span> <span class="o">+=</span> <span class="p">[</span><span class="n">HSAccessResource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="p">,</span> <span class="n">g</span><span class="p">[</span><span class="s">&#39;uuid&#39;</span><span class="p">])]</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="c">### ERROR ### def get_group_invitations(self):</span>
-    <span class="c">### ERROR ###   &quot;&quot;&quot;</span>
-    <span class="c">### ERROR ###   Get a list of invitations to join groups, with &quot;accept&quot; and &quot;refuse&quot; buttons</span>
-    <span class="c">### ERROR ###   &quot;&quot;&quot;</span>
-    <span class="c">### ERROR ###   invites = self.__hsa.get_group_invitations_for_user(self.__uuid)</span>
-    <span class="c">### ERROR ###   results = []</span>
-    <span class="c">### ERROR ###   for i in invites:</span>
-    <span class="c">### ERROR ###       results += [HSAccessGroupInvitation(self.__hsa,</span>
-    <span class="c">### ERROR ###                                           self.__uuid,</span>
-    <span class="c">### ERROR ###                                           i[&#39;group_uuid&#39;],</span>
-    <span class="c">### ERROR ###                                           i[&#39;inviting_user_uuid&#39;])]</span>
+    <span class="c"># ## ERROR ### def get_group_invitations(self):</span>
+    <span class="c"># ## ERROR ###   &quot;&quot;&quot;</span>
+    <span class="c"># ## ERROR ###   Get a list of invitations to join groups, with &quot;accept&quot; and &quot;refuse&quot; buttons</span>
+    <span class="c"># ## ERROR ###   &quot;&quot;&quot;</span>
+    <span class="c"># ## ERROR ###   invites = self.__hsa.get_group_invitations_for_user(self.__uuid)</span>
+    <span class="c"># ## ERROR ###   results = []</span>
+    <span class="c"># ## ERROR ###   for i in invites:</span>
+    <span class="c"># ## ERROR ###       results += [HSAccessGroupInvitation(self.__hsa,</span>
+    <span class="c"># ## ERROR ###                                           self.__uuid,</span>
+    <span class="c"># ## ERROR ###                                           i[&#39;group_uuid&#39;],</span>
+    <span class="c"># ## ERROR ###                                           i[&#39;inviting_user_uuid&#39;])]</span>
 
-    <span class="c">### ERROR ### def get_resource_invitations(self):</span>
-    <span class="c">### ERROR ###     &quot;&quot;&quot;</span>
-    <span class="c">### ERROR ###     Get a list of all invitations to own resources, with &quot;accept&quot; and &quot;reject&quot; buttons</span>
-    <span class="c">### ERROR ###     &quot;&quot;&quot;</span>
-    <span class="c">### ERROR ###     pass</span>
+    <span class="c"># ## ERROR ### def get_resource_invitations(self):</span>
+    <span class="c"># ## ERROR ###     &quot;&quot;&quot;</span>
+    <span class="c"># ## ERROR ###     Get a list of all invitations to own resources, with &quot;accept&quot; and &quot;reject&quot; buttons</span>
+    <span class="c"># ## ERROR ###     &quot;&quot;&quot;</span>
+    <span class="c"># ## ERROR ###     pass</span>
 </div>
 <div class="viewcode-block" id="HSAccessUser.get_capabilities"><a class="viewcode-back" href="../objects.html#HSAccessObjects.HSAccessUser.get_capabilities">[docs]</a>    <span class="k">def</span> <span class="nf">get_capabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -915,24 +915,24 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__hsa</span><span class="o">.</span><span class="n">share_group_with_user</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__uuid</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">get_uuid</span><span class="p">(),</span> <span class="n">privilege_code</span><span class="p">)</span>
 
-    <span class="c">### ERROR ### def __invite_user(self, user, privilege_code):</span>
-    <span class="c">### ERROR ###     self.__hsa.invite_user_to_group(self.__uuid, user.get_uuid(), privilege_code)</span>
+    <span class="c"># ## ERROR ### def __invite_user(self, user, privilege_code):</span>
+    <span class="c"># ## ERROR ###     self.__hsa.invite_user_to_group(self.__uuid, user.get_uuid(), privilege_code)</span>
 
-    <span class="c">### ERROR ### def get_invited_users(self):</span>
-    <span class="c">### ERROR ###     # this returns ALL invitations sent by the user.</span>
-    <span class="c">### ERROR ###     # we want the ones for this group specifically</span>
-    <span class="c">### ERROR ###     # THIS IS DEFINITELY WRONG</span>
-    <span class="c">### ERROR ###     invites = self.__hsa.get_group_invitations_sent_by_user()</span>
-    <span class="c">### ERROR ###     pprint(invites)</span>
-    <span class="c">### ERROR ###     results = []</span>
-    <span class="c">### ERROR ###     for u in invites:</span>
-    <span class="c">### ERROR ###         # limit to this specific group</span>
-    <span class="c">### ERROR ###         if u[&#39;group_uuid&#39;] is self.__uuid:</span>
-    <span class="c">### ERROR ###             results += [HSAccessGroupInvitation(self.__hsa,</span>
-    <span class="c">### ERROR ###                                                 u[&#39;user_uuid&#39;],</span>
-    <span class="c">### ERROR ###                                                 u[&#39;group_uuid&#39;],</span>
-    <span class="c">### ERROR ###                                                 u[&#39;inviting_user_uuid&#39;])]</span>
-    <span class="c">### ERROR ###     return results</span>
+    <span class="c"># ## ERROR ### def get_invited_users(self):</span>
+    <span class="c"># ## ERROR ###     # this returns ALL invitations sent by the user.</span>
+    <span class="c"># ## ERROR ###     # we want the ones for this group specifically</span>
+    <span class="c"># ## ERROR ###     # THIS IS DEFINITELY WRONG</span>
+    <span class="c"># ## ERROR ###     invites = self.__hsa.get_group_invitations_sent_by_user()</span>
+    <span class="c"># ## ERROR ###     pprint(invites)</span>
+    <span class="c"># ## ERROR ###     results = []</span>
+    <span class="c"># ## ERROR ###     for u in invites:</span>
+    <span class="c"># ## ERROR ###         # limit to this specific group</span>
+    <span class="c"># ## ERROR ###         if u[&#39;group_uuid&#39;] is self.__uuid:</span>
+    <span class="c"># ## ERROR ###             results += [HSAccessGroupInvitation(self.__hsa,</span>
+    <span class="c"># ## ERROR ###                                                 u[&#39;user_uuid&#39;],</span>
+    <span class="c"># ## ERROR ###                                                 u[&#39;group_uuid&#39;],</span>
+    <span class="c"># ## ERROR ###                                                 u[&#39;inviting_user_uuid&#39;])]</span>
+    <span class="c"># ## ERROR ###     return results</span>
 
     <span class="k">def</span> <span class="nf">__spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>

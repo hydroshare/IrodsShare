@@ -595,26 +595,6 @@ These include:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="HSAlib.HSAccessCore._HSAccessCore__get_user_uuid_from_login">
-<tt class="descname">_HSAccessCore__get_user_uuid_from_login</tt><big>(</big><em>login</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__get_user_uuid_from_login" title="Permalink to this definition">¶</a></dt>
-<dd><p>PRIVATE: get user database id from login name</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<em>str</em>) &#8211; string login name</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">user uuid</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-<p>This returns the user uuid from the login name. While this works reliably
-because login names are unique, this is only used to construct test cases.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="HSAlib.HSAccessCore._HSAccessCore__global_reset">
 <tt class="descname">_HSAccessCore__global_reset</tt><big>(</big><em>are_you_sure</em><big>)</big><a class="headerlink" href="#HSAlib.HSAccessCore._HSAccessCore__global_reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>PRIVATE: Delete all data from the database except for starting situation, for testing.</p>
@@ -991,10 +971,10 @@ to be updated does not exist, an exception is raised.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>int</strong> (<em>privilege_id</em>) &#8211; id of requesting user</li>
-<li><strong>int</strong> &#8211; user id of user to which to grant privilege</li>
-<li><strong>int</strong> &#8211; resource id to which to grant privilege</li>
-<li><strong>int</strong> &#8211; privilege to grant</li>
+<li><strong>requesting_id</strong> (<em>int</em>) &#8211; id of requesting user</li>
+<li><strong>user_id</strong> (<em>int</em>) &#8211; user id of user to which to grant privilege</li>
+<li><strong>resource_id</strong> (<em>int</em>) &#8211; resource id to which to grant privilege</li>
+<li><strong>privilege_id</strong> (<em>int</em>) &#8211; privilege to grant</li>
 </ul>
 </td>
 </tr>
@@ -2148,6 +2128,26 @@ This returns one of the following strings:</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="HSAlib.HSAccessCore.get_user_uuid_from_login">
+<tt class="descname">get_user_uuid_from_login</tt><big>(</big><em>login</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_user_uuid_from_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_user_uuid_from_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>PRIVATE: get user database id from login name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<em>str</em>) &#8211; string login name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">user uuid</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<p>This returns the user uuid from the login name. While this works reliably
+because login names are unique, this is only used to construct test cases.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="HSAlib.HSAccessCore.get_users">
 <tt class="descname">get_users</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.get_users"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.get_users" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the registered user list</p>
@@ -2182,7 +2182,7 @@ This returns one of the following strings:</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of user; omit for current user.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of resources containing dict items</td>
 </tr>
@@ -2730,6 +2730,27 @@ there is a band-aid fix that does the cascade in the application.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="HSAlib.HSAccessCore.retract_resource">
+<tt class="descname">retract_resource</tt><big>(</big><em>resource_uuid</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.retract_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.retract_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a resource and all privilege information</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource_uuid</strong> (<em>str</em>) &#8211; uuid of resource to delete</td>
+</tr>
+</tbody>
+</table>
+<p>Retractions are handled via database cascade logic (ON DELETE CASCADE).
+This deletes all information about the resource, including all privilege
+over it.</p>
+<p>Restrictions:</p>
+<ol class="arabic simple">
+<li>Only the owner of the group or an administrator can do this.</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
 <dt id="HSAlib.HSAccessCore.retract_resource_has_tag">
 <tt class="descname">retract_resource_has_tag</tt><big>(</big><em>resource_uuid</em>, <em>tag_name</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessCore.retract_resource_has_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessCore.retract_resource_has_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>STUB: Remove a tag from a resource; it becomes untagged.</p>
@@ -3142,19 +3163,33 @@ Administrative users can, for example:</p>
 <dl class="class">
 <dt id="HSAlib.HSAccessException">
 <em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAccessException</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAccessException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAccessException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception class for access-level problems</p>
+<dd><p>Exception class for access control.</p>
+<p>This exception is raised when the access control system denies a user request.
+It can safely be caught to probe whether an operation is permitted.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="HSAlib.HSAUsageException">
 <em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAUsageException</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAUsageException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAUsageException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception class for parameter usage problems.</p>
+<p>This exception is raised when a routine is called with invalid parameters.
+This includes references to non-existent resources, groups, and users.</p>
+<p>This is typically a programming error and should be entered into
+issue tracker and resolved.</p>
+<p><em>Catching this exception is not recommended.</em></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="HSAlib.HSAIntegrityException">
 <em class="property">class </em><tt class="descclassname">HSAlib.</tt><tt class="descname">HSAIntegrityException</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/HSAlib.html#HSAIntegrityException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#HSAlib.HSAIntegrityException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception class for database failures.</p>
+<dd><p>Exception class for database failures.
+This is an &#8220;anti-bugging&#8221; exception that should <em>never</em> be raised unless something
+is very seriously wrong with database configuration. This exception is only raised
+if the database fails to meet integrity constraints.</p>
+<p><em>This cannot be a programming error.</em> In fact, it can only happen if the schema
+for the database itself becomes corrupt. The only way to address this is to
+repair the schema.</p>
+<p><em>Catching this exception is not recommended.</em></p>
 </dd></dl>
 
 </div>
