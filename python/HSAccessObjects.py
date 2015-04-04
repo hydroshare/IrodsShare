@@ -55,6 +55,24 @@ class HSAccessUser(object):
         # does an implicit check on uuid validity and raises exception if not valid
         self.__meta = self.__hsa.get_user_metadata(self.__uuid)
 
+    def refresh(self):
+        """
+        Refresh metadata after a change
+
+        :return: dict of metadata
+        :rtype: dict
+        """
+        self.__meta = self.__hsa.get_user_metadata(self.__uuid)
+
+    def get_access(self):
+        """
+        Get the HSAccess object underlying the user object.
+
+        :return: HSAccess object underlying this user
+        :rtype: HSAccess
+        """
+        return self.__hsa
+
     def get_uuid(self):
         """ 
         Get the uuid of the user that this object represents. 
@@ -464,8 +482,8 @@ class HSAccessUser(object):
             capabilities['change_name'] = self.__change_name
 
         # if the user is the currently logged-in user
-        if self.__hsa.user_is_admin() or self.__hsa.get_uuid() == self.__uuid:
-            capabilities['change_name'] = self.__change_name
+        # if self.__hsa.get_uuid() == self.__uuid:
+        #     capabilities['change_name'] = self.__change_name
 
         return capabilities
 
@@ -551,7 +569,16 @@ class HSAccessGroup(object):
 
         self.__hsa = hsa
         self.__uuid = uuid
-        self.__meta = self.__hsa.get_group_metadata(self.__uuid)
+        self.refresh()
+
+    def refresh(self):
+        """
+        Refresh metadata after a change
+
+        :return: dict of metadata
+        :rtype: dict
+        """
+        self.__meta = self.__hsa.get_user_metadata(self.__uuid)
         self.__priv_cum = self.__hsa.get_cumulative_user_privilege_over_group(self.__uuid)
         self.__priv_prim = self.__hsa.get_user_privilege_over_group(self.__uuid)
         self.__member = self.__hsa.user_in_group(self.__uuid)
@@ -1093,6 +1120,15 @@ class HSAccessResource(object):
 
         self.__hsa = hsa
         self.__uuid = uuid
+        self.refresh()
+
+    def refresh(self):
+        """
+        Refresh metadata after a change
+
+        :return: dict of metadata
+        :rtype: dict
+        """
         self.__meta = self.__hsa.get_resource_metadata(self.__uuid)
         self.__priv_cum = self.__hsa.get_cumulative_user_privilege_over_resource(self.__uuid)
         self.__priv_prim = self.__hsa.get_user_privilege_over_resource(self.__uuid)
@@ -1142,7 +1178,7 @@ class HSAccessResource(object):
         :rtype: int
         """
 
-        return self.__priv_cum == 'ro' or self.__priv_cum == 'rw' or self.__priv_cum == 'ro'
+        return self.__priv_cum == 'ro' or self.__priv_cum == 'rw' or self.__priv_cum == 'own'
 
     def is_writeable(self):
         """
@@ -1435,14 +1471,14 @@ class HSAccessResource(object):
         Make the current resource discoverable. 
         """
         self.__hsa.make_resource_public(self.__uuid)
-        self.__meta['public'] = True
+        self.__meta['discoverable'] = True
 
     def __make_not_discoverable(self):
         """
         Make the current resource not discoverable. 
         """
         self.__hsa.make_resource_not_public(self.__uuid)
-        self.__meta['public'] = False
+        self.__meta['discoverable'] = False
 
     def __make_immutable(self):
         """
