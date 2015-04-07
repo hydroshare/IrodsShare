@@ -58,4 +58,3 @@ pprint(ha.get_user_metadata(uuuid02))
 print
 print "get_resource_metadata for", ruuid01, "is"
 pprint(ha.get_resource_metadata(ruuid01))
-

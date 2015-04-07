@@ -7,7 +7,7 @@ from pprint import pprint
 def startup(login):
     return HSAlib.HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
 
-# storage for test context; users, groups, and resources created durign testing
+# storage for test test_context; users, groups, and resources created durign testing
 
 context = {'groups': {}, 'users': {}, 'resources': {}}
 
@@ -25,7 +25,7 @@ class T02CreateUser(unittest.TestCase):
         ha = startup('admin')
         self.assertTrue(ha.get_number_of_resources_owned_by_user() == 0)
         context['users']['cat'] = ha.assert_user('cat', 'not a dog', True, False, user_uuid="user_cat")
-        # store this context for later tests
+        # store this test_context for later tests
 
         # check that user was created correctly
         self.assertTrue(context['users']['cat'] == 'user_cat')
@@ -119,7 +119,7 @@ class T03CreateResource(unittest.TestCase):
         self.assertTrue(ha.resource_is_owned(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readable(context['resources']['dog']))
-        # self.assertTrue(ha.resource_is_readable_without_sharing(context['resources']['dog']))
+        # self.assertTrue(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
 
         # should not allow pathnames to be changed by a non-administrator
         try:
@@ -141,9 +141,9 @@ class T03CreateResource(unittest.TestCase):
         meta = ha.get_resource_metadata(context['resources']['dog'])
         ha.assert_resource_metadata(meta)
 
-        # ha.make_resource_immutable(context['resources']['dog'])
-        # self.assertTrue(ha.resource_is_immutable(context['resources']['dog'])==True)
-        # self.assertTrue(ha.resource_is_public(context['resources']['dog'])==False)
+        # ha.make_resource_immutable(test_context['resources']['dog'])
+        # self.assertTrue(ha.resource_is_immutable(test_context['resources']['dog'])==True)
+        # self.assertTrue(ha.resource_is_public(test_context['resources']['dog'])==False)
 
 
 class T04CreateGroup(unittest.TestCase):
@@ -189,7 +189,7 @@ class T04CreateGroup(unittest.TestCase):
         self.assertTrue(ha.group_is_owned(context['groups']['arfers']))
         self.assertTrue(ha.group_is_readwrite(context['groups']['arfers']))
         self.assertTrue(ha.group_is_readable(context['groups']['arfers']))
-        # self.assertTrue(ha.group_is_readable_without_sharing(context['groups']['arfers']))
+        # self.assertTrue(ha.group_is_readable_without_sharing(test_context['groups']['arfers']))
 
         # change the group metadata without creating a new group
         ha.assert_group('all about dogs', group_uuid=context['groups']['arfers'])
@@ -225,11 +225,11 @@ class T05ProtectResource(unittest.TestCase):
 
         # dog should not have sharing privileges
         ha = startup('dog')
-        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(context['resources']['dog']) == 100)
+        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(test_context['resources']['dog']) == 100)
         self.assertFalse(ha.resource_is_owned(context['resources']['dog']))
         self.assertFalse(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertFalse(ha.resource_is_readable(context['resources']['dog']))
-        # self.assertFalse(ha.resource_is_readable_without_sharing(context['resources']['dog']))
+        # self.assertFalse(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
         # this should fail.
         try:
             ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
@@ -243,23 +243,23 @@ class T05ProtectResource(unittest.TestCase):
         ha.share_resource_with_user(context['resources']['dog'], context['users']['dog'], 'own')
         ha = startup('dog')
         # print "user privilege over resource dog is ",
-        #       ha.__get_user_privilege_over_resource(context['resources']['dog'])
-        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(context['resources']['dog']) == 1)
+        #       ha.__get_user_privilege_over_resource(test_context['resources']['dog'])
+        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(test_context['resources']['dog']) == 1)
         self.assertTrue(ha.resource_is_owned(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readable(context['resources']['dog']))
-        # self.assertTrue(ha.resource_is_readable_without_sharing(context['resources']['dog']))
+        # self.assertTrue(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
         ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
 
         # downgrade permission to rw
         ha = startup('cat')
         ha.share_resource_with_user(context['resources']['dog'], context['users']['dog'], 'rw')
         ha = startup('dog')
-        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(context['resources']['dog']) == 2)
+        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(test_context['resources']['dog']) == 2)
         self.assertFalse(ha.resource_is_owned(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readable(context['resources']['dog']))
-        # self.assertTrue(ha.resource_is_readable_without_sharing(context['resources']['dog']))
+        # self.assertTrue(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
         try:
             ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
             self.fail("non-owners should not be able to modify resource metadata")
@@ -271,11 +271,11 @@ class T05ProtectResource(unittest.TestCase):
         ha = startup('cat')
         ha.share_resource_with_user(context['resources']['dog'], context['users']['dog'], 'ro')
         ha = startup('dog')
-        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(context['resources']['dog']) == 3)
+        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(test_context['resources']['dog']) == 3)
         self.assertFalse(ha.resource_is_owned(context['resources']['dog']))
         self.assertFalse(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readable(context['resources']['dog']))
-        # self.assertTrue(ha.resource_is_readable_without_sharing(context['resources']['dog']))
+        # self.assertTrue(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
         try:
             ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
             self.fail("non-owners should not be able to modify resource metadata")
@@ -295,16 +295,16 @@ class T05ProtectResource(unittest.TestCase):
             # print e.value
             self.assertTrue(e.value == "A group cannot own a resource")
         ha.share_resource_with_group(context['resources']['dog'], context['groups']['meowers'], 'rw')
-        # ha.unshare_resource_with_group(context['resources']['dog'], context['groups']['meowers'])
+        # ha.unshare_resource_with_group(test_context['resources']['dog'], test_context['groups']['meowers'])
 
         # second phase: check group membership privilege
         ha = startup('dog')
-        # print ha.__get_user_privilege_over_resource(ha.__user_uuid, context['resources']['dog'])
-        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(context['resources']['dog']) == 2)
+        # print ha.__get_user_privilege_over_resource(ha.__user_uuid, test_context['resources']['dog'])
+        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(test_context['resources']['dog']) == 2)
         self.assertFalse(ha.resource_is_owned(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readable(context['resources']['dog']))
-        # self.assertTrue(ha.resource_is_readable_without_sharing(context['resources']['dog']))
+        # self.assertTrue(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
         try:
             ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
             self.fail("non-owners should not be able to modify resource metadata")
@@ -316,11 +316,11 @@ class T05ProtectResource(unittest.TestCase):
         ha = startup('cat')
         ha.unshare_resource_with_group(context['resources']['dog'], context['groups']['meowers'])
         ha = startup('dog')
-        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(context['resources']['dog']) == 100)
+        # self.assertTrue(ha._HSAccessCore__get_user_privilege_over_resource(test_context['resources']['dog']) == 100)
         self.assertFalse(ha.resource_is_owned(context['resources']['dog']))
         self.assertFalse(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertFalse(ha.resource_is_readable(context['resources']['dog']))
-        # self.assertFalse(ha.resource_is_readable_without_sharing(context['resources']['dog']))
+        # self.assertFalse(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
 
 
 def match_lists(l1, l2):
@@ -357,7 +357,7 @@ class T06ProtectGroup(unittest.TestCase):
         self.assertTrue(match_lists(['all about dogs', 'some random meowers'], names), "error in group listing")
 
         # should not be able to modify group members
-        # ha.share_group_with_user(context['groups']['polyamory'], context['users']['dog'], "rw")
+        # ha.share_group_with_user(test_context['groups']['polyamory'], test_context['users']['dog'], "rw")
         try:
             ha.share_group_with_user(context['groups']['polyamory'], context['users']['dog'], "rw")
             self.fail("non-members should not be able to add users to a group")
@@ -388,7 +388,7 @@ class T06ProtectGroup(unittest.TestCase):
         self.assertTrue(match_lists(['wolves', 'polyamory', 'all about dogs', 'some random meowers'], names),
                         "error in group listing")
 
-        # put 'context['users']['cat']' into the 'wolves' group
+        # put 'test_context['users']['cat']' into the 'wolves' group
         ha.share_group_with_user(wolves, context['users']['cat'], "rw")
 
         # make sure 'cat' is a member
@@ -573,7 +573,7 @@ class T08ResourceFlags(unittest.TestCase):
         ha = startup('admin')
         context['users']['bat'] = ha.assert_user('bat', 'not a man', True, False)
 
-        # not an owner of context['resources']['bones']
+        # not an owner of test_context['resources']['bones']
         ha = startup('cat')
         self.assertTrue(ha.resource_is_readable(context['resources']['bones']))
         self.assertFalse(ha.resource_is_readwrite(context['resources']['bones']))
@@ -662,7 +662,7 @@ class T09GroupSharing(unittest.TestCase):
         ha = startup('dog')
 
         context['resources']['scratching'] = ha.assert_resource('/cat/scratching',
-                                                                'all about sofas as scratching posts')
+                                                                'all about sofas as scratching meowers')
 
         self.assertFalse(ha.resource_is_public(context['resources']['scratching']))
         self.assertFalse(ha.resource_is_immutable(context['resources']['scratching']))
@@ -730,7 +730,7 @@ class T11PreserveOwnership(unittest.TestCase):
         ha = startup('dog')
         self.assertTrue(ha.group_is_owned(context['groups']['felines']))
         self.assertTrue(ha.get_number_of_group_owners(context['groups']['felines']) == 1)
-        # meta = ha.get_group_metadata(context['groups']['felines'])
+        # meta = ha.get_group_metadata(test_context['groups']['felines'])
         try:
             # try to downgrade your own privilege
             ha.share_group_with_user(context['groups']['felines'], context['users']['dog'], 'ro')
@@ -740,7 +740,7 @@ class T11PreserveOwnership(unittest.TestCase):
 
         self.assertTrue(ha.resource_is_owned(context['resources']['bones']))
         self.assertTrue(ha.get_number_of_resource_owners(context['resources']['bones']) == 1)
-        # meta = ha.get_resource_metadata(context['resources']['bones'])
+        # meta = ha.get_resource_metadata(test_context['resources']['bones'])
         try:
             # try to downgrade your own privilege
             ha.share_resource_with_user(context['resources']['bones'], context['users']['dog'], 'ro')
