@@ -3723,7 +3723,7 @@ class HSAccessCore(object):
                                 ELSE 'none'
                            END AS privilege_code
                            FROM resources
-                           WHERE resource_discoverable=TRUE
+                           WHERE resource_discoverable is TRUE
                            ORDER BY resource_title""")
         result = []
         for row in self.__cur:

@@ -333,6 +333,7 @@ class T06ProtectGroup(unittest.TestCase):
         ha = startup('cat')
 
         context['groups']['polyamory'] = ha.assert_group('polyamory')  # owned by 'cat'
+        self.assertTrue(ha.group_is_owned(context['groups']['polyamory']))
         self.assertTrue(ha.group_is_active(context['groups']['polyamory']))
         self.assertTrue(ha.group_is_public(context['groups']['polyamory']))
         self.assertTrue(ha.group_is_shareable(context['groups']['polyamory']))
@@ -600,6 +601,9 @@ class T08ResourceFlags(unittest.TestCase):
         self.assertTrue(ha.resource_is_discoverable(context['resources']['bones']))
         self.assertTrue(ha.resource_is_shareable(context['resources']['bones']))
 
+        names = map((lambda x: x['title']), ha.get_discoverable_resources())
+        self.assertTrue(match_lists(['all about dog bones'], names), "error in discoverable resource listing")
+
         ha.make_resource_not_discoverable(context['resources']['bones'])
         self.assertFalse(ha.resource_is_immutable(context['resources']['bones']))
         self.assertFalse(ha.resource_is_public(context['resources']['bones']))
@@ -639,8 +643,11 @@ class T08ResourceFlags(unittest.TestCase):
         self.assertFalse(ha.resource_is_immutable(context['resources']['chewies']))
         self.assertTrue(ha.resource_is_public(context['resources']['chewies']))
         self.assertFalse(ha.resource_is_published(context['resources']['chewies']))
-        self.assertTrue(ha.resource_is_discoverable(context['resources']['chewies']))
+        self.assertFalse(ha.resource_is_discoverable(context['resources']['chewies']))
         self.assertTrue(ha.resource_is_shareable(context['resources']['chewies']))
+
+        names = map((lambda x: x['title']), ha.get_public_resources())
+        self.assertTrue(match_lists(['all about dog chewies'], names), "error in public resource listing")
 
         ha = startup('bat')
 
@@ -655,7 +662,6 @@ class T08ResourceFlags(unittest.TestCase):
         self.assertFalse(ha.resource_exists(context['resources']['chewies']),
                                             "resource still exists after being retracted")
 
-
 class T09GroupSharing(unittest.TestCase):
     def test(self):
         global context
@@ -669,6 +675,8 @@ class T09GroupSharing(unittest.TestCase):
 
         # test primitive group sharing of a resource
         context['groups']['felines'] = ha.assert_group('felines')
+        ha.group_is_owned(context['groups']['felines'])
+
         ha.share_group_with_user(context['groups']['felines'], context['users']['cat'], 'ro')
 
         try:
@@ -712,6 +720,8 @@ class T10GroupFlags(unittest.TestCase):
         global context
         # test whether protection on flags is appropriate
         ha = startup('cat')
+        self.assertFalse(ha.group_is_owned(context['groups']['felines']))
+
         try:
             ha.make_group_not_shareable(context['groups']['felines'])
             self.fail("non-owner should not be able to change sharing")
@@ -722,6 +732,81 @@ class T10GroupFlags(unittest.TestCase):
             self.fail("non-owner should not be able to change discoverability")
         except HSAlib.HSAccessException as e:
             self.assertTrue(e.value == "Regular user must own group")
+
+        ha = startup('dog')
+        self.assertTrue(ha.group_is_owned(context['groups']['felines']))
+        self.assertTrue(ha.group_is_public(context['groups']['felines']))
+        self.assertTrue(ha.group_is_discoverable(context['groups']['felines']))
+        self.assertTrue(ha.group_is_active(context['groups']['felines']))
+        self.assertTrue(ha.group_is_shareable(context['groups']['felines']))
+
+        names = map((lambda x: x['name']), ha.get_discoverable_groups())
+        self.assertTrue('felines' in names)
+
+        ha.make_group_not_discoverable(context['groups']['felines'])
+
+        self.assertTrue(ha.group_is_owned(context['groups']['felines']))
+        self.assertTrue(ha.group_is_public(context['groups']['felines']))
+        self.assertFalse(ha.group_is_discoverable(context['groups']['felines']))
+        self.assertTrue(ha.group_is_active(context['groups']['felines']))
+        self.assertTrue(ha.group_is_shareable(context['groups']['felines']))
+
+        names = map((lambda x: x['name']), ha.get_discoverable_groups())
+        self.assertTrue('felines' not in names)
+
+        ha.make_group_discoverable(context['groups']['felines'])
+
+        self.assertTrue(ha.group_is_owned(context['groups']['felines']))
+        self.assertTrue(ha.group_is_public(context['groups']['felines']))
+        self.assertTrue(ha.group_is_discoverable(context['groups']['felines']))
+        self.assertTrue(ha.group_is_active(context['groups']['felines']))
+        self.assertTrue(ha.group_is_shareable(context['groups']['felines']))
+
+        names = map((lambda x: x['name']), ha.get_discoverable_groups())
+        self.assertTrue('felines' in names)
+
+        # check public flag
+        names = map((lambda x: x['name']), ha.get_public_groups())
+        self.assertTrue('felines' in names)
+
+        ha.make_group_not_public(context['groups']['felines'])
+
+        self.assertTrue(ha.group_is_owned(context['groups']['felines']))
+        self.assertFalse(ha.group_is_public(context['groups']['felines']))
+        self.assertTrue(ha.group_is_discoverable(context['groups']['felines']))
+        self.assertTrue(ha.group_is_active(context['groups']['felines']))
+        self.assertTrue(ha.group_is_shareable(context['groups']['felines']))
+
+        names = map((lambda x: x['name']), ha.get_public_groups())
+        self.assertTrue('felines' not in names)
+
+        ha.make_group_public(context['groups']['felines'])
+
+        self.assertTrue(ha.group_is_owned(context['groups']['felines']))
+        self.assertTrue(ha.group_is_public(context['groups']['felines']))
+        self.assertTrue(ha.group_is_discoverable(context['groups']['felines']))
+        self.assertTrue(ha.group_is_active(context['groups']['felines']))
+        self.assertTrue(ha.group_is_shareable(context['groups']['felines']))
+
+        names = map((lambda x: x['name']), ha.get_public_groups())
+        self.assertTrue('felines' in names)
+
+        # check shareable flag
+        ha.make_group_not_shareable(context['groups']['felines'])
+
+        self.assertTrue(ha.group_is_owned(context['groups']['felines']))
+        self.assertTrue(ha.group_is_public(context['groups']['felines']))
+        self.assertTrue(ha.group_is_discoverable(context['groups']['felines']))
+        self.assertTrue(ha.group_is_active(context['groups']['felines']))
+        self.assertFalse(ha.group_is_shareable(context['groups']['felines']))
+
+        ha.make_group_shareable(context['groups']['felines'])
+
+        self.assertTrue(ha.group_is_owned(context['groups']['felines']))
+        self.assertTrue(ha.group_is_public(context['groups']['felines']))
+        self.assertTrue(ha.group_is_discoverable(context['groups']['felines']))
+        self.assertTrue(ha.group_is_active(context['groups']['felines']))
+        self.assertTrue(ha.group_is_shareable(context['groups']['felines']))
 
 
 class T11PreserveOwnership(unittest.TestCase):
