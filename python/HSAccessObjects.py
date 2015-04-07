@@ -39,7 +39,7 @@ class HSAccessUser(object):
         :param hsa: A raw HSAccess object with non-object interface. 
         :param user_uuid: uuid of the user to represent with this object. 
 
-        This stores a primitive HSAccess object as a sub-object and then stores context as to what
+        This stores a primitive HSAccess object as a sub-object and then stores test_context as to what
         specific user it represents. It reads and caches metadata in order to reduce database calls. 
         """
         if type(hsa) is not HSAccess:
@@ -379,11 +379,43 @@ class HSAccessUser(object):
         Get groups accessible to a user, along with requisite action links
 
         :return: List of :py:class:`HSAccessGroup` instances. 
-        :rtype: List<HSAccessGroup>
+        :rtype: list[HSAccessGroup]
 
         This gets the list of groups accessible to the current user, as objects. 
         """
         group_uuids = self.__hsa.get_groups_for_user(self.__uuid)
+        result = []
+        for g in group_uuids:
+            result += [HSAccessGroup(self.__hsa, g['uuid'])]
+        return result
+
+    def get_public_groups(self):
+        """
+        Get public groups accessible to all users, along with requisite action links
+
+        :return: List of :py:class:`HSAccessGroup` instances.
+        :rtype: list[HSAccessGroup]
+
+        This gets the list of groups accessible to the current user, as objects.
+        """
+        group_uuids = self.__hsa.get_public_groups()
+        # print "group_uuids is "
+        # pprint(group_uuids)
+        result = []
+        for g in group_uuids:
+            result += [HSAccessGroup(self.__hsa, g['uuid'])]
+        return result
+
+    def get_discoverable_groups(self):
+        """
+        Get groups discoverable by users, along with requisite action links
+
+        :return: List of :py:class:`HSAccessGroup` instances.
+        :rtype: list[HSAccessGroup]
+
+        This gets the list of groups discoverable by the current user, as objects.
+        """
+        group_uuids = self.__hsa.get_discoverable_groups()
         result = []
         for g in group_uuids:
             result += [HSAccessGroup(self.__hsa, g['uuid'])]
@@ -395,11 +427,41 @@ class HSAccessUser(object):
         Get a list of accessible resources, along wih requisite action links
 
         :return: List of :py:class:`HSAccessResource` instances. 
-        :rtype: List<HSAccessResource>
+        :rtype: list[HSAccessResource]
 
         This gets the list of resources accessible to the current user, as objects. 
         """
         resource_uuids = self.__hsa.get_resources_held_by_user(self.__uuid)
+        result = []
+        for g in resource_uuids:
+            result += [HSAccessResource(self.__hsa, g['uuid'])]
+        return result
+
+    def get_public_resources(self):
+        """
+        Get a list of public resources, along wih requisite action links
+
+        :return: List of :py:class:`HSAccessResource` instances.
+        :rtype: list[HSAccessResource]
+
+        This gets the list of resources accessible to the current user, as objects.
+        """
+        resource_uuids = self.__hsa.get_public_resources()
+        result = []
+        for g in resource_uuids:
+            result += [HSAccessResource(self.__hsa, g['uuid'])]
+        return result
+
+    def get_discoverable_resources(self):
+        """
+        Get a list of discoverable resources, along wih requisite action links
+
+        :return: List of :py:class:`HSAccessResource` instances.
+        :rtype: list[HSAccessResource]
+
+        This gets the list of resources accessible to the current user, as objects.
+        """
+        resource_uuids = self.__hsa.get_discoverable_resources()
         result = []
         for g in resource_uuids:
             result += [HSAccessResource(self.__hsa, g['uuid'])]
@@ -578,7 +640,7 @@ class HSAccessGroup(object):
         :return: dict of metadata
         :rtype: dict
         """
-        self.__meta = self.__hsa.get_user_metadata(self.__uuid)
+        self.__meta = self.__hsa.get_group_metadata(self.__uuid)
         self.__priv_cum = self.__hsa.get_cumulative_user_privilege_over_group(self.__uuid)
         self.__priv_prim = self.__hsa.get_user_privilege_over_group(self.__uuid)
         self.__member = self.__hsa.user_in_group(self.__uuid)
@@ -634,7 +696,7 @@ class HSAccessGroup(object):
         Get owners of the current group as HSAccessUser instances 
 
         :return: List of HSAccessUser instances. 
-        :rtype: List<HSAccessUser> 
+        :rtype: list[HSAccessUser]
         """
         mems = self.__hsa.get_group_members(self.__uuid)
         results = []
@@ -643,12 +705,12 @@ class HSAccessGroup(object):
                 results += [HSAccessUser(self.__hsa, m['uuid'])]
         return results
 
-    def __get_members(self):  # users who hold resource
+    def __get_members(self):  # members of a group
         """
         Get members of the current group as HSAccessUser instances 
 
         :return: List of HSAccessUser instances. 
-        :rtype: List<HSAccessUser> 
+        :rtype: list[HSAccessUser]
 
         This is a privileged routine made accessible by :py:meth:`get_capabilities`. 
         """
@@ -663,7 +725,7 @@ class HSAccessGroup(object):
         Get resources held by group as HSAccessResource instances 
 
         :return: List of HSAccessResource instances. 
-        :rtype: List<HSAccessResource> 
+        :rtype: list[HSAccessResource] 
 
         This is a privileged routine made accessible by :py:meth:`get_capabilities`. 
         """
@@ -821,14 +883,17 @@ class HSAccessGroup(object):
         # if the user is administrator or owner, then can set flags
         if self.__hsa.user_is_admin() or self.is_owned():
             capabilities['change_name'] = self.__change_name
+
             if self.is_discoverable():
                 capabilities['make_not_discoverable'] = self.__make_not_discoverable
             else:
                 capabilities['make_discoverable'] = self.__make_discoverable
+
             if self.is_public():
                 capabilities['make_not_public'] = self.__make_not_public
             else:
                 capabilities['make_public'] = self.__make_public
+
             if self.is_shareable():
                 capabilities['make_not_shareable'] = self.__make_not_shareable
             else:
@@ -1355,9 +1420,14 @@ class HSAccessResource(object):
 
             if not self.is_published():
                 capabilities['make_published'] = self.__make_published
+            else:
+                capabilities['make_not_published'] = self.__make_not_published
 
             if not self.is_immutable():
                 capabilities['make_immutable'] = self.__make_immutable
+            else:
+                if self.__hsa.user_is_admin():
+                    capabilities['make_not_immutable'] = self.__make_not_immutable()
 
         if self.is_owned() or self.is_shareable():
             capabilities['share_with_user'] = self.__share_with_user
@@ -1377,11 +1447,11 @@ class HSAccessResource(object):
             'share_with_user', 'share_with_group',
             'change_title',
             'get_users', 'get_groups',
-            'make_published',
+            'make_published', 'make_not_published'
             'make_shareable', 'make_not_shareable',
             'make_public', 'make_not_public',
             'make_discoverable', 'make_not_discoverable',
-            'make_immutable'
+            'make_immutable', 'make_not_immutable'
         ]
     # "__" routines are limited via access control
 
@@ -1390,7 +1460,7 @@ class HSAccessResource(object):
         Get the list of HSAccessUsers currently holding this resource. 
 
         :return: List of :py:class:`HSAccessUser`
-        :rtype: List<HSAccessUser> 
+        :rtype: list[HSAccessUser] 
         """
         users = self.__hsa.get_users_holding_resource(self.__uuid)
         result = []
@@ -1403,7 +1473,7 @@ class HSAccessResource(object):
         Get the list of HSAccessGroups currently holding this resource. 
 
         :return: List of :py:class:`HSAccessGroup`
-        :rtype: List<HSAccessGroup> 
+        :rtype: list[HSAccessGroup] 
         """
         groups = self.__hsa.get_groups_holding_resource(self.__uuid)
         result = []
@@ -1459,7 +1529,7 @@ class HSAccessResource(object):
         self.__hsa.make_resource_published(self.__uuid)
         self.__meta['published'] = True
 
-    def make_not_published(self):
+    def __make_not_published(self):
         """
         Make the current resource not published. 
         """
@@ -1470,14 +1540,14 @@ class HSAccessResource(object):
         """
         Make the current resource discoverable. 
         """
-        self.__hsa.make_resource_public(self.__uuid)
+        self.__hsa.make_resource_discoverable(self.__uuid)
         self.__meta['discoverable'] = True
 
     def __make_not_discoverable(self):
         """
         Make the current resource not discoverable. 
         """
-        self.__hsa.make_resource_not_public(self.__uuid)
+        self.__hsa.make_resource_not_discoverable(self.__uuid)
         self.__meta['discoverable'] = False
 
     def __make_immutable(self):
@@ -1486,6 +1556,13 @@ class HSAccessResource(object):
         """
         self.__hsa.make_resource_immutable(self.__uuid)
         self.__meta['immutable'] = True
+
+    def __make_not_immutable(self):
+        """
+        Make the current resource no longer immutable.
+        """
+        self.__hsa.make_resource_not_immutable(self.__uuid)
+        self.__meta['immutable'] = False
 
     # need to store allowable privilege codes somewhere
     def __share_with_user(self, user, privilege_code):

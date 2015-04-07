@@ -468,7 +468,7 @@ class HSAccessCore(object):
         Get the registered user list
 
         :return: list of user metadata dictionaries
-        :rtype: List<Dict>
+        :rtype: list[dict[str, str]]
 
         Return format is a list of dictionaries of the form::
 
@@ -589,7 +589,7 @@ class HSAccessCore(object):
 
         :param user_uuid: the user to report on; omit to report on current user.
         :return: list of dicts describing groups
-        :rtype: List<Dict> 
+        :rtype: list[dict[str, str]] 
 
         This returns a list of groups in the following format::
             { 'name': *name of group*, 'uuid': *uuid of group* } ]
@@ -613,19 +613,65 @@ class HSAccessCore(object):
             result += [{'uuid': row['group_uuid'], 'name': row['group_name'], 'code': row['privilege_code']}]
         return result
 
+    def get_public_groups(self):
+        """
+        Get a list of groups relevant to a specific user
+
+        :return: list of dicts describing groups
+        :rtype: list[dict[str, str]]
+
+        This returns a list of groups in the following format::
+            { 'name': *name of group*, 'uuid': *uuid of group* } ]
+        """
+        self.__cur.execute("""select g.group_uuid, g.group_name, 'ro' AS privilege_code
+                           from groups g
+                           where g.group_public=TRUE
+                           order by g.group_name, g.group_uuid""", ())
+        rows = self.__cur.fetchall()
+        result = []
+        for row in rows:
+            result += [{'uuid': row['group_uuid'], 'name': row['group_name'], 'code': row['privilege_code']}]
+        return result
+
+    def get_discoverable_groups(self):
+        """
+        Get a list of groups that are discoverable
+
+        :return: list of dicts describing groups
+        :rtype: list[dict[str, str]]
+
+        This returns a list of groups in the following format::
+            { 'name': *name of group*, 'uuid': *uuid of group* } ]
+        """
+        self.__cur.execute("""select g.group_uuid, g.group_name,
+                           CASE WHEN g.group_public THEN 'ro'
+                                ELSE 'none'
+                           END AS privilege_code
+                           from groups g
+                           where g.group_discoverable = TRUE
+                           order by g.group_name, g.group_uuid""")
+        rows = self.__cur.fetchall()
+        result = []
+        for row in rows:
+            result += [{'uuid': row['group_uuid'], 'name': row['group_name'], 'code': row['privilege_code']}]
+        return result
+
     def get_group_members(self, group_uuid):
         """
         Get a list of members of a specific group
 
         :param group_uuid: the group to report on; omit to report on current user.
         :return: list of dicts describing groups
-        :rtype: List<Dict> 
+        :rtype: list[dict[str, str]] 
 
         This returns a list of groups in the following format::
             { 'name': *name of group*, 'uuid': *uuid of group* } ]
         """
         if type(group_uuid) is not str:
             raise HSAUsageException("group_uuid is not a string")
+        # THIS SHOULD HONOR group_public flags and user flags
+        if not self.group_is_public(group_uuid) and not self.group_is_owned(group_uuid):
+            raise HSAccessException("User must be owner or administrator")
         self.__cur.execute("""select u.user_uuid, u.user_name, x.privilege_code
                               from groups g
                               left join user_group_privilege p on p.group_id=g.group_id
@@ -1271,8 +1317,8 @@ class HSAccessCore(object):
             if resource_path != meta['path']:
                 if not self.user_is_admin():
                     raise HSAccessException("User must be an administrator")
-            # making mutable requires admin
-            if self.resource_is_immutable(resource_uuid) and not self.user_is_admin():
+            # making mutable again requires admin
+            if not resource_immutable and resource_immutable != meta['immutable'] and not self.user_is_admin():
                 raise HSAccessException("Resource is marked as immutable")
             # only admin users or owners can change the resource title and flags
             if self.user_is_admin(self.get_uuid()) or self.resource_is_owned(resource_uuid):
@@ -3476,7 +3522,7 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param user_uuid: uuid of user; omit for current user.
         :return: List of resources containing dict items
-        :rtype: List<Dict> 
+        :rtype: list[dict[str, str]] 
 
         This returns a list of resource dict records, in the format::
 
@@ -3514,7 +3560,7 @@ class HSAccessCore(object):
         :type resource_uuid: str
         :param resource_uuid: uuid of user; omit for current user.
         :return: List of resources containing dict items
-        :rtype: List<Dict> 
+        :rtype: list[dict[str, str]] 
 
         This returns a list of user dict records, in the format::
 
@@ -3551,7 +3597,7 @@ class HSAccessCore(object):
         :type group_uuid: str
         :param group_uuid: uuid of the group to check
         :return: List of Dicts of resource info
-        :rtype: List<Dict> 
+        :rtype: list[dict[str, str]] 
 
         This returns a list of resources accessible to a specific group, in the format::
 
@@ -3589,7 +3635,7 @@ class HSAccessCore(object):
         :type resource_uuid: str
         :param resource_uuid: uuid of the resource to check
         :return: List of Dicts describing groups
-        :rtype: List<Dict> 
+        :rtype: list[dict[str, str]] 
 
         This returns a list of groups that can access a resource, in the format:
 
@@ -3619,6 +3665,74 @@ class HSAccessCore(object):
                            'privilege': row['privilege_code']})
         return result
 
+    def get_public_resources(self):
+        """
+        Make a list of public resources, sorted by title
+
+        :type user_uuid: str
+        :param user_uuid: uuid of user; omit for current user.
+        :return: List of resources containing dict items
+        :rtype: list[dict[str, str]]
+
+        This returns a list of resource dict records, in the format::
+
+            {
+            'uuid': *uuid of resource*,
+            'title': *title of resource*,
+            'path': *path of resource*,
+            'privilege': *privilege code*
+            }
+
+        Note: this is not currently subject to access control.
+        """
+        self.__cur.execute("""select resource_uuid, resource_title, resource_path,
+                           'ro' AS privilege_code
+                           FROM resources
+                           WHERE resource_public
+                           ORDER BY resource_title""")
+        result = []
+        for row in self.__cur:
+            result.append({'uuid': row['resource_uuid'],
+                           'title': row['resource_title'],
+                           'path': row['resource_path'],
+                           'privilege': row['privilege_code']})
+        return result
+
+    def get_discoverable_resources(self):
+        """
+        Make a list of public resources, sorted by title
+
+        :type user_uuid: str
+        :param user_uuid: uuid of user; omit for current user.
+        :return: List of resources containing dict items
+        :rtype: list[dict[str, str]]
+
+        This returns a list of resource dict records, in the format::
+
+            {
+            'uuid': *uuid of resource*,
+            'title': *title of resource*,
+            'path': *path of resource*,
+            'privilege': *privilege code*
+            }
+
+        Note: this is not currently subject to access control.
+        """
+        self.__cur.execute("""select resource_uuid, resource_title, resource_path,
+                           CASE WHEN resource_public THEN 'ro'
+                                ELSE 'none'
+                           END AS privilege_code
+                           FROM resources
+                           WHERE resource_discoverable=TRUE
+                           ORDER BY resource_title""")
+        result = []
+        for row in self.__cur:
+            result.append({'uuid': row['resource_uuid'],
+                           'title': row['resource_title'],
+                           'path': row['resource_path'],
+                           'privilege': row['privilege_code']})
+        return result
+
     # CLI: hs ls groups
     def groups_of_user(self, user_uuid=None):
         """
@@ -3627,7 +3741,7 @@ class HSAccessCore(object):
         :type user_uuid: str
         :param user_uuid: uuid of user, or None to use current authorized user
         :return: List of Dict entries for groups of user. 
-        :rtype: List<Dict> 
+        :rtype: list[dict[str, str]] 
 
         This returns a list of dictionaries, each of the form::
 
@@ -4067,19 +4181,26 @@ class HSAccess(HSAccessCore):
     # Convenience functions for resource state
     ###########################################################
 
-    # there is no 'make_resource_mutable': this is discouraged!
+    # there is no 'make_resource_mutable' for normal users: this is discouraged!
     def make_resource_immutable(self, resource_uuid, user_uuid=None):
         meta = self.get_resource_metadata(resource_uuid)
         if not meta['immutable']:
             meta['immutable'] = True
             self.assert_resource_metadata(meta, user_uuid)
 
+    # admin only
+    def make_resource_not_immutable(self, resource_uuid, user_uuid=None):
+        meta = self.get_resource_metadata(resource_uuid)
+        if not meta['immutable']:
+            meta['immutable'] = False
+            self.assert_resource_metadata(meta, user_uuid)
+
     # making a resource public -- as a side effect -- makes it discoverable
     def make_resource_public(self, resource_uuid, user_uuid=None):
         meta = self.get_resource_metadata(resource_uuid)
-        if not meta['public'] or not meta['discoverable']:
+        if not meta['public']:  # or not meta['discoverable']:
             meta['public'] = True
-            meta['discoverable'] = True
+            # meta['discoverable'] = True  # should I do this?
             # this checks access privileges
             self.assert_resource_metadata(meta, user_uuid)
 
@@ -4106,9 +4227,9 @@ class HSAccess(HSAccessCore):
 
     def make_resource_published(self, resource_uuid, user_uuid=None):
         meta = self.get_resource_metadata(resource_uuid)
-        if not meta['published'] or not meta['discoverable']:
+        if not meta['published']:  # or not meta['discoverable']:
             meta['published'] = True
-            meta['discoverable'] = True
+            # meta['discoverable'] = True  # should I do this?
             # this checks access privileges
             self.assert_resource_metadata(meta, user_uuid)
 
