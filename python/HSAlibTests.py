@@ -355,7 +355,8 @@ class T06ProtectGroup(unittest.TestCase):
 
         # dog's groups should be unchanged
         names = map((lambda x: x['name']), ha.get_groups_for_user())
-        self.assertTrue(match_lists(['all about dogs', 'some random meowers'], names), "error in group listing")
+        # pprint(names)
+        self.assertTrue(match_lists(['some random meowers'], names), "error in group listing")
 
         # should not be able to modify group members
         # ha.share_group_with_user(test_context['groups']['polyamory'], test_context['users']['dog'], "rw")
@@ -379,14 +380,14 @@ class T06ProtectGroup(unittest.TestCase):
 
         # check total group membership as well
         names = map((lambda x: x['name']), ha.get_groups_for_user())
-        self.assertTrue(match_lists(['polyamory', 'all about dogs', 'some random meowers'], names),
+        self.assertTrue(match_lists(['polyamory', 'some random meowers'], names),
                         "error in group listing")
 
         # now let's have dog make a group
         wolves = ha.assert_group("wolves")
         # check that the dog is a member
         names = map((lambda x: x['name']), ha.get_groups_for_user())
-        self.assertTrue(match_lists(['wolves', 'polyamory', 'all about dogs', 'some random meowers'], names),
+        self.assertTrue(match_lists(['wolves', 'polyamory', 'some random meowers'], names),
                         "error in group listing")
 
         # put 'test_context['users']['cat']' into the 'wolves' group
@@ -398,7 +399,7 @@ class T06ProtectGroup(unittest.TestCase):
                         "error in group listing")
 
         names = map((lambda x: x['name']), ha.get_groups())
-        self.assertTrue(match_lists(names, ['polyamory', 'some random meowers', 'wolves', 'all about dogs']))
+        self.assertTrue(match_lists(names, ['polyamory', 'some random meowers', 'wolves']))
 
 
 class T07InviteToGroup(unittest.TestCase):
@@ -479,9 +480,11 @@ class T07InviteToResource(unittest.TestCase):
         global context
 
         ha = startup('dog')
-        context['resources']['weber'] = ha.assert_resource('/dog/weber', 'Andrew Lloyd Weber')  # resources are public by default
+        context['resources']['weber'] = ha.assert_resource('/dog/weber', 'Andrew Lloyd Weber')
+        # resources are public by default
 
-        ha.invite_user_to_resource(context['resources']['weber'], context['users']['cat'], 'ro')  # dog invites cat to weber
+        ha.invite_user_to_resource(context['resources']['weber'], context['users']['cat'], 'ro')
+        # dog invites cat to weber
         invites = ha.get_resource_invitations_for_user()
         self.assertTrue(len(invites) == 0)
 
@@ -906,6 +909,31 @@ class T12ProgrammingErrors(unittest.TestCase):
             self.fail("managed to get non-existent resource path 'nonsense'")
         except HSAlib.HSAUsageException as e:
             self.assertTrue(e.value=='Resource uuid does not exist')
+
+
+class T13CascadeDelete(unittest.TestCase):
+    def test(self):
+        global context
+        ha = startup('admin')
+        context['users']['wombat'] = ha.assert_user('wombat', 'some random wombat')
+
+        ha = startup('dog')
+        context['resources']['verdi'] = ha.assert_resource('/dog/verdi', 'Guiseppe Verdi')
+        ha.share_resource_with_user(context['resources']['verdi'], context['users']['cat'])
+        ha.share_resource_with_group(context['resources']['verdi'], context['groups']['operas'])
+        ha.invite_user_to_resource(context['resources']['verdi'], context['users']['wombat'])
+
+        self.assertTrue(ha.resource_exists(context['resources']['verdi']))
+        ha.retract_resource(context['resources']['verdi'])
+        self.assertFalse(ha.resource_exists(context['resources']['verdi']))
+
+        context['groups']['singers'] = ha.assert_group('singers')
+        ha.share_group_with_user(context['groups']['singers'], context['users']['cat'])
+        ha.invite_user_to_group(context['groups']['singers'], context['users']['wombat'])
+
+        self.assertTrue(ha.group_exists(context['groups']['singers']))
+        ha.retract_group(context['groups']['singers'])
+        self.assertFalse(ha.group_exists(context['groups']['singers']))
 
 
 if __name__ == '__main__':
