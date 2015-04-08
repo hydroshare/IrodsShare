@@ -47,12 +47,8 @@ rDives.get_capabilities()['make_public']()
 
 rDives.pprint()
 
-gCoolies.get_capabilities()['invite_user'](uFrank, "ro")
-
-# pprint(gCoolies.get_invited_users())
+gCoolies.get_capabilities()['share_with_user'](uFrank, "ro")
 
 uJoe.pprint()
-uAdmin['register_user']
-
 rDives.pprint()
 gCoolies.pprint()

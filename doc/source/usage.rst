@@ -4,7 +4,8 @@ IrodsShare HSAccess usage
 .. module:: HSAlib
 
 :py:class:`HSAccess` implements a python interface to the iRODS access control system. 
-This document describes usage of the python interface. 
+This document describes usage of the low level python interface.  There is also a high-level 
+python interface :py:mod:`HSAccessObjects`. 
 
 Overview
 --------

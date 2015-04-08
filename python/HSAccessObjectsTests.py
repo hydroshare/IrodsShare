@@ -28,6 +28,9 @@ class Stasher(object):
     def stash_user(self, user, name):
         if type(user) is not HSAccessUser:
             raise HSAUsageException("cannot stash non-user")
+        if name in self.test_context['users'].keys()\
+                and self.test_context['users'][name] != user.get_uuid():
+            raise HSAIntegrityException("attempt to change user id for name not allowed")
         self.test_context['users'][name] = user.get_uuid()
 
     def get_user(self, name):
@@ -38,6 +41,8 @@ class Stasher(object):
     def stash_group(self, group, name):
         if type(group) is not HSAccessGroup:
             raise HSAUsageException("cannot stash non-group")
+        if name in self.test_context['groups'].keys():
+            raise HSAIntegrityException("attempt to reuse group name is not allowed")
         # print "group name is ", group.get_name()
         # print "name is ", name
         # print "uuid is ", group.get_uuid()
@@ -47,18 +52,13 @@ class Stasher(object):
     def get_group(self, name):
         if type(name) is not str:
             raise HSAUsageException("name is not a string")
-
-        # pprint(self.test_context)
-        # print "name is ", name
-        # pprint(self.test_context['groups'])
-        foo = self.test_context['groups'][name]
-        print "foo is"
-        pprint(foo)
-        return HSAccessGroup(self.hsa, foo)
+        return HSAccessGroup(self.hsa, self.test_context['groups'][name])
 
     def stash_resource(self, resource, name):
         if type(resource) is not HSAccessResource:
             raise HSAUsageException("cannot stash non-resource")
+        if name in self.test_context['resources'].keys():
+            raise HSAIntegrityException("attempt to reuse resource name not allowed")
         self.test_context['resources'][name] = resource.get_uuid()
 
     def get_resource(self, name):
@@ -325,6 +325,7 @@ class T04RegisterResource(unittest.TestCase):
         self.assertTrue(len(resources) == 1)
         self.assertTrue(resources[0].get_title() == 'all about scratching posts')
 
+
 class T05ResourceFlagSemantics(unittest.TestCase):
     def test(self):
         global stasher
@@ -374,6 +375,7 @@ class T05ResourceFlagSemantics(unittest.TestCase):
         posts_caps = posts.get_capabilities()
         posts_caps['make_not_discoverable']()
         self.assertFalse(posts.is_discoverable())
+
 
 class T06RegisterGroup(unittest.TestCase):
     def test(self):
@@ -473,35 +475,25 @@ class T06RegisterGroup(unittest.TestCase):
         self.assertTrue(groups[0].get_name() == 'meowers')
 
 
-class T06GroupFlagSemantics(unittest.TestCase):
+class T07GroupFlagSemantics(unittest.TestCase):
     def test(self):
         global stasher
-
-        # become an unprivileged user
-        cat = stasher.login('cat')
-        public2 = stasher.hsa.get_public_groups()
-        print "public2 is"
-        pprint(public2)
-        # grab a previously created group
-        # meowers = stasher.get_group('meowers')
 
         # test basic semantics of public groups
 
         # need to switch user here and test that it is visible
-        dog = stasher.login('dog')
+        dog = stasher.login('cat')
         public = dog.get_public_groups()
-        public2 = stasher.hsa.get_public_groups()
-        print "public2 is"
-        pprint(public2)
+
         self.assertTrue(len(public) == 1)
         self.assertTrue(public[0].get_name() == 'meowers')
-        public = stash.hsa.get_public_groups()
+
         # and that it is really public
         gcaps = public[0].get_capabilities()
         self.assertTrue('get_members' in gcaps.keys())
         members = gcaps['get_members']()
         self.assertTrue(len(members) == 1)
-        self.assertTrue(members[0].name() == 'cat')
+        self.assertTrue(members[0].get_name() == 'one mean meower')
 
         cat = stasher.login('cat')
         meowers = stasher.get_group('meowers')
@@ -535,14 +527,12 @@ class T06GroupFlagSemantics(unittest.TestCase):
         self.assertTrue('get_members' in gcaps.keys())
         members = gcaps['get_members']()
         self.assertTrue(len(members) == 1)
-        self.assertTrue(members[0].name() == 'cat')
+        self.assertTrue(members[0].get_name() == 'one mean meower')
 
         # test basic semantics of discoverability
         # first switch back to using user 'cat'
         cat = stasher.login('cat')
         meowers = stasher.get_group('meowers')
-        meowers_caps = meowers.get_capabilities()
-        meowers_caps['make_public']()
 
         discoverable = cat.get_discoverable_groups()
         self.assertTrue(len(discoverable) == 1)
