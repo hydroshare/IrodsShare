@@ -200,7 +200,7 @@ class HSAccessCore(object):
                 user_uuid = uuid.uuid4().hex
         # print "resource uuid is", resource_uuid
 
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a unicode or str")
 
         assert_id = self.__get_user_id_from_uuid(self.__user_uuid)
@@ -287,8 +287,8 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         try:
             self.get_user_metadata(user_uuid)
             return True
@@ -314,7 +314,7 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a unicode or str")
         meta = self.get_user_metadata(user_uuid)
         return meta['admin']
@@ -337,7 +337,7 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a unicode or str")
         meta = self.get_user_metadata(user_uuid)
         return meta['active']
@@ -380,7 +380,7 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a unicode or str")
         self.__cur.execute("select user_id from users where user_uuid=%s", (user_uuid,))
         if self.__cur.rowcount > 1:
@@ -406,7 +406,7 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a unicode or str")
         self.__cur.execute("select user_login from users where user_uuid=%s", (user_uuid,))
         if self.__cur.rowcount > 1:
@@ -511,7 +511,7 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a unicode or str")
         self.__cur.execute("""select u.user_login, u.user_uuid, u.user_name, u.user_active, u.user_admin,
           a.user_login as user_assertion_login, a.user_uuid as user_assertion_uuid, u.assertion_time
@@ -596,7 +596,7 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a unicode or str")
         self.__cur.execute("""select g.group_uuid, g.group_name, x.privilege_code
                           from groups g
@@ -649,6 +649,7 @@ class HSAccessCore(object):
                            END AS privilege_code
                            from groups g
                            where g.group_discoverable = TRUE
+                              OR g.group_public = TRUE
                            order by g.group_name, g.group_uuid""")
         rows = self.__cur.fetchall()
         result = []
@@ -667,7 +668,7 @@ class HSAccessCore(object):
         This returns a list of groups in the following format::
             { 'name': *name of group*, 'uuid': *uuid of group* } ]
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         # THIS SHOULD HONOR group_public flags and user flags
         if not self.group_is_public(group_uuid) and not self.group_is_owned(group_uuid):
@@ -709,7 +710,7 @@ class HSAccessCore(object):
 
         This value can be edited and used as an argument to 'assert_group_metadata'.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         self.__cur.execute("""select g.group_uuid, g.group_name,
           g.group_active, g.group_shareable, g.group_discoverable, g.group_public,
@@ -764,7 +765,7 @@ class HSAccessCore(object):
         a join target. This is an integer for speed. This identifier is never exposed
         to users or administrators of the system.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         self.__cur.execute("select group_id from groups where group_uuid=%s", (group_uuid,))
         if self.__cur.rowcount > 1:
@@ -787,7 +788,7 @@ class HSAccessCore(object):
         This returns the name of a group from its uuid. Group names are not generally unique and
         cannot be used as keys from which to locate groups.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         meta = self.get_group_metadata(group_uuid)
         return meta['name']
@@ -850,7 +851,7 @@ class HSAccessCore(object):
 
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a unicode or str")
         if not (self.user_exists(user_uuid)):
             raise HSAUsageException("User uuid does not exist")
@@ -862,7 +863,7 @@ class HSAccessCore(object):
         if group_uuid is None:
             group_uuid = uuid.uuid4().hex
 
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
 
         assert_id = self.__get_user_id_from_uuid(user_uuid)
@@ -975,7 +976,7 @@ class HSAccessCore(object):
         1. Only the owner of the group or an administrator can do this.
 
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         # only an owner or administrator can retract a group
         if not self.user_is_admin(self.get_uuid()) \
@@ -1004,7 +1005,7 @@ class HSAccessCore(object):
         This is used to avoid execution exceptions by ensuring that a group uuid
         is valid before performing further actions.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         try:
             self.get_group_metadata(group_uuid)
@@ -1021,7 +1022,7 @@ class HSAccessCore(object):
         :return: True if group is active.
         :rtype: bool 
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         meta = self.get_group_metadata(group_uuid)
         return meta['active']
@@ -1037,7 +1038,7 @@ class HSAccessCore(object):
 
         If a group is shareable, then users with readwrite privilege can invite members. Otherwise, they cannot.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         meta = self.get_group_metadata(group_uuid)
         return meta['shareable']
@@ -1053,7 +1054,7 @@ class HSAccessCore(object):
 
         If a group is discoverable, then it appears in the active groups along with its owner contact information.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         meta = self.get_group_metadata(group_uuid)
         return meta['discoverable']
@@ -1069,7 +1070,7 @@ class HSAccessCore(object):
 
         If a group is public, then others can see group members.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         meta = self.get_group_metadata(group_uuid)
         return meta['public']
@@ -1092,7 +1093,7 @@ class HSAccessCore(object):
 
         Note: this method is not subject to access control.
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
+        if not isinstance(resource_uuid, basestring):
             raise HSAUsageException("resource_uuid is not a unicode or str")
         self.__cur.execute("select resource_id from resources where resource_uuid=%s", (resource_uuid,))
         if self.__cur.rowcount > 1:
@@ -1156,7 +1157,7 @@ class HSAccessCore(object):
         of "who to blame" for the last change.
 
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
+        if not isinstance(resource_uuid, basestring):
             raise HSAUsageException("resource_uuid is not a unicode or str")
 
         self.__cur.execute("""select r.resource_uuid, r.resource_path,
@@ -1264,11 +1265,11 @@ class HSAccessCore(object):
         as an administrator. If admin privileges are not present in this case,
         an exception is raised.
         """
-        # anti-bug usage by requireing argument types
-        if type(resource_title) is not unicode:
-            raise HSAUsageException("resource_title is not a unicode or str")
-        if not(type(resource_path) is unicode or type(resource_path) is str):
-            raise HSAUsageException("resource_path is not a string or unicode")
+        # anti-bug usage by requiring argument types
+        if not isinstance(resource_title, basestring):
+            raise HSAUsageException("resource_title is not a string")
+        if not isinstance(resource_path, basestring):
+            raise HSAUsageException("resource_path is not a string")
         if type(resource_shareable) is not bool:
             raise HSAUsageException("resource_shareable is not boolean")
         if type(resource_discoverable) is not bool:
@@ -1282,8 +1283,8 @@ class HSAccessCore(object):
 
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         if not (self.user_exists(user_uuid)):
             raise HSAUsageException("User uuid does not exist")
         requesting_user_id = self.__get_user_id_from_uuid(user_uuid)
@@ -1300,8 +1301,8 @@ class HSAccessCore(object):
             except HSAException:
                 resource_uuid = uuid.uuid4().hex
 
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         # print "resource uuid is", resource_uuid
         if self.resource_exists(resource_uuid):
@@ -1319,17 +1320,18 @@ class HSAccessCore(object):
                 if not self.user_is_admin():
                     raise HSAccessException("User must be an administrator")
             # making mutable again requires admin
-            if not resource_immutable and resource_immutable != meta['immutable'] and not self.user_is_admin():
-                raise HSAccessException("Resource is marked as immutable")
+            # if not resource_immutable and resource_immutable != meta['immutable'] and not self.user_is_admin():
+            #     raise HSAccessException("Resource is marked as immutable")
+            if resource_title != meta['title'] \
+                    and not self.user_is_admin() \
+                    and not self.resource_is_readwrite(resource_uuid):
+                raise HSAccessException("Resource must be writeable")
             # only admin users or owners can change the resource title and flags
-            if self.user_is_admin(self.get_uuid()) or self.resource_is_owned(resource_uuid):
-                self.__assert_resource_update(requesting_user_id, resource_uuid,
-                                              resource_path, resource_title,
-                                              resource_immutable, resource_published,
-                                              resource_discoverable, resource_public,
-                                              resource_shareable)
-            else:
-                raise HSAccessException("Regular user must own resource")
+            self.__assert_resource_update(requesting_user_id, resource_uuid,
+                                          resource_path, resource_title,
+                                          resource_immutable, resource_published,
+                                          resource_discoverable, resource_public,
+                                          resource_shareable)
         else:
             # NEW RESOURCE
             # 1) put the resource into the registry
@@ -1459,8 +1461,8 @@ class HSAccessCore(object):
         1. Only the owner of the group or an administrator can do this.
 
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         # only an owner or administrator can retract a group
         if not self.user_is_admin(self.get_uuid()) \
@@ -1487,8 +1489,8 @@ class HSAccessCore(object):
 
         This determines whether a given resource uuid corresponds to an existing resource.
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         try:
             self.get_resource_metadata(resource_uuid)
@@ -1517,8 +1519,8 @@ class HSAccessCore(object):
         The spirit of the immutable flag is that the affected resource's landing page can then safely be
         issued a data citation.
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         meta = self.get_resource_metadata(resource_uuid)
         return meta['immutable']
@@ -1532,8 +1534,8 @@ class HSAccessCore(object):
         :return: bool: whether resource has been flagged as published
         :rtype: bool 
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         meta = self.get_resource_metadata(resource_uuid)
         return meta['published']
@@ -1547,8 +1549,8 @@ class HSAccessCore(object):
         :return: bool: whether resource has been flagged as published
         :rtype: bool 
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
         meta = self.get_resource_metadata(resource_uuid)
         return meta['discoverable']
 
@@ -1573,8 +1575,8 @@ class HSAccessCore(object):
         :return: bool: whether resource has been flagged as published
         :rtype: bool 
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         meta = self.get_resource_metadata(resource_uuid)
         return meta['shareable']
@@ -1675,8 +1677,8 @@ class HSAccessCore(object):
 
                 No privilege over resource
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         pnum = self.__get_user_privilege_over_resource(resource_uuid)
         if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
@@ -1760,9 +1762,9 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
             raise HSAUsageException("resource_uuid is not a string")
 
         pnum = self.__get_cumulative_user_privilege_over_resource(resource_uuid, user_uuid)
@@ -1927,10 +1929,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         return self.__resource_accessible(user_uuid, resource_uuid, 'own')
 
@@ -1949,10 +1951,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         return self.__resource_cumulatively_accessible(user_uuid, resource_uuid, 'rw')
 
@@ -1971,10 +1973,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         return self.__resource_cumulatively_accessible(user_uuid, resource_uuid, 'ro')
 
@@ -2016,10 +2018,10 @@ class HSAccessCore(object):
         4. An administrative user may arbitrarily change sharing parameters.
 
         """
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         user_id = self.__get_user_id_from_uuid(user_uuid)
         # requested privilege id
@@ -2163,10 +2165,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         # assert_id = self.__get_user_id_from_uuid(self.get_uuid())
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
@@ -2228,10 +2230,10 @@ class HSAccessCore(object):
         for the object.  It is possible to downgrade privilege assigned by a user whose privilege has been
         downgraded, but this has not been implemented.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         group_id = self.__get_group_id_from_uuid(group_uuid)
         privilege_id = self.__get_privilege_id_from_code(privilege_code)
@@ -2337,10 +2339,10 @@ class HSAccessCore(object):
         Only a group owner or administrator may revoke all privileges over a resource.  This
         includes all grants of privilege no matter what the source within the group.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         # assert_id = self.__get_user_id_from_uuid(self.get_uuid())
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
@@ -2372,10 +2374,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
         group_id = self.__get_group_id_from_uuid(group_uuid)
         self.__cur.execute("""select privilege_id from user_group_privilege
@@ -2526,11 +2528,11 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
 
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         pnum = self.__get_cumulative_user_privilege_over_group(group_uuid, user_uuid)
         if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
             return self.__PRIVILEGE_CODES[pnum-1]
@@ -2569,10 +2571,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         pnum = self.__get_user_privilege_over_group(group_uuid, user_uuid)
         if pnum >= self.__PRIVILEGE_OWN and pnum <= self.__PRIVILEGE_NONE:
             return self.__PRIVILEGE_CODES[pnum-1]
@@ -2678,10 +2680,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         return self.__group_cumulatively_accessible(user_uuid, group_uuid, 'own')
 
     # can invite members to group
@@ -2698,10 +2700,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         return self.__group_cumulatively_accessible(user_uuid, group_uuid, 'rw')
 
     # minimal group membership: can see members but cannot add/invite them
@@ -2718,10 +2720,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         return self.__group_cumulatively_accessible(user_uuid, group_uuid, 'ro')
 
     # CLI: hs invite ....
@@ -2733,8 +2735,8 @@ class HSAccessCore(object):
         :param user_uuid:
         :param privilege_code:
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
         privilege_id = self.__get_privilege_id_from_code(privilege_code)
         group_id = self.__get_group_id_from_uuid(group_uuid)
@@ -2854,8 +2856,8 @@ class HSAccessCore(object):
         :param group_uuid: uuid of group
         :param user_uuid: uuid of user
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
         group_id = self.__get_group_id_from_uuid(group_uuid)
         requesting_id = self.__get_user_id_from_uuid(self.get_uuid())
@@ -2894,8 +2896,8 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         self.__cur.execute("""select g.group_uuid, g.group_name, p.privilege_code,
                               a.user_uuid, a.user_name, a.user_login
                               from user_invitations_to_group i
@@ -2943,8 +2945,8 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         self.__cur.execute("""select u.user_uuid, u.user_name, u.user_login,
                                      g.group_uuid, g.group_name,
                                      p.privilege_code,
@@ -2984,10 +2986,10 @@ class HSAccessCore(object):
         Accept an invitation to a group previously made by another user via
         'invite_user_to_group'
         """
-        if not (type(host_uuid) is unicode or type(host_uuid) is str):
-            raise HSAUsageException("host_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(host_uuid, basestring):
+            raise HSAUsageException("host_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(self.get_uuid())
         group_id = self.__get_group_id_from_uuid(group_uuid)
         requesting_id = self.__get_user_id_from_uuid(host_uuid)
@@ -3009,10 +3011,10 @@ class HSAccessCore(object):
 
         Refuse an invitation created with 'invite_user_to_group'.
         """
-        if not (type(host_uuid) is unicode or type(host_uuid) is str):
-            raise HSAUsageException("host_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(host_uuid, basestring):
+            raise HSAUsageException("host_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(self.get_uuid())
         group_id = self.__get_group_id_from_uuid(group_uuid)
         requesting_id = self.__get_user_id_from_uuid(host_uuid)
@@ -3034,10 +3036,10 @@ class HSAccessCore(object):
         :param user_uuid:
         :param privilege_code:
         """
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         user_id = self.__get_user_id_from_uuid(user_uuid)
         privilege_id = self.__get_privilege_id_from_code(privilege_code)
@@ -3158,10 +3160,10 @@ class HSAccessCore(object):
         :param resource_uuid: uuid of resource
         :param user_uuid: uuid of user
         """
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         user_id = self.__get_user_id_from_uuid(user_uuid)
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
@@ -3201,8 +3203,8 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         self.__cur.execute("""select g.resource_uuid, g.resource_title, p.privilege_code, a.user_uuid, a.user_name, a.user_login
                               from user_invitations_to_resource i
                               left join resources g on i.resource_id=g.resource_id
@@ -3249,8 +3251,8 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         self.__cur.execute("""select g.resource_uuid, g.resource_title, p.privilege_code, u.user_uuid, u.user_name, u.user_login
                               from user_invitations_to_resource i
                               left join resources g on i.resource_id=g.resource_id
@@ -3284,10 +3286,10 @@ class HSAccessCore(object):
         Accept an invitation to a resource previously made by another user via
         'invite_user_to_resource'
         """
-        if not (type(host_uuid) is unicode or type(host_uuid) is str):
-            raise HSAUsageException("host_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(host_uuid, basestring):
+            raise HSAUsageException("host_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         user_id = self.__get_user_id_from_uuid(self.get_uuid())
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
@@ -3310,10 +3312,10 @@ class HSAccessCore(object):
 
         Refuse an invitation created with 'invite_user_to_resource'.
         """
-        if not (type(host_uuid) is unicode or type(host_uuid) is str):
-            raise HSAUsageException("host_uuid is not a unicode or str")
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(host_uuid, basestring):
+            raise HSAUsageException("host_uuid is not a string")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         user_id = self.__get_user_id_from_uuid(self.get_uuid())
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
@@ -3358,10 +3360,10 @@ class HSAccessCore(object):
 
         :todo: not safe from removing last owner
         """
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
         privilege_id = self.__get_privilege_id_from_code(privilege_code)
         group_id = self.__get_group_id_from_uuid(group_uuid)
@@ -3491,10 +3493,10 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         # these serve as argument checks
         user_id = self.__get_user_id_from_uuid(user_uuid)
         group_id = self.__get_group_id_from_uuid(group_uuid)
@@ -3540,8 +3542,8 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
         self.__cur.execute("""select distinct r.resource_uuid, r.resource_title, r.resource_path, p.privilege_code
           from user_resource_privilege u
@@ -3576,8 +3578,8 @@ class HSAccessCore(object):
 
         Note: this is not currently subject to access control.
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
         self.__cur.execute("""select distinct u.user_uuid, u.user_name, u.user_login, p.privilege_code
@@ -3613,8 +3615,8 @@ class HSAccessCore(object):
 
         Note: this is not subject to access control.
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         group_id = self.__get_group_id_from_uuid(group_uuid)
         self.__cur.execute("""select DISTINCT r.resource_title, r.resource_uuid, r.resource_path, q.privilege_code
                               from resources r
@@ -3650,8 +3652,8 @@ class HSAccessCore(object):
 
         Note: this is not subject to access control.
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
         self.__cur.execute("""select DISTINCT g.group_name, g.group_uuid, q.privilege_code
@@ -3688,7 +3690,7 @@ class HSAccessCore(object):
 
         Note: this is not currently subject to access control.
         """
-        self.__cur.execute("""select resource_uuid, resource_title, resource_path,
+        self.__cur.execute("""SELECT resource_uuid, resource_title, resource_path,
                            'ro' AS privilege_code
                            FROM resources
                            WHERE resource_public
@@ -3721,12 +3723,13 @@ class HSAccessCore(object):
 
         Note: this is not currently subject to access control.
         """
-        self.__cur.execute("""select resource_uuid, resource_title, resource_path,
+        self.__cur.execute("""SELECT resource_uuid, resource_title, resource_path,
                            CASE WHEN resource_public THEN 'ro'
                                 ELSE 'none'
                            END AS privilege_code
                            FROM resources
                            WHERE resource_discoverable is TRUE
+                              OR resource_public is TRUE
                            ORDER BY resource_title""")
         result = []
         for row in self.__cur:
@@ -3759,8 +3762,8 @@ class HSAccessCore(object):
         # default to irods user if no uuid given
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
         self.__cur.execute("""select distinct g.group_uuid, g.group_name
                               from user_membership_in_group m left join groups g on m.group_id=g.group_id
@@ -3959,8 +3962,8 @@ class HSAccessCore(object):
         :return: number of owners
         :rtype: int
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         resource_id = self.__get_resource_id_from_uuid(resource_uuid)
         return self.__get_number_of_resource_owners_by_id(resource_id)
@@ -3980,14 +3983,14 @@ class HSAccessCore(object):
         :return: number of owners
         :rtype: int
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         group_id = self.__get_group_id_from_uuid(group_uuid)
         return self.__get_number_of_group_owners_by_id(group_id)
 
     def __get_number_of_group_owners_by_id(self, group_id):
-        self.__cur.execute("""select count(distinct user_id) as count from user_group_privilege
-                              where group_id=%s and privilege_id=1""",
+        self.__cur.execute("""SELECT count(distinct user_id) AS count FROM user_group_privilege
+                              WHERE group_id=%s and privilege_id=1""",
                            (group_id,))
         return self.__cur.fetchone()['count']
 
@@ -4004,11 +4007,11 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
-        self.__cur.execute("""select count(distinct resource_id) as count from user_resource_privilege
-                              where user_id=%s and privilege_id=1""",
+        self.__cur.execute("""SELECT count(DISTINCT resource_id) AS count FROM user_resource_privilege
+                              WHERE user_id=%s AND privilege_id=1""",
                            (user_id,))
         return self.__cur.fetchone()['count']
 
@@ -4026,11 +4029,11 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
-        self.__cur.execute("""select count(distinct group_id) as count from user_group_privilege
-                              where user_id=%s and privilege_id=1""",
+        self.__cur.execute("""SELECT count(distinct group_id) AS count FROM user_group_privilege
+                              WHERE user_id=%s AND privilege_id=1""",
                            (user_id,))
         return self.__cur.fetchone()['count']
 
@@ -4048,11 +4051,11 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         user_id = self.__get_user_id_from_uuid(user_uuid)
-        self.__cur.execute("""select count(distinct resource_id) as count from user_resource_privilege
-                              where user_id=%s""",
+        self.__cur.execute("""SELECT count(distinct resource_id) AS count FROM user_resource_privilege
+                              WHERE user_id=%s""",
                            (user_id,))
         return self.__cur.fetchone()['count']
 
@@ -4073,8 +4076,8 @@ class HSAccessCore(object):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         if not self.user_exists(user_uuid):
             raise HSAUsageException("User uuid does not exist")
         user_id = self.__get_user_id_from_uuid(user_uuid)
@@ -4194,7 +4197,7 @@ class HSAccess(HSAccessCore):
     # admin only
     def make_resource_not_immutable(self, resource_uuid, user_uuid=None):
         meta = self.get_resource_metadata(resource_uuid)
-        if not meta['immutable']:
+        if meta['immutable']:
             meta['immutable'] = False
             self.assert_resource_metadata(meta, user_uuid)
 
@@ -4322,8 +4325,8 @@ class HSAccess(HSAccessCore):
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
-        if not (type(user_uuid) is unicode or type(user_uuid) is str):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+        if not isinstance(user_uuid, basestring):
+            raise HSAUsageException("user_uuid is not a string")
         meta = self.get_user_metadata(user_uuid)
         return meta['name'] + '(' + meta['uuid'] + ')'
 
@@ -4336,8 +4339,8 @@ class HSAccess(HSAccessCore):
         :return: print name for requested resource
         :rtype: str
         """
-        if not (type(resource_uuid) is unicode or type(resource_uuid) is str):
-            raise HSAUsageException("resource_uuid is not a unicode or str")
+        if not isinstance(resource_uuid, basestring):
+            raise HSAUsageException("resource_uuid is not a string")
 
         meta = self.get_resource_metadata(resource_uuid)
         return meta['title'] + '(' + meta['uuid'] + ')'
@@ -4351,7 +4354,7 @@ class HSAccess(HSAccessCore):
         :return: print name for requested group
         :rtype: str
         """
-        if not (type(group_uuid) is unicode or type(group_uuid) is str):
-            raise HSAUsageException("group_uuid is not a unicode or str")
+        if not isinstance(group_uuid, basestring):
+            raise HSAUsageException("group_uuid is not a string")
         meta = self.get_group_metadata(group_uuid)
         return meta['name'] + '(' + meta['uuid'] + ')'

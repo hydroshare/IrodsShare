@@ -11,10 +11,17 @@
 -- views for debugging/human readability 
 DROP VIEW IF EXISTS debug_cumulative_user_resource_privilege; 
 DROP VIEW IF EXISTS debug_cumulative_group_resource_privilege; 
+DROP VIEW IF EXISTS debug_cumulative_user_group_privilege; 
 DROP VIEW IF EXISTS debug_user_access_to_resource; 
 DROP VIEW IF EXISTS debug_group_access_to_resource; 
 DROP VIEW IF EXISTS debug_user_access_to_group; 
 DROP VIEW IF EXISTS debug_membership_in_group; 
+
+-- public and discoverable 
+DROP VIEW IF EXISTS public_resource_privilege; 
+DROP VIEW IF EXISTS discoverable_resource_privilege; 
+DROP VIEW IF EXISTS public_group_privilege; 
+DROP VIEW IF EXISTS discoverable_group_privilege; 
 
 -- cumulative privilege 
 DROP VIEW IF EXISTS cumulative_user_group_privilege; 
@@ -558,7 +565,8 @@ CREATE VIEW group_resource_privilege AS
 CREATE VIEW cumulative_user_resource_privilege AS
 SELECT p.user_id, r.resource_id,
     CASE
-    	WHEN (r.resource_immutable AND p.privilege_id < 3) THEN 3
+    	WHEN ((r.resource_immutable OR r.resource_published) 
+	    AND p.privilege_id < 3) THEN 3
     	WHEN (r.resource_public AND p.privilege_id > 3) THEN 3
     	ELSE p.privilege_id
     END AS privilege_id
@@ -621,12 +629,48 @@ FROM user_resource_privilege p
 CREATE VIEW cumulative_group_resource_privilege AS
 SELECT p.group_id, r.resource_id,
     CASE
-    	WHEN (r.resource_immutable AND p.privilege_id < 3) THEN 3
+    	WHEN ((r.resource_immutable OR r.resource_published) 
+            AND p.privilege_id < 3) THEN 3
     	WHEN (r.resource_public AND p.privilege_id > 3) THEN 3
   	ELSE p.privilege_id
     END AS privilege_id
 FROM group_resource_privilege p 
     LEFT JOIN resources r on p.resource_id=r.resource_id;
+
+---------------------------------------------------
+-- discoverable and public resource privilege 
+---------------------------------------------------
+CREATE VIEW discoverable_resource_privilege AS 
+SELECT resource_uuid, resource_title, resource_path,
+CASE WHEN resource_public THEN 'ro'
+     ELSE 'none'
+END AS privilege_code
+FROM resources
+WHERE resource_discoverable 
+   OR resource_public
+ORDER BY resource_title; 
+
+CREATE VIEW public_resource_privilege AS 
+select resource_uuid, resource_title, resource_path, 'ro'::TEXT AS privilege_code
+FROM resources
+WHERE resource_public
+ORDER BY resource_title; 
+
+CREATE VIEW discoverable_group_privilege AS 
+SELECT group_uuid, group_name,
+CASE WHEN group_public THEN 'ro'
+     ELSE 'none'
+END AS privilege_code
+FROM groups
+WHERE group_discoverable 
+   OR group_public
+ORDER BY group_name; 
+
+CREATE VIEW public_group_privilege AS 
+select group_uuid, group_name, 'ro'::TEXT AS privilege_code
+FROM groups
+WHERE group_public
+ORDER BY group_name; 
 
 -- OLD -- Eliminated 2015-03-28 in favor of marking public
 -- OLD -- resource as explicitly "held". 
@@ -657,31 +701,55 @@ left join privileges p on p.privilege_id = m.privilege_id;
 
 CREATE VIEW debug_cumulative_user_resource_privilege AS 
 SELECT u.user_login, 
-    r.resource_title, r.resource_public, r.resource_immutable, 
+    r.resource_title, r.resource_discoverable, r.resource_public, r.resource_immutable, 
     p.privilege_code
 from cumulative_user_resource_privilege as m
 left join users u on u.user_id=m.user_id 
 left join resources r on r.resource_id=m.resource_id
-left join privileges p on p.privilege_id = m.privilege_id;
+left join privileges p on p.privilege_id = m.privilege_id
+order by r.resource_title, u.user_login, p.privilege_code; 
 
 CREATE VIEW debug_cumulative_group_resource_privilege AS 
 SELECT g.group_name, 
-    r.resource_title, r.resource_public, r.resource_immutable, 
+    r.resource_title, r.resource_discoverable, r.resource_public, r.resource_immutable, 
     p.privilege_code
 from cumulative_group_resource_privilege as m
 left join groups g on g.group_id=m.group_id 
 left join resources r on r.resource_id=m.resource_id
-left join privileges p on p.privilege_id = m.privilege_id;
+left join privileges p on p.privilege_id = m.privilege_id
+order by r.resource_title, g.group_name, p.privilege_code; 
+
+CREATE VIEW debug_cumulative_user_group_privilege AS 
+SELECT u.user_login, 
+    g.group_name, g.group_discoverable, g.group_public,
+    p.privilege_code
+FROM cumulative_user_group_privilege as m
+LEFT JOIN users u on u.user_id=m.user_id 
+LEFT JOIN groups g on g.group_id=m.group_id
+LEFT JOIN privileges p on p.privilege_id = m.privilege_id
+ORDER BY g.group_name, u.user_login, p.privilege_code; 
+
+CREATE VIEW debug_user_access_to_resource AS
+SELECT u.user_login, 
+    r.resource_title, r.resource_public, r.resource_immutable, 
+    p.privilege_code, u2.user_login as asserting_login
+from user_access_to_resource as m
+left join users u on u.user_id=m.user_id 
+left join resources r on r.resource_id=m.resource_id
+left join privileges p on p.privilege_id = m.privilege_id
+left join users u2 on u2.user_id=m.assertion_user_id
+order by r.resource_title, u.user_login, p.privilege_code; 
 
 CREATE VIEW debug_group_access_to_resource AS
 SELECT g.group_name, 
     r.resource_title, r.resource_public, r.resource_immutable, 
     p.privilege_code, u2.user_login as asserting_login
-from group_access_to_resource as m
-left join groups g on g.group_id=m.group_id 
-left join resources r on r.resource_id=m.resource_id
-left join privileges p on p.privilege_id = m.privilege_id
-left join users u2 on u2.user_id=m.assertion_user_id;
+FROM group_access_to_resource AS m
+LEFT JOIN groups g ON g.group_id=m.group_id 
+LEFT JOIN resources r ON r.resource_id=m.resource_id
+LEFT JOIN privileges p ON p.privilege_id = m.privilege_id
+LEFT JOIN users u2 ON u2.user_id=m.assertion_user_id
+ORDER BY r.resource_title, g.group_name, p.privilege_code; 
 
 CREATE VIEW debug_user_access_to_group AS
 SELECT u.user_login, 
@@ -692,5 +760,6 @@ from user_access_to_group as m
 left join users u on u.user_id=m.user_id 
 left join groups g on g.group_id=m.group_id
 left join privileges p on p.privilege_id = m.privilege_id
-left join users u2 on u2.user_id=m.assertion_user_id;
+left join users u2 on u2.user_id=m.assertion_user_id
+order by g.group_name, u.user_login, p.privilege_code; 
 

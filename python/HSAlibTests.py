@@ -219,6 +219,7 @@ class T04CreateGroup(unittest.TestCase):
         except HSAlib.HSAUsageException as e:
             self.assertTrue("Group uuid does not exist" == e.value)
 
+
 class T05ProtectResource(unittest.TestCase):
     def test(self):
         global context
@@ -236,7 +237,7 @@ class T05ProtectResource(unittest.TestCase):
             self.fail("non-owners should not be able to modify resource metadata")
         except HSAlib.HSAException as e:
             # print e.value
-            self.assertTrue(e.value == 'Regular user must own resource')
+            self.assertTrue(e.value == 'Resource must be writeable')
 
         # now share something with dog
         ha = startup('cat')
@@ -260,12 +261,14 @@ class T05ProtectResource(unittest.TestCase):
         self.assertTrue(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readable(context['resources']['dog']))
         # self.assertTrue(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
-        try:
-            ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
-            self.fail("non-owners should not be able to modify resource metadata")
-        except HSAlib.HSAccessException as e:
-            # print e.value
-            self.assertTrue(e.value == 'Regular user must own resource')
+
+        # readwrite users should be able to change title.
+        ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
+        meta = ha.get_resource_metadata(context['resources']['dog'])
+        self.assertEqual(meta['title'], 'all about dogs')
+        ha.assert_resource('/cat/foo', 'no more about dogs', resource_uuid = context['resources']['dog'])
+        meta = ha.get_resource_metadata(context['resources']['dog'])
+        self.assertEqual(meta['title'], 'no more about dogs')
 
         # downgrade permission to 'ro'
         ha = startup('cat')
@@ -278,10 +281,10 @@ class T05ProtectResource(unittest.TestCase):
         # self.assertTrue(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
         try:
             ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
-            self.fail("non-owners should not be able to modify resource metadata")
+            self.fail("read-only users should not be able to modify resource metadata")
         except HSAlib.HSAException as e:
             # print e.value
-            self.assertTrue(e.value == 'Regular user must own resource')
+            self.assertTrue(e.value == 'Resource must be writeable')
 
         ha = startup('cat')
         # take out user sharing
@@ -305,12 +308,15 @@ class T05ProtectResource(unittest.TestCase):
         self.assertTrue(ha.resource_is_readwrite(context['resources']['dog']))
         self.assertTrue(ha.resource_is_readable(context['resources']['dog']))
         # self.assertTrue(ha.resource_is_readable_without_sharing(test_context['resources']['dog']))
-        try:
-            ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
-            self.fail("non-owners should not be able to modify resource metadata")
-        except HSAlib.HSAException as e:
-            # print e.value
-            self.assertTrue(e.value == 'Regular user must own resource')
+
+        # readwrite users should be able to change title.
+        ha.assert_resource('/cat/foo', 'all about dogs', resource_uuid=context['resources']['dog'])
+        meta = ha.get_resource_metadata(context['resources']['dog'])
+        self.assertEqual(meta['title'], 'all about dogs')
+        ha.assert_resource('/cat/foo', 'no more about dogs', resource_uuid = context['resources']['dog'])
+        meta = ha.get_resource_metadata(context['resources']['dog'])
+        self.assertEqual(meta['title'], 'no more about dogs')
+
 
         # turn off group sharing
         ha = startup('cat')
@@ -549,6 +555,9 @@ class T07InviteToResource(unittest.TestCase):
 class T08ResourceFlags(unittest.TestCase):
     def test(self):
         global context
+        ha = startup('admin')
+        # a user with no privilege over anything
+        context['users']['nobody'] = ha.assert_user('nobody', 'no one in particular')
 
         ha = startup('dog')
 
@@ -607,6 +616,10 @@ class T08ResourceFlags(unittest.TestCase):
         names = map((lambda x: x['title']), ha.get_discoverable_resources())
         self.assertTrue(match_lists(['all about dog bones'], names), "error in discoverable resource listing")
 
+        ha = startup('nobody')
+        self.assertEqual(ha.get_cumulative_user_privilege_over_resource(context['resources']['bones']), 'none')
+        ha = startup('dog')
+
         ha.make_resource_not_discoverable(context['resources']['bones'])
         self.assertFalse(ha.resource_is_immutable(context['resources']['bones']))
         self.assertFalse(ha.resource_is_public(context['resources']['bones']))
@@ -627,10 +640,19 @@ class T08ResourceFlags(unittest.TestCase):
         self.assertTrue(ha.resource_is_owned(context['resources']['bones']))
 
         # another user shouldn't be able to read it unless it's also public
-        ha = startup('bat')
+        ha = startup('nobody')
         self.assertFalse(ha.resource_is_readable(context['resources']['bones']))
         self.assertFalse(ha.resource_is_readwrite(context['resources']['bones']))
         self.assertFalse(ha.resource_is_owned(context['resources']['bones']))
+
+        ha = startup('dog')
+        ha.make_resource_not_immutable(context['resources']['bones'])
+
+        self.assertFalse(ha.resource_is_immutable(context['resources']['bones']))
+        self.assertFalse(ha.resource_is_public(context['resources']['bones']))
+        self.assertFalse(ha.resource_is_published(context['resources']['bones']))
+        self.assertFalse(ha.resource_is_discoverable(context['resources']['bones']))
+        self.assertTrue(ha.resource_is_shareable(context['resources']['bones']))
 
         # test making a resource public
         ha = startup('dog')
@@ -651,19 +673,26 @@ class T08ResourceFlags(unittest.TestCase):
 
         names = map((lambda x: x['title']), ha.get_public_resources())
         self.assertTrue(match_lists(['all about dog chewies'], names), "error in public resource listing")
+        names = map((lambda x: x['title']), ha.get_discoverable_resources())
+        self.assertTrue(match_lists(['all about dog chewies'], names), "error in public resource listing")
 
         ha = startup('bat')
+        # check protection for otherwise unconnected user
+        protection = [i['privilege'] for i in ha.get_discoverable_resources() if i['title'] == 'all about dog chewies' ]
+        self.assertEqual(len(protection), 1, "wrong number of title matches in get_discoverable_resources")
+        self.assertEqual(protection[0], 'ro', 'public resource protection incorrect')
 
         # can 'cat' see the public resource owned by 'dog' but not explicitly owned by 'cat'.
         self.assertTrue(ha.resource_is_readable(context['resources']['chewies']))
         self.assertFalse(ha.resource_is_readwrite(context['resources']['chewies']))
         self.assertFalse(ha.resource_is_owned(context['resources']['chewies']))
+        self.assertEqual(ha.get_cumulative_user_privilege_over_resource(context['resources']['chewies']), 'ro')
 
         # test whether we can retract a resource
         ha = startup('dog')
         ha.retract_resource(context['resources']['chewies'])
         self.assertFalse(ha.resource_exists(context['resources']['chewies']),
-                                            "resource still exists after being retracted")
+                         "resource still exists after being retracted")
 
 class T09GroupSharing(unittest.TestCase):
     def test(self):
@@ -671,7 +700,7 @@ class T09GroupSharing(unittest.TestCase):
         ha = startup('dog')
 
         context['resources']['scratching'] = ha.assert_resource('/cat/scratching',
-                                                                'all about sofas as scratching meowers')
+                                                                'all about sofas as scratching posts')
 
         self.assertFalse(ha.resource_is_public(context['resources']['scratching']))
         self.assertFalse(ha.resource_is_immutable(context['resources']['scratching']))
@@ -755,7 +784,7 @@ class T10GroupFlags(unittest.TestCase):
         self.assertTrue(ha.group_is_shareable(context['groups']['felines']))
 
         names = map((lambda x: x['name']), ha.get_discoverable_groups())
-        self.assertTrue('felines' not in names)
+        self.assertTrue('felines' in names)
 
         ha.make_group_discoverable(context['groups']['felines'])
 
@@ -771,6 +800,9 @@ class T10GroupFlags(unittest.TestCase):
         # check public flag
         names = map((lambda x: x['name']), ha.get_public_groups())
         self.assertTrue('felines' in names)
+
+        # become another user and check that the resource is readable
+
 
         ha.make_group_not_public(context['groups']['felines'])
 
