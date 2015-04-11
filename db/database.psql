@@ -1,14 +1,40 @@
 ------------------------------------------------
--- outstanding issues
--- - Can a user share a public resource with another? 
--- - Should there be a sharing message that indicates intent? 
---   Should that message be stored here or elsewhere? 
+-- The database design is based upon two orthogonal components: 
+-- a) attributes of the resource to be protected: 
+--    public/private; mutable/immutable; discoverable/hidden; 
+--    and published/unpublished.
+-- b) specific user privileges from either explicit or group access. 
+-- There are two queries that drive the system by determining access rules
+-- for resources: 
+--
+-- 1) determine specific user privileges over resource: 
+--    SELECT privilege_id from cumulative_user_resource_privilege 
+--    WHERE user_id IN (SELECT user_id FROM users 
+--	WHERE user_login='desired user') 
+--    AND resource_id IN (SELECT resource_id FROM resources 
+--	WHERE resource_path='desired resource'); 
+--    If no record is returned there is no privilege. 
+--    The privilege_id is: 
+--      1 for owner
+--      2 for read/write ("change") access. 
+--      3 for read-only ("view") access. 
+--      4 for no access ("none"). 
+--
+-- 2) determine whether a resource_uuid is public: 
+--    SELECT privilege_id from public_resource_privilege 
+--    WHERE resource_path = 'desired resource'; 
+--    If no record is returned, there is again no privilege. 
+--    privilege_id is always 3 (read-only/view). 
 ------------------------------------------------
 
 -- MUST DROP IN REVERSE ORDER 
 -- in order to avoid dependencies. 
 
 -- views for debugging/human readability 
+DROP VIEW IF EXISTS debug_public_resource_privilege; 
+DROP VIEW IF EXISTS debug_discoverable_resource_privilege; 
+DROP VIEW IF EXISTS debug_public_group_privilege; 
+DROP VIEW IF EXISTS debug_discoverable_group_privilege; 
 DROP VIEW IF EXISTS debug_cumulative_user_resource_privilege; 
 DROP VIEW IF EXISTS debug_cumulative_group_resource_privilege; 
 DROP VIEW IF EXISTS debug_cumulative_user_group_privilege; 
@@ -642,32 +668,30 @@ FROM group_resource_privilege p
 ---------------------------------------------------
 CREATE VIEW discoverable_resource_privilege AS 
 SELECT resource_uuid, resource_title, resource_path,
-CASE WHEN resource_public THEN 'ro'
-     ELSE 'none'
-END AS privilege_code
+CASE WHEN resource_public THEN 3
+     ELSE 4
+END AS privilege_id
 FROM resources
-WHERE resource_discoverable 
-   OR resource_public
+WHERE resource_discoverable OR resource_public
 ORDER BY resource_title; 
 
 CREATE VIEW public_resource_privilege AS 
-select resource_uuid, resource_title, resource_path, 'ro'::TEXT AS privilege_code
+select resource_uuid, resource_title, resource_path, 3 AS privilege_id
 FROM resources
 WHERE resource_public
 ORDER BY resource_title; 
 
 CREATE VIEW discoverable_group_privilege AS 
 SELECT group_uuid, group_name,
-CASE WHEN group_public THEN 'ro'
-     ELSE 'none'
-END AS privilege_code
+CASE WHEN group_public THEN 3
+     ELSE 4
+END AS privilege_id
 FROM groups
-WHERE group_discoverable 
-   OR group_public
+WHERE group_discoverable OR group_public
 ORDER BY group_name; 
 
 CREATE VIEW public_group_privilege AS 
-select group_uuid, group_name, 'ro'::TEXT AS privilege_code
+select group_uuid, group_name, 3 AS privilege_id
 FROM groups
 WHERE group_public
 ORDER BY group_name; 
@@ -763,3 +787,22 @@ left join privileges p on p.privilege_id = m.privilege_id
 left join users u2 on u2.user_id=m.assertion_user_id
 order by g.group_name, u.user_login, p.privilege_code; 
 
+CREATE VIEW debug_public_resource_privilege AS 
+SELECT p.resource_uuid, p.resource_title, q.privilege_code
+FROM public_resource_privilege p 
+LEFT JOIN privileges q ON p.privilege_id=q.privilege_id; 
+
+CREATE VIEW debug_discoverable_resource_privilege AS 
+SELECT p.resource_uuid, p.resource_title, q.privilege_code 
+FROM discoverable_resource_privilege p 
+LEFT JOIN privileges q ON p.privilege_id=q.privilege_id; 
+
+CREATE VIEW debug_public_group_privilege AS 
+SELECT p.group_uuid, p.group_name, q.privilege_code
+FROM public_group_privilege p 
+LEFT JOIN privileges q ON p.privilege_id=q.privilege_id; 
+
+CREATE VIEW debug_discoverable_group_privilege AS 
+SELECT p.group_uuid, p.group_name, q.privilege_code
+FROM discoverable_group_privilege p 
+LEFT JOIN privileges q ON p.privilege_id=q.privilege_id; 

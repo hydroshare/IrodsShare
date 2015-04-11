@@ -5,66 +5,107 @@ from HSAccessObjects import HSAccessUser, HSAccessGroup, HSAccessResource
 import unittest
 from pprint import pprint
 
-
 class Stasher(object):
+    """
+    This allows recovery of object details for objects that have been created before,
+    but refreshes metadata as needed. This allows complex state transition tests.
+    """
 
     def __init__(self):
-        self.test_context = {'users':{}, 'groups':{}, 'resources':{}}
-        self.hsa = None
+        self.users = {}
+        self.groups = {}
+        self.resources = {}
+
+        self.hsaccess_instance = None
         self.login_name = None
-        self.user = None
+        self.user_object = None
 
     def login(self, login):
-        self.hsa = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
         self.login_name = login
-        self.user = HSAccessUser(self.hsa, self.hsa.get_uuid())
-        self.stash_user(self.user, login)
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        self.stash_user(self.user_object, login)
         # pprint(stasher)
-        return self.user
+        return self.user_object
 
     def reset(self):
-        self.hsa._HSAccessCore__global_reset("yes, I'm sure")
+        self.hsaccess_instance._HSAccessCore__global_reset("yes, I'm sure")
 
     def stash_user(self, user, name):
         if type(user) is not HSAccessUser:
             raise HSAUsageException("cannot stash non-user")
-        if name in self.test_context['users'].keys()\
-                and self.test_context['users'][name] != user.get_uuid():
+        if name in self.users.keys()\
+                and self.users[name] != user.get_uuid():
             raise HSAIntegrityException("attempt to change user id for name not allowed")
-        self.test_context['users'][name] = user.get_uuid()
+        self.users[name] = user.get_uuid()
 
     def get_user(self, name):
         if type(name) is not str:
             raise HSAUsageException("name is not a string")
-        return HSAccessUser(self.hsa, self.test_context['users'][name])
+        return HSAccessUser(self.hsaccess_instance, self.users[name])
 
     def stash_group(self, group, name):
         if type(group) is not HSAccessGroup:
             raise HSAUsageException("cannot stash non-group")
-        if name in self.test_context['groups'].keys():
+        if name in self.groups.keys():
             raise HSAIntegrityException("attempt to reuse group name is not allowed")
-        # print "group name is ", group.get_name()
-        # print "name is ", name
-        # print "uuid is ", group.get_uuid()
-        self.test_context['groups'][name] = group.get_uuid()
-        # pprint(self.test_context)
+        self.groups[name] = group.get_uuid()
+        # pprint(self.context)
 
     def get_group(self, name):
         if type(name) is not str:
             raise HSAUsageException("name is not a string")
-        return HSAccessGroup(self.hsa, self.test_context['groups'][name])
+        return HSAccessGroup(self.hsaccess_instance, self.groups[name])
 
     def stash_resource(self, resource, name):
         if type(resource) is not HSAccessResource:
             raise HSAUsageException("cannot stash non-resource")
-        if name in self.test_context['resources'].keys():
+        if name in self.resources.keys():
             raise HSAIntegrityException("attempt to reuse resource name not allowed")
-        self.test_context['resources'][name] = resource.get_uuid()
+        self.resources[name] = resource.get_uuid()
 
     def get_resource(self, name):
         if type(name) is not str:
             raise HSAUsageException("name is not a string")
-        return HSAccessResource(self.hsa, self.test_context['resources'][name])
+        return HSAccessResource(self.hsaccess_instance, self.resources[name])
+
+def check_homogeneity(tester, object):
+    """
+    Check that basic attributes of objects are synchronized between implementations
+
+    :type tester: unittest.TestCase
+    :type object: HSAccessObject
+    :param tester: Instance of TestCase
+    :param object: object to test: can be HSAccessUser. HSAccessGroup, HSAccessResource
+    """
+    if isinstance(object, HSAccessUser):
+        tester.assertEqual(object.is_admin(), object.hsa.user_is_admin(object.get_uuid()), 'homogeneity failure')
+        tester.assertEqual(object.is_active(), object.hsa.user_is_admin(object.get_uuid()), 'homogeneity failure')
+	if tester.hsa.user_is_admin(): 
+	    tester.assertTrue(match_lists(object.get_capabilities().keys(), 
+		[
+		    'create_user', 
+		    'change_name'
+		]
+	else
+	    test.assertTrue(match_lists(object.get_capabilities.keys(), [])
+	    
+	return
+    if isinstance(object, HSAccessGroup):
+        tester.assertEqual(object.is_active(), object.hsa.group_is_active(object.get_uuid()), 'homogeneity failure')
+        tester.assertEqual(object.is_shareable(), object.hsa.group_is_shareable(object.get_uuid()), 'homogeneity failure')
+        tester.assertEqual(object.is_discoverable(), object.hsa.group_is_discoverable(object.get_uuid()), 'homogeneity failure')
+        tester.assertEqual(object.is_public(), object.hsa.group_is_public(object.get_uuid()), 'homogeneity failure')
+        return
+
+    if isinstance(object, HSAccessResource):
+        tester.assertEqual(object.is_shareable(), object.hsa.resource_is_shareable(object.get_uuid), 'homogeneity failure')
+        tester.assertEqual(object.is_discoverable(), object.hsa.resource_is_discoverable(object.get_uuid), 'homogeneity failure')
+        tester.assertEqual(object.is_public(), object.hsa.resource_is_public(object.get_uuid), 'homogeneity failure')
+        tester.assertEqual(object.is_published(), object.hsa.resource_is_published(object.get_uuid), 'homogeneity failure')
+        tester.assertEqual(object.is_immutable(), object.hsa.resource_is_immutable(object.get_uuid), 'homogeneity failure')
+        return
+    tester.fail("unknown object passed to check_homogeneity")
 
 
 def match_lists(l1, l2):
@@ -198,8 +239,8 @@ class T04RegisterResource(unittest.TestCase):
         self.assertFalse(posts.is_discoverable())
         self.assertFalse(posts.is_public())
         self.assertFalse(posts.is_published())
-        self.assertTrue(posts.is_shareable())
         self.assertFalse(posts.is_immutable())
+        self.assertTrue(posts.is_shareable())
         self.assertTrue(posts.is_owned())
         self.assertTrue(posts.is_writeable())
         self.assertTrue(posts.is_readable())
@@ -387,7 +428,7 @@ class T06RegisterGroup(unittest.TestCase):
         # create a resource 
         meowers = cat.register_group('meowers')
         stasher.stash_group(meowers, 'meowers')
-        # pprint(stasher.test_context)
+        # pprint(stasher.context)
         # meowers.pprint()
 
         self.assertTrue(meowers.get_name() == 'meowers')

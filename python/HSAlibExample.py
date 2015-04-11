@@ -41,7 +41,7 @@ pprint(ha.get_resources_held_by_user(uuuid02))
 
 print
 print "get groups of user", uuuid02, "is"
-pprint(ha.groups_of_user(uuuid02))
+pprint(ha.get_groups_of_user(uuuid02))
 
 print
 print "get groups is"
