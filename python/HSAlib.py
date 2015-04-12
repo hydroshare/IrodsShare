@@ -3774,27 +3774,7 @@ class HSAccessCore(object):
     # ##########################################################
     # stubs for folder subsystem
     # ##########################################################
-    #TODO: question for couch:::: do we create a new table user_access_to_folder AND user_access_to_tag? The same way we handle permissions for resources?
-        #if so, much of this code will need refactoring
-    #TODO: update all the documentation to reflect that we are using _self.user_id instead of _self.user_uuid
-
-    #TODO: write this documentation before merging with master
-    def _user_owns_folder(self, folder_name):
-        """
-        TODO: write this documentation
-
-        :type TODO WRITE THIS
-        :param folder_name: The name of the folder
-        :return: True if a folder exists in user_folders with given folder_name. Return False otherwise
-        """
-        self._cur.execute("""select assertion_user_id from user_folders where user_folder_name = %s""",
-            (folder_name,))
-
-        result = self._cur.fetchone()
-
-        return result[0] == self._user_id
-
-    def _get_folder_id_from_name(self, folder_name):
+    def __get_folder_id_from_name(self, folder_name):
         """
         PRIVATE: get folder_id from folder name
 
@@ -3807,40 +3787,49 @@ class HSAccessCore(object):
 
         Note: this method is not subject to access control. 
         """
-        self._cur.execute("select user_folder_id from user_folders where user_folder_name=%s", (folder_name,))
-        if self._cur.rowcount > 1:
+        self.__cur.execute("select user_folder_id from user_folders where user_folder_name=%s", (folder_name,))
+        if self.__cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one record for a specific folder name")
-        if self._cur.rowcount > 0:
-            return self._cur.fetchone()['user_folder_id']
+        if self.__cur.rowcount > 0:
+            return self.__cur.fetchone()['user_folder_id']
         else:
             raise HSAException("Folder name '" + folder_name + "' does not exist")
 
-    def _check_user_permissions_for_folder_and_resource(self, resource_uuid, folder_name):
-        if resource_uuid:
-            if folder_name:
-                folder_exists = self.folder_exists(folder_name)
-                resource_exists = self.resource_exists(resource_uuid)
-
-                if folder_exists:
-                    if resource_exists:
-                        #TODO: review folder and resource permissions before merging with master
-                        if self._user_owns_folder(folder_name):
-                            if self.resource_is_readwrite(resource_uuid) or self.resource_is_owned(resource_uuid):
-                                pass
-                            else:
-                                raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to add resource_uuid=" + resource_uuid + " to folder_name=" + folder_name)
-                        else:
-                            raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove folder_name=" + folder_name)
-                    else:
-                        raise HSAException("no resouces exist with resource_uuid=" + resource_uuid)
-                else:
-                    raise HSAException("no folders exist with folder_name=" + folder_name)
-            else:
-                raise HSAException("folder_name is required")
-        else:
+    #TODO: write documentation before merging with master
+    def __check_folder_and_resource_exist(self, resource_uuid, folder_name):
+        if not resource_uuid:
             raise HSAException("resource_uuid is required")
+        elif not folder_name:
+            raise HSAException("folder_name is required")
+        else:
+            folder_exists = self.folder_exists(folder_name)
+            resource_exists = self.resource_exists(resource_uuid)
 
+            if not folder_exists:
+                raise HSAException("no folders exist with folder_name=" + folder_name)
+            elif not resource_exists:
+                raise HSAException("no resources exist with resource_uuid=" + resource_uuid)
+            else:
+                pass
+        
         return
+
+    def __get_all_folders(self):
+        """
+        PRIVATE: Return a list of all folders for all users
+
+        :return: A list of folder names
+        :rtype: List<str> 
+
+        Uses self.get_uuid(): current user identity
+        """
+        self.__cur.execute("""select user_folder_name from user_folders""")
+
+        result = []
+        rows = self.__cur.fetchall()
+        for row in rows:
+            result += [row['user_folder_name']]
+        return result
 
     def folder_exists(self, folder_name):
         """
@@ -3852,10 +3841,10 @@ class HSAccessCore(object):
 
         This determines whether a given folder name corresponds to an existing folder. 
         """
-        self._cur.execute("select user_folder_id from user_folders where user_folder_name=%s", (folder_name,))
-        if self._cur.rowcount > 1:
+        self.__cur.execute("select user_folder_id from user_folders where user_folder_name=%s", (folder_name,))
+        if self.__cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one record for a specific folder name")
-        if self._cur.rowcount > 0:
+        if self.__cur.rowcount > 0:
             return True
         else:
             return False
@@ -3874,10 +3863,10 @@ class HSAccessCore(object):
             folder_exists = self.folder_exists(folder_name)
 
             if not folder_exists:
-                self._cur.execute("""insert into user_folders (user_folder_id, user_folder_name,
+                self.__cur.execute("""insert into user_folders (user_folder_id, user_folder_name,
                 assertion_user_id, assertion_time) values (DEFAULT, %s, %s, DEFAULT)""",
-                (folder_name, self._user_id,))
-                self._conn.commit()
+                (folder_name, self.__user_id,))
+                self.__conn.commit()
             else:
                 raise HSAException("folder already exists with folder_name=" + folder_name)
         else:
@@ -3901,12 +3890,12 @@ class HSAccessCore(object):
 
             if folder_exists:
                 #TODO: are we removing any subfolders?
-                if self._user_owns_folder(folder_name):
-                    self._cur.execute("""delete from user_folders where user_folder_name = %s""",
-                    (folder_name,))
-                    self._conn.commit()
-                else:
-                    raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove folder_name=" + folder_name)
+                #if self._user_owns_folder(folder_name):
+                self.__cur.execute("""delete from user_folders where user_folder_name = %s""",
+                (folder_name,))
+                self.__conn.commit()
+                #else:
+                #    raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove folder_name=" + folder_name)
 
             else:
                 raise HSAException("no folder exists with folder_name=" + folder_name)
@@ -3929,11 +3918,11 @@ class HSAccessCore(object):
         Uses self.get_uuid(): the identity of the current user.
         Folders are local to the current user.
         """
-        self._check_user_permissions_for_folder_and_resource(resource_uuid, folder_name)
-        
-        self._cur.execute("""insert into user_folder_of_resource (id, user_id, user_folder_id, resource_id, assertion_time) values (DEFAULT, %s, %s, %s, DEFAULT)""",
-        (self._user_id, self._get_folder_id_from_name(folder_name), self._get_resource_id_from_uuid(resource_uuid),))
-        self._conn.commit()
+        self.__check_folder_and_resource_exist(resource_uuid, folder_name)
+
+        self.__cur.execute("""insert into user_folder_of_resource (id, user_id, user_folder_id, resource_id, assertion_time) values (DEFAULT, %s, %s, %s, DEFAULT)""",
+        (self.__user_id, self.__get_folder_id_from_name(folder_name), self.__get_resource_id_from_uuid(resource_uuid),))
+        self.__conn.commit()
 
         return
 
@@ -3946,11 +3935,11 @@ class HSAccessCore(object):
         :param resource_uuid: identifier of resource to put into folder
         :param folder_name: name of the folder
         """
-        self._check_user_permissions_for_folder_and_resource(resource_uuid, folder_name)
+        self.__check_folder_and_resource_exist(resource_uuid, folder_name)
 
-        self._cur.execute("""delete from user_folder_of_resource where user_folder_id = %s and resource_id = %s""",
-        (self._get_folder_id_from_name(folder_name), self._get_resource_id_from_uuid(resource_uuid),))
-        self._conn.commit()
+        self.__cur.execute("""delete from user_folder_of_resource where user_folder_id = %s and resource_id = %s""",
+        (self.__get_folder_id_from_name(folder_name), self.__get_resource_id_from_uuid(resource_uuid),))
+        self.__conn.commit()
 
         return
 
@@ -3963,16 +3952,15 @@ class HSAccessCore(object):
 
         Uses self.get_uuid(): current user identity
         """
-        self._cur.execute("""select user_folder_name from user_folders where assertion_user_id = %s""",
-        (self._user_id,))
+        self.__cur.execute("""select user_folder_name from user_folders where assertion_user_id = %s""",
+        (self.__user_id,))
 
         result = []
-        rows = self._cur.fetchall()
+        rows = self.__cur.fetchall()
         for row in rows:
             result += [row['user_folder_name']]
         return result
 
-    #TODO: implement this second to last, after finishing the tagging
     def get_resources_in_folders(self, folder=None):
         """
         STUB: Get a structured dictionary of folders and their contents
@@ -3993,56 +3981,76 @@ class HSAccessCore(object):
         2.  If folder is not None, report on only one chosen folder.
 
         """
-        return
+        if folder is not None:
+            folder_length = len(folder)
+            all_folders = self.__get_all_folders()
+
+            #list comprehension to find subfolders of provided folders based on string match from left
+            subfolders = [subfolder for subfolder in all_folders if subfolder[:folder_length] == folder]
+
+        else:
+            subfolders = self.__get_all_folders()
+
+        self.__cur.execute("""select f.user_folder_name, r.resource_uuid, r.resource_title, 'none' AS privilege_code FROM user_folders f
+            LEFT OUTER JOIN user_folder_of_resource ufr ON ufr.user_folder_id = f.user_folder_id
+            LEFT OUTER JOIN resources r ON r.resource_id = ufr.resource_id
+            WHERE f.user_folder_name = ANY(%s)
+            EXCEPT
+            SELECT f.user_folder_name, r.resource_uuid, r.resource_title, 'none' AS privilege_code FROM user_folders f
+            LEFT OUTER JOIN user_folder_of_resource ufr ON ufr.user_folder_id = f.user_folder_id
+            LEFT OUTER JOIN resources r ON r.resource_id = ufr.resource_id
+            LEFT OUTER JOIN user_access_to_resource uar ON uar.resource_id = r.resource_id
+            LEFT OUTER JOIN privileges p ON p.privilege_id = uar.privilege_id
+            WHERE uar.user_id = %s
+            AND f.user_folder_name = ANY(%s)
+            UNION 
+            SELECT f.user_folder_name, r.resource_uuid, r.resource_title, p.privilege_code from user_folders f
+            LEFT OUTER JOIN user_folder_of_resource ufr ON ufr.user_folder_id = f.user_folder_id
+            LEFT OUTER JOIN resources r ON r.resource_id = ufr.resource_id
+            LEFT OUTER JOIN user_access_to_resource uar ON uar.resource_id = r.resource_id
+            LEFT OUTER JOIN privileges p ON p.privilege_id = uar.privilege_id
+            WHERE uar.user_id = %s
+            AND f.user_folder_name = ANY(%s)""", (subfolders, self.__user_id, subfolders, self.__user_id, subfolders,))
+
+        resources_in_folders = {}
+
+        rows = self.__cur.fetchall()
+        for row in rows:
+            if not row['user_folder_name'] in resources_in_folders:
+                resources_in_folders[row['user_folder_name']] = {}
+
+                if row['resource_uuid'] is not None:
+                    if not row['resource_uuid'] in resources_in_folders[row['user_folder_name']]:
+                        resources_in_folders[row['user_folder_name']][row['resource_uuid']] = {}
+                    
+                    resources_in_folders[row['user_folder_name']][row['resource_uuid']]['title'] = row['resource_title']
+                    resources_in_folders[row['user_folder_name']][row['resource_uuid']]['access'] = row['privilege_code']
+
+        return resources_in_folders
 
     # ##########################################################
     # stubs for tag subsystem
     # ##########################################################
-    #QUESTIONS FOR COUCH: can we only tag resources? Or can we tag folders? If we tag a folder, do all subresources get that tag as well?
-    #TODO: write this documentation before merging with master
-    def _user_owns_tag(self, tag_name):
-        """
-        TODO: write this documentation
-
-        :type TODO WRITE THIS
-        :param tag_name: The name of the folder
-        :return: True if a folder exists in user_folders with given tag_name. Return False otherwise
-        """
-        self._cur.execute("""select assertion_user_id from user_tags where user_tag_name = %s""",
-            (tag_name,))
-
-        result = self._cur.fetchone()
-
-        return result[0] == self._user_id
-
-    def _check_user_permissions_for_tag_and_resource(self, resource_uuid, tag_name):
-        if resource_uuid:
-            if tag_name:
-                tag_exists = self.tag_exists(tag_name)
-                resource_exists = self.resource_exists(resource_uuid)
-
-                if tag_exists:
-                    if resource_exists:
-                        #TODO: review folder and resource permissions before merging with master
-                        if self._user_owns_tag(tag_name):
-                            if self.resource_is_readwrite(resource_uuid) or self.resource_is_owned(resource_uuid):
-                                pass
-                            else:
-                                raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to add tag_name=" + tag_name + " to resource_uuid=" + resource_uuid)
-                        else:
-                            raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove tag_name=" + tag_name)
-                    else:
-                        raise HSAException("no resouces exist with resource_uuid=" + resource_uuid)
-                else:
-                    raise HSAException("no tags exist with tag_name=" + tag_name)
-            else:
-                raise HSAException("tag_name is required")
-        else:
+    #TODO: write documentation before merging with master
+    def __check_tag_and_resource_exist(self, resource_uuid, tag_name):
+        if not resource_uuid:
             raise HSAException("resource_uuid is required")
+        elif not tag_name:
+            raise HSAException("tag_name is required")
+        else:
+            tag_exists = self.tag_exists(tag_name)
+            resource_exists = self.resource_exists(resource_uuid)
 
+            if not tag_exists:
+                raise HSAException("no tags exist with tag_name=" + tag_name)
+            elif not resource_exists:
+                raise HSAException("no resources exist with resource_uuid=" + resource_uuid)
+            else:
+                pass
+        
         return
 
-    def _get_tag_id_from_name(self, tag_name):
+    def __get_tag_id_from_name(self, tag_name):
         """
         PRIVATE: get tag_id from tag name
 
@@ -4055,13 +4063,28 @@ class HSAccessCore(object):
 
         Note: this method is not subject to access control. 
         """
-        self._cur.execute("select user_tag_id from user_tags where user_tag_name=%s", (tag_name,))
-        if self._cur.rowcount > 1:
+        self.__cur.execute("select user_tag_id from user_tags where user_tag_name=%s", (tag_name,))
+        if self.__cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one record for a specific tag name")
-        if self._cur.rowcount > 0:
-            return self._cur.fetchone()['user_tag_id']
+        if self.__cur.rowcount > 0:
+            return self.__cur.fetchone()['user_tag_id']
         else:
             raise HSAException("Tag name '" + tag_name + "' does not exist")
+
+    def __get_all_tags(self):
+        """
+        PRIVATE: Return a list of all tags
+
+        :return: A list of tag names
+        :rtype: List<str> 
+        """
+        self.__cur.execute("""select user_tag_name from user_tags""")
+
+        result = []
+        rows = self.__cur.fetchall()
+        for row in rows:
+            result += [row['user_tag_name']]
+        return result
 
     def tag_exists(self, tag_name):
         """
@@ -4073,10 +4096,10 @@ class HSAccessCore(object):
 
         This determines whether a given tag name corresponds to an existing tag. 
         """
-        self._cur.execute("select user_tag_id from user_tags where user_tag_name=%s", (tag_name,))
-        if self._cur.rowcount > 1:
+        self.__cur.execute("select user_tag_id from user_tags where user_tag_name=%s", (tag_name,))
+        if self.__cur.rowcount > 1:
             raise HSAException("Database integrity violation: more than one record for a specific tag name")
-        if self._cur.rowcount > 0:
+        if self.__cur.rowcount > 0:
             return True
         else:
             return False
@@ -4097,9 +4120,9 @@ class HSAccessCore(object):
             tag_exists = self.tag_exists(tag_name)
 
             if not tag_exists:
-                self._cur.execute("""insert into user_tags values (DEFAULT, %s, %s, DEFAULT)""",
-                (tag_name, self._user_id,))
-                self._conn.commit()
+                self.__cur.execute("""insert into user_tags values (DEFAULT, %s, %s, DEFAULT)""",
+                (tag_name, self.__user_id,))
+                self.__conn.commit()
             else:
                 raise HSAException("tag already exists with tag_name=" + tag_name)
         else:
@@ -4124,18 +4147,13 @@ class HSAccessCore(object):
             tag_exists = self.tag_exists(tag_name)
 
             if tag_exists:
-                #TODO: are we removing any subfolders?
-                if self._user_owns_tag(tag_name):
-                    self._cur.execute("""delete from user_tags where user_tag_name = %s""",
-                    (tag_name,))
-                    self._conn.commit()
-                else:
-                    raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove tag_name=" + tag_name)
+                self.__cur.execute("""delete from user_tags where user_tag_name = %s""",
+                (tag_name,))
+                self.__conn.commit()
 
             else:
                 raise HSAException("no tag exists with tag_name=" + tag_name)
 
-            
         else:
             raise HSAException("tag_name is required for retract_tag")
 
@@ -4154,11 +4172,11 @@ class HSAccessCore(object):
         Tags are local to the current user.
         Multiple asserts with different tags apply all of them
         """
-        self._check_user_permissions_for_tag_and_resource(resource_uuid, tag_name)
+        self.__check_tag_and_resource_exist(resource_uuid, tag_name)
         
-        self._cur.execute("""insert into user_tags_of_resource (id, user_id, user_tag_id, resource_id, assertion_time) values (DEFAULT, %s, %s, %s, DEFAULT)""",
-        (self._user_id, self._get_tag_id_from_name(tag_name), self._get_resource_id_from_uuid(resource_uuid),))
-        self._conn.commit()
+        self.__cur.execute("""insert into user_tags_of_resource (id, user_id, user_tag_id, resource_id, assertion_time) values (DEFAULT, %s, %s, %s, DEFAULT)""",
+        (self.__user_id, self.__get_tag_id_from_name(tag_name), self.__get_resource_id_from_uuid(resource_uuid),))
+        self.__conn.commit()
 
         return
 
@@ -4175,11 +4193,11 @@ class HSAccessCore(object):
         Tags are local to the current user.
         This removes an assertion of one tag while leaving the others alone.
         """
-        self._check_user_permissions_for_tag_and_resource(resource_uuid, tag_name)
+        self.__check_tag_and_resource_exist(resource_uuid, tag_name)
 
-        self._cur.execute("""delete from user_tags_of_resource where user_tag_id = %s and resource_id = %s""",
-        (self._get_tag_id_from_name(tag_name), self._get_resource_id_from_uuid(resource_uuid),))
-        self._conn.commit()
+        self.__cur.execute("""delete from user_tags_of_resource where user_tag_id = %s and resource_id = %s""",
+        (self.__get_tag_id_from_name(tag_name), self.__get_resource_id_from_uuid(resource_uuid),))
+        self.__conn.commit()
 
         return
 
@@ -4192,16 +4210,16 @@ class HSAccessCore(object):
 
         Uses self.get_uuid(): current user identity
         """
-        self._cur.execute("""select user_tag_name from user_tags where assertion_user_id = %s""",
-        (self._user_id,))
+        self.__cur.execute("""select user_tag_name from user_tags where assertion_user_id = %s""",
+        (self.__user_id,))
 
         result = []
-        rows = self._cur.fetchall()
+        rows = self.__cur.fetchall()
         for row in rows:
             result += [row['user_tag_name']]
         return result
 
-    #TODO: implement this last, after get_resouces_in_folder
+    #TODO: implement this last, after get_resources_in_folder
     def get_resources_by_tag(self, tag=None):
         """
         STUB: Get a structured dictionary of tags and their contents

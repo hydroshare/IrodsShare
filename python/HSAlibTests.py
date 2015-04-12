@@ -946,15 +946,6 @@ class T14FolderTests(unittest.TestCase):
 
         resource_dog = context['resources']['dog']
 
-        #TODO: do this
-        #add resource for cat to context for future tests
-        #context['resources']['cat'] = 
-
-        #TODO: add folder for cat and dog to context for future tests
-        #context['folders'] = {}
-        #context['folders']['dog'] = 
-        #context['folders']['cat'] = 
-
         ##############################
         # create folders
         ##############################
@@ -962,7 +953,7 @@ class T14FolderTests(unittest.TestCase):
         try:
             ha_dog.assert_folder(None)
             self.fail("expected an exception")
-        except HSAException, ex:
+        except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
@@ -980,7 +971,7 @@ class T14FolderTests(unittest.TestCase):
         try:
             ha_dog.assert_folder('kibble')
             self.fail("expected an exception")
-        except HSAException, ex:
+        except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
@@ -992,7 +983,7 @@ class T14FolderTests(unittest.TestCase):
         try:
             ha_dog.retract_folder(None)
             self.fail("expected an exception")
-        except HSAException, ex:
+        except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
@@ -1001,26 +992,15 @@ class T14FolderTests(unittest.TestCase):
         try:
             ha_dog.retract_folder("this_folder_does_not_exist")
             self.fail("expected an exception")
-        except HSAException, ex:
+        except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
-
-        #cat cannot delete dog's folder
-        try:
-            ha_cat.retract_folder('bits')
-            self.fail("expected an exception")
-        except HSAException, ex:
-            pass
-        except:
-            self.fail("expected an HSAException")
-
-        self.assertTrue(ha_dog.folder_exists('bits'))
 
         #happy path
         ha_dog.retract_folder('bits')
 
-        self.assertFalse(ha.folder_exists('bits'))
+        self.assertFalse(ha_dog.folder_exists('bits'))
 
         ##############################
         # Add resource to folder
@@ -1029,16 +1009,16 @@ class T14FolderTests(unittest.TestCase):
         try:
             ha_dog.assert_resource_in_folder(None, 'kibble')
             self.fail("expected an exception")
-        except HSAException, ex:
+        except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
         #must provide a folder_name
         try:
-            ha_dog.assert_resource_in_folder(dog_resource, None)
+            ha_dog.assert_resource_in_folder(resource_dog, None)
             self.fail("expected an exception")
-        except HSAException, ex:
+        except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
@@ -1047,42 +1027,112 @@ class T14FolderTests(unittest.TestCase):
         try:
             ha_dog.assert_resource_in_folder('this_resource_does_not_exist', 'kibble')
             self.fail("expected an exception")
-        except HSAException, ex:
+        except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
         #folder does not exist
         try:
-            ha_dog.assert_resource_in_folder(dog_resource, 'this_folder_does_not_exist')
+            ha_dog.assert_resource_in_folder(resource_dog, 'this_folder_does_not_exist')
             self.fail("expected an exception")
-        except HSAException, ex:
+        except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #cat cannot add its own resource to dog's folder
-
-        #cat cannot add dog's resource to cat's folder
-
         #happy path
         ha_dog.assert_resource_in_folder(resource_dog, 'kibble')
 
-        self.assertTrue("resource exists in folder. write a helper method in HSAlib for this")
+        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
 
         ##############################
         # Remove resource from folder
         ##############################
+        #must provide a resource_uuid
+        try:
+            ha_dog.retract_resource_in_folder(None, 'kibble')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #must provide a folder_name
+        try:
+            ha_dog.retract_resource_in_folder(resource_dog, None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #resource does not exist
+        try:
+            ha_dog.retract_resource_in_folder('this_resource_does_not_exist', 'kibble')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #folder does not exist
+        try:
+            ha_dog.retract_resource_in_folder(resource_dog, 'this_folder_does_not_exist')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #happy path
+        ha_dog.retract_resource_in_folder(resource_dog, 'kibble')
+
+        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {}} )
 
 
         ##############################
         # Get folders
         ##############################
+        #returns an array of folder names for a user that has folders
+        ha_dog.assert_folder('bits')
+
+        dog_folders = ha_dog.get_folders()
+
+        self.assertEqual(dog_folders, ['kibble', 'bits'])
+
+        #returns an empty array for a user that has no folders
+        ha_cat.retract_folder('catnip')
+        cat_folders = ha_cat.get_folders()
+
+        self.assertEqual(cat_folders, [])
+
+        #returns only folders that were created by the current user, and none that were created by anyone else
+        ha_cat.assert_folder('catnip')
+        dog_folders = ha_dog.get_folders()
+
+        self.assertEqual(dog_folders, ['kibble', 'bits'])
 
 
         ##############################
         # Get resources in folder
         ##############################
+        #should return an empty dictionary for folders with no resources
+        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {}} )
+
+        #should return 'none' for access code if user does not have a privilege for a resource in a folder
+        ha_dog.assert_resource_in_folder(resource_dog, 'kibble')
+
+        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
+
+        #should return the privilege code as access code if user has a privilege for a resource in a folder
+        ha_admin = startup('admin')
+        ha_admin.share_resource_with_user('resource_dog', context['users']['dog'], 'own')
+
+        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
+
+        #should return data for all folders for all users if folder parameter is not passed
+        self.assertEqual(ha_dog.get_resources_in_folders(), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}, 'bits': {}, 'catnip': {}} )
 
 class T15TagTests(unittest.TestCase):
     def test(self):
@@ -1094,33 +1144,166 @@ class T15TagTests(unittest.TestCase):
         ha_cat = startup('cat')
 
         resource_dog = context['resources']['dog']
-        #resource_cat = context['resources']['cat']
-
-        #TODO: add tag for cat and dog to context for future tests
-        #context['folders'] = {}
-        #context['tags']['dog'] = 
-        #context['tags']['cat'] = 
 
         ##############################
         # create tags
         ##############################
+        #cannot create a tag without a name
+        try:
+            ha_dog.assert_tag(None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #happy path
+        ha_dog.assert_tag('dog_food')
+        ha_dog.assert_tag('dog_toys')
+
+        ha_cat.assert_tag('cat_food')
+
+        self.assertTrue(ha_dog.tag_exists('dog_food'))
+        self.assertTrue(ha_cat.tag_exists('cat_food'))
+
+        #cannot create a tag that already exists
+        try:
+            ha_dog.assert_tag('dog_food')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
         ##############################
         # delete tags
         ##############################
+        #cannot delete a tag without a name
+        try:
+            ha_dog.retract_tag(None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #cannot delete a tag that does not exist
+        try:
+            ha_dog.retract_tag("this_tag_does_not_exist")
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #happy path
+        ha_cat.retract_tag('cat_food')
+
+        self.assertFalse(ha_cat.tag_exists('cat_food'))
 
         ##############################
         # Add tag to resource
         ##############################
+        #must provide a resource_uuid
+        try:
+            ha_dog.assert_resource_has_tag(None, 'dog_food')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #must provide a tag_name
+        try:
+            ha_dog.assert_resource_has_tag(resource_dog, None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #resource does not exist
+        try:
+            ha_dog.assert_resource_has_tag('this_resource_does_not_exist', 'dog_food')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #folder does not exist
+        try:
+            ha_dog.assert_resource_has_tag(resource_dog, 'this_tag_does_not_exist')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #happy path
+        ha_dog.assert_resource_has_tag(resource_dog, 'dog_food')
+
+        # TODO: implement this
+        # self.assertTrue("resource has tag. write a helper method in HSAlib for this")
 
         ##############################
         # Remove tag from resource
         ##############################
+        #must provide a resource_uuid
+        try:
+            ha_dog.retract_resource_has_tag(None, 'dog_food')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #must provide a tag_name
+        try:
+            ha_dog.retract_resource_has_tag(resource_dog, None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #resource does not exist
+        try:
+            ha_dog.retract_resource_has_tag('this_resource_does_not_exist', 'dog_food')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #folder does not exist
+        try:
+            ha_dog.retract_resource_has_tag(resource_dog, 'this_tag_does_not_exist')
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+        #happy path
+        ha_dog.retract_resource_has_tag(resource_dog, 'dog_food')
+
+        # TODO: implement this
+        # self.assertTrue("resource does not have tag. write a helper method in HSAlib for this")
 
 
         ##############################
         # Get tags
         ##############################
+        #returns an array of folder names for a user that has folders
+        dog_tags = ha_dog.get_tags()
+
+        self.assertEqual(dog_tags, ['dog_food', 'dog_toys'])
+
+        #returns an empty array for a user that has no folders
+        cat_tags = ha_cat.get_tags()
+
+        self.assertEqual(cat_tags, [])
 
 
         ##############################
