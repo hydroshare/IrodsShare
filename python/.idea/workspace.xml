@@ -14,8 +14,10 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/iRODSSharePsql$HSAccess.coverage" NAME="HSAccess Coverage Results" MODIFIED="1424635772092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/iRODSSharePsql$HSAccessTests.coverage" NAME="HSAccessTests Coverage Results" MODIFIED="1425254622780" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/iRODSSharePsql$HSAccess.coverage" NAME="HSAccessTests Coverage Results" MODIFIED="1425142378250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/iRODSSharePsql$main.coverage" NAME="main Coverage Results" MODIFIED="1424201666576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/iRODSSharePsql$HSAccessExample.coverage" NAME="HSAccessExample Coverage Results" MODIFIED="1425157924134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -33,34 +35,6 @@
         <option name="myItemId" />
         <option name="myItemType" value="com.intellij.database.view.DbRootNodeDescriptor" />
       </PATH_ELEMENT>
-      <PATH_ELEMENT>
-        <option name="myItemId" value="PostgreSQL on ww2.cuahsi.org" />
-        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
-      </PATH_ELEMENT>
-      <PATH_ELEMENT>
-        <option name="myItemId" value="acouch.public" />
-        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
-      </PATH_ELEMENT>
-    </PATH>
-    <PATH>
-      <PATH_ELEMENT>
-        <option name="myItemId" />
-        <option name="myItemType" value="com.intellij.database.view.DbRootNodeDescriptor" />
-      </PATH_ELEMENT>
-      <PATH_ELEMENT>
-        <option name="myItemId" value="PostgreSQL on ww2.cuahsi.org" />
-        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
-      </PATH_ELEMENT>
-    </PATH>
-    <PATH>
-      <PATH_ELEMENT>
-        <option name="myItemId" />
-        <option name="myItemType" value="com.intellij.database.view.DbRootNodeDescriptor" />
-      </PATH_ELEMENT>
-      <PATH_ELEMENT>
-        <option name="myItemId" value="PostgreSQL - alva@localhost" />
-        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
-      </PATH_ELEMENT>
     </PATH>
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
@@ -72,60 +46,104 @@
       <file leaf-file-name="HSAlib.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HSAlib.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.118120804" vertical-offset="2026" max-vertical-offset="17289">
-              <caret line="114" column="36" selection-start-line="114" selection-start-column="36" selection-end-line="114" selection-end-column="36" />
+            <state vertical-scroll-proportion="7.5675106" vertical-offset="0" max-vertical-offset="47379">
+              <caret line="211" column="0" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
               <folding>
-                <element signature="e#27#42#0" expanded="true" />
-                <marker date="1424635745812" expanded="true" signature="2087:2115" placeholder="SELECT user_..users..." />
-                <marker date="1424635745812" expanded="true" signature="2495:2741" placeholder="select u.use..users..." />
-                <marker date="1424635745812" expanded="true" signature="4190:4233" placeholder="select user_..users..." />
-                <marker date="1424635745812" expanded="true" signature="4861:4904" placeholder="select user_..users..." />
-                <marker date="1424635745812" expanded="true" signature="5435:5481" placeholder="select user_..users..." />
-                <marker date="1424635745812" expanded="true" signature="6160:6207" placeholder="select user_..users..." />
-                <marker date="1424635745812" expanded="true" signature="8760:8827" placeholder="insert into ..." />
-                <marker date="1424635745812" expanded="true" signature="9685:9884" placeholder="update users..." />
-                <marker date="1424635745812" expanded="true" signature="10473:10546" placeholder="SELECT group..groups..." />
-                <marker date="1424635745812" expanded="true" signature="10954:11160" placeholder="select g.gro..groups..." />
-                <marker date="1424635745812" expanded="true" signature="12366:12411" placeholder="select group..groups..." />
-                <marker date="1424635745812" expanded="true" signature="13084:13129" placeholder="select group..groups..." />
-                <marker date="1424635745812" expanded="true" signature="14545:14601" placeholder="insert into ..." />
-                <marker date="1424635745812" expanded="true" signature="15068:15223" placeholder="update group..." />
-                <marker date="1424635745812" expanded="true" signature="15771:15807" placeholder="delete from ..." />
-                <marker date="1424635745812" expanded="true" signature="15771:16108" placeholder="delete from ..." />
-                <marker date="1424635745812" expanded="true" signature="16340:16394" placeholder="select resou..resources..." />
-                <marker date="1424635745812" expanded="true" signature="16979:17033" placeholder="select resou..resources..." />
-                <marker date="1424635745812" expanded="true" signature="17604:17665" placeholder="select resou..resources..." />
-                <marker date="1424635745812" expanded="true" signature="18320:18588" placeholder="select r.res..groups..." />
-                <marker date="1424635745812" expanded="true" signature="21721:21788" placeholder="insert into ..." />
-                <marker date="1424635745812" expanded="true" signature="22557:22737" placeholder="update resou..." />
-                <marker date="1424635745812" expanded="true" signature="23331:23388" placeholder="select privi..privileges..." />
-                <marker date="1424635745812" expanded="true" signature="24252:24371" placeholder="select privi..user_access_to_resource..." />
-                <marker date="1424635745812" expanded="true" signature="25948:26076" placeholder="select privi..user_privilege_over_resource..." />
-                <marker date="1424635745812" expanded="true" signature="31007:31162" placeholder="update user_..." />
-                <marker date="1424635745812" expanded="true" signature="31394:31471" placeholder="insert into ..." />
-                <marker date="1424635745812" expanded="true" signature="31926:32047" placeholder="select privi..group_access_to_resource..." />
-                <marker date="1424635745812" expanded="true" signature="34966:35123" placeholder="update group..." />
-                <marker date="1424635745812" expanded="true" signature="35688:35766" placeholder="insert into ..." />
-                <marker date="1424635745812" expanded="true" signature="36430:36500" placeholder="select id fr..user_membership_in_group..." />
-                <marker date="1424635745812" expanded="true" signature="37499:37573" placeholder="insert into ..." />
-                <marker date="1424635745812" expanded="true" signature="38409:38476" placeholder="delete from ..." />
-                <marker date="1424635745812" expanded="true" signature="39235:39348" placeholder="select privi..user_access_to_group..." />
-                <marker date="1424635745812" expanded="true" signature="40792:40873" placeholder="select privi..user_privilege_over_group..." />
-                <marker date="1424635745812" expanded="true" signature="45699:45848" placeholder="update user_..." />
-                <marker date="1424635745812" expanded="true" signature="46407:46481" placeholder="insert into ..." />
-                <marker date="1424635745812" expanded="true" signature="47096:47320" placeholder="select disti..user_resource_privilege..." />
-                <marker date="1424635745812" expanded="true" signature="47915:48106" placeholder="select disti..user_membership_in_group..." />
+                <element signature="e#257#272#0" expanded="true" />
+                <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+                <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+                <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+                <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+                <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+                <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+                <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+                <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+                <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+                <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+                <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+                <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+                <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+                <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+                <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+                <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+                <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+                <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+                <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+                <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+                <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+                <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+                <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+                <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+                <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+                <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+                <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+                <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+                <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+                <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+                <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+                <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+                <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+                <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+                <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+                <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+                <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+                <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+                <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HSAccessTests.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/HSAccessTests.py">
+      <file leaf-file-name="HSAlibExample.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
-              <caret line="27" column="21" selection-start-line="27" selection-start-column="21" selection-end-line="27" selection-end-column="21" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="69" max-vertical-offset="748">
+              <caret line="38" column="38" selection-start-line="38" selection-start-column="38" selection-end-line="38" selection-end-column="38" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HSAlibTests.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="4795" max-vertical-offset="7701">
+              <caret line="293" column="68" selection-start-line="293" selection-start-column="68" selection-end-line="293" selection-end-column="68" />
+              <folding>
+                <element signature="e#20#33#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -133,8 +151,8 @@
       <file leaf-file-name="PostgreSQL on ww2.cuahsi.org" pinned="false" current-in-tab="false">
         <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.8" vertical-offset="0" max-vertical-offset="323">
-              <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="50" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="697">
+              <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
               <folding />
             </state>
           </provider>
@@ -148,8 +166,10 @@
         <option value="db-console:/c8a11f89/e6858613-ca99-4b70-b14d-6570da0f285a/" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/HSAccess.py" />
-        <option value="db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/" />
         <option value="$PROJECT_DIR$/HSAccessTests.py" />
+        <option value="db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/" />
+        <option value="$PROJECT_DIR$/HSAlibTests.py" />
+        <option value="$PROJECT_DIR$/HSAlibExample.py" />
         <option value="$PROJECT_DIR$/HSAlib.py" />
       </list>
     </option>
@@ -158,10 +178,10 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-5" />
-    <option name="y" value="-1208" />
-    <option name="width" value="1936" />
-    <option name="height" value="1160" />
+    <option name="x" value="150" />
+    <option name="y" value="-908" />
+    <option name="width" value="1616" />
+    <option name="height" value="860" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -186,6 +206,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -210,13 +231,12 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="C:/Python27/python.exe" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Documents/Sphinx" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+    <property name="options.lastSelected" value="preferences.pluginManager" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="recentsLimit" value="5" />
@@ -236,7 +256,7 @@
       <recent name="C:\Users\Alva\PycharmProjects\iRODSSharePsql\HSAccess" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.HSAccess">
+  <component name="RunManager" selected="Python.HSAccessTests">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -431,7 +451,7 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="HSAccess" type="PythonConfigurationType" factoryName="Python">
+    <configuration default="false" name="HSAccessTests" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -444,12 +464,34 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="iRODSSharePsql" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HSAccessTests.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HSAlibTests.py" />
+      <option name="PARAMETERS" value="-v" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <RunnerSettings RunnerId="PyDebugRunner" />
+      <RunnerSettings RunnerId="PythonCover" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
+      <ConfigurationWrapper RunnerId="PythonCover" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="HSAccessExample" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="ssh://acouch@ww2.cuahsi.org:22/usr/bin/python" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="iRODSSharePsql" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HSAlibExample.py" />
+      <option name="PARAMETERS" value="-v" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
@@ -475,9 +517,10 @@
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Python.HSAccess" />
-      <item index="1" class="java.lang.String" itemvalue="Python.main" />
+    <list size="3">
+      <item index="0" class="java.lang.String" itemvalue="Python.HSAccessTests" />
+      <item index="1" class="java.lang.String" itemvalue="Python.HSAccessExample" />
+      <item index="2" class="java.lang.String" itemvalue="Python.main" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
@@ -491,35 +534,37 @@
       <option name="number" value="Default" />
       <updated>1424097248346</updated>
     </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-5" y="-1208" width="1936" height="1160" extended-state="6" />
-    <editor active="false" />
+    <frame x="150" y="-908" width="1616" height="860" extended-state="6" />
+    <editor active="true" />
     <layout>
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.080625" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25214082" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33155793" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32797858" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22125" sideWeight="0.49788433" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25214082" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30352047" sideWeight="0.49895832" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.08020833" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22135417" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39680427" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39946738" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32540438" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3320647" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22135417" sideWeight="0.50211567" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23523094" sideWeight="0.49739584" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3273073" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39680427" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -540,56 +585,1167 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4795" max-vertical-offset="7701">
+          <caret line="293" column="68" selection-start-line="293" selection-start-column="68" selection-end-line="293" selection-end-column="68" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="697">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="47379">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="69" max-vertical-offset="748">
+          <caret line="38" column="38" selection-start-line="38" selection-start-column="38" selection-end-line="38" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4795" max-vertical-offset="7701">
+          <caret line="293" column="68" selection-start-line="293" selection-start-column="68" selection-end-line="293" selection-end-column="68" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="697">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="35649">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm40/system/remote_sources/278004374/-1227933812/psycopg2/extras.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1788" max-vertical-offset="16626">
+          <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="748">
+          <caret line="15" column="51" selection-start-line="15" selection-start-column="51" selection-end-line="15" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4795" max-vertical-offset="7701">
+          <caret line="320" column="57" selection-start-line="320" selection-start-column="57" selection-end-line="320" selection-end-column="57" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="697">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="10557" max-vertical-offset="35411">
+          <caret line="621" column="23" selection-start-line="621" selection-start-column="23" selection-end-line="621" selection-end-column="23" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm40/system/remote_sources/278004374/-1227933812/psycopg2/extras.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1788" max-vertical-offset="16626">
+          <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="69" max-vertical-offset="748">
+          <caret line="8" column="56" selection-start-line="8" selection-start-column="56" selection-end-line="8" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7701">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="697">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="33609">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm40/system/remote_sources/278004374/-1227933812/psycopg2/extras.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1788" max-vertical-offset="16626">
+          <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="69" max-vertical-offset="748">
+          <caret line="8" column="56" selection-start-line="8" selection-start-column="56" selection-end-line="8" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="577" max-vertical-offset="6409">
+          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="697">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="19210" max-vertical-offset="25126">
+          <caret line="1144" column="46" selection-start-line="1144" selection-start-column="46" selection-end-line="1144" selection-end-column="46" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="680">
+          <caret line="5" column="11" selection-start-line="2" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1394" max-vertical-offset="1734">
+          <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="19210" max-vertical-offset="25126">
+          <caret line="1144" column="46" selection-start-line="1144" selection-start-column="46" selection-end-line="1144" selection-end-column="46" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="680">
+          <caret line="5" column="11" selection-start-line="2" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1394" max-vertical-offset="1734">
+          <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2139" max-vertical-offset="24684">
+          <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="680">
+          <caret line="5" column="11" selection-start-line="2" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="765">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="340" max-vertical-offset="459">
+          <caret line="20" column="9" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="23511">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="612">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="323">
+          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="20808">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="612">
+          <caret line="30" column="42" selection-start-line="30" selection-start-column="42" selection-end-line="30" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="323">
+          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="20502">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="340" max-vertical-offset="595">
+          <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="323">
+          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/HSAlib.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1071">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#27#42#0" expanded="true" />
-            <marker date="1424635745812" expanded="true" signature="2087:2115" placeholder="SELECT user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="2495:2741" placeholder="select u.use..users..." />
-            <marker date="1424635745812" expanded="true" signature="4190:4233" placeholder="select user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="4861:4904" placeholder="select user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="5435:5481" placeholder="select user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="6160:6207" placeholder="select user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="8760:8827" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="9685:9884" placeholder="update users..." />
-            <marker date="1424635745812" expanded="true" signature="10473:10546" placeholder="SELECT group..groups..." />
-            <marker date="1424635745812" expanded="true" signature="10954:11160" placeholder="select g.gro..groups..." />
-            <marker date="1424635745812" expanded="true" signature="12366:12411" placeholder="select group..groups..." />
-            <marker date="1424635745812" expanded="true" signature="13084:13129" placeholder="select group..groups..." />
-            <marker date="1424635745812" expanded="true" signature="14545:14601" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="15068:15223" placeholder="update group..." />
-            <marker date="1424635745812" expanded="true" signature="15771:15807" placeholder="delete from ..." />
-            <marker date="1424635745812" expanded="true" signature="15771:16108" placeholder="delete from ..." />
-            <marker date="1424635745812" expanded="true" signature="16340:16394" placeholder="select resou..resources..." />
-            <marker date="1424635745812" expanded="true" signature="16979:17033" placeholder="select resou..resources..." />
-            <marker date="1424635745812" expanded="true" signature="17604:17665" placeholder="select resou..resources..." />
-            <marker date="1424635745812" expanded="true" signature="18320:18588" placeholder="select r.res..groups..." />
-            <marker date="1424635745812" expanded="true" signature="21721:21788" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="22557:22737" placeholder="update resou..." />
-            <marker date="1424635745812" expanded="true" signature="23331:23388" placeholder="select privi..privileges..." />
-            <marker date="1424635745812" expanded="true" signature="24252:24371" placeholder="select privi..user_access_to_resource..." />
-            <marker date="1424635745812" expanded="true" signature="25948:26076" placeholder="select privi..user_privilege_over_resource..." />
-            <marker date="1424635745812" expanded="true" signature="31007:31162" placeholder="update user_..." />
-            <marker date="1424635745812" expanded="true" signature="31394:31471" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="31926:32047" placeholder="select privi..group_access_to_resource..." />
-            <marker date="1424635745812" expanded="true" signature="34966:35123" placeholder="update group..." />
-            <marker date="1424635745812" expanded="true" signature="35688:35766" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="36430:36500" placeholder="select id fr..user_membership_in_group..." />
-            <marker date="1424635745812" expanded="true" signature="37499:37573" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="38409:38476" placeholder="delete from ..." />
-            <marker date="1424635745812" expanded="true" signature="39235:39348" placeholder="select privi..user_access_to_group..." />
-            <marker date="1424635745812" expanded="true" signature="40792:40873" placeholder="select privi..user_privilege_over_group..." />
-            <marker date="1424635745812" expanded="true" signature="45699:45848" placeholder="update user_..." />
-            <marker date="1424635745812" expanded="true" signature="46407:46481" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="47096:47320" placeholder="select disti..user_resource_privilege..." />
-            <marker date="1424635745812" expanded="true" signature="47915:48106" placeholder="select disti..user_membership_in_group..." />
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
           </folding>
         </state>
       </provider>
@@ -602,41 +1758,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/py_postgresql_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="884">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="dbDummy://db-console:/c8a11f89/e6858613-ca99-4b70-b14d-6570da0f285a/">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="102">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/py_postgresql_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="782">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="dbDummy://db-console:/c8a11f89/e6858613-ca99-4b70-b14d-6570da0f285a/">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="102">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/py_postgresql_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_pluginbase.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.29691878" vertical-offset="7510" max-vertical-offset="8143">
@@ -644,92 +1765,128 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/py_postgresql_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="884">
-          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+    <entry file="dbDummy://dbtable:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/acouch.public.user_privilege_over_group">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
         </state>
       </provider>
-    </entry>
-    <entry file="dbDummy://db-console:/c8a11f89/e6858613-ca99-4b70-b14d-6570da0f285a/">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
+      <provider editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="100">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/.PyCharm40/system/remote_sources/278004374/-1227933812/psycopg2/extras.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1796" max-vertical-offset="16626">
+        <state vertical-scroll-proportion="0.27098674" vertical-offset="1788" max-vertical-offset="16626">
           <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
-          <folding>
-            <marker date="1424201311973" expanded="true" signature="-1:-1" placeholder="SELECT t.oid..pg_type..." />
-            <marker date="1424201311973" expanded="true" signature="-1:-1" placeholder="SELECT t.oid..pg_type..." />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="dbDummy://db-console:/c8a11f89/9c1cc13d-d423-44fe-9b5b-b34f571ea27c/">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.8" vertical-offset="0" max-vertical-offset="323">
-          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="50" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="697">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HSAccessTests.py">
+    <entry file="file://$PROJECT_DIR$/HSAlibTests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
-          <caret line="27" column="21" selection-start-line="27" selection-start-column="21" selection-end-line="27" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="4795" max-vertical-offset="7701">
+          <caret line="293" column="68" selection-start-line="293" selection-start-column="68" selection-end-line="293" selection-end-column="68" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HSAlibExample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="69" max-vertical-offset="748">
+          <caret line="38" column="38" selection-start-line="38" selection-start-column="38" selection-end-line="38" selection-end-column="38" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/HSAlib.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.118120804" vertical-offset="2026" max-vertical-offset="17289">
-          <caret line="114" column="36" selection-start-line="114" selection-start-column="36" selection-end-line="114" selection-end-column="36" />
+        <state vertical-scroll-proportion="7.5675106" vertical-offset="0" max-vertical-offset="47379">
+          <caret line="211" column="0" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
           <folding>
-            <element signature="e#27#42#0" expanded="true" />
-            <marker date="1424635745812" expanded="true" signature="2087:2115" placeholder="SELECT user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="2495:2741" placeholder="select u.use..users..." />
-            <marker date="1424635745812" expanded="true" signature="4190:4233" placeholder="select user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="4861:4904" placeholder="select user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="5435:5481" placeholder="select user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="6160:6207" placeholder="select user_..users..." />
-            <marker date="1424635745812" expanded="true" signature="8760:8827" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="9685:9884" placeholder="update users..." />
-            <marker date="1424635745812" expanded="true" signature="10473:10546" placeholder="SELECT group..groups..." />
-            <marker date="1424635745812" expanded="true" signature="10954:11160" placeholder="select g.gro..groups..." />
-            <marker date="1424635745812" expanded="true" signature="12366:12411" placeholder="select group..groups..." />
-            <marker date="1424635745812" expanded="true" signature="13084:13129" placeholder="select group..groups..." />
-            <marker date="1424635745812" expanded="true" signature="14545:14601" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="15068:15223" placeholder="update group..." />
-            <marker date="1424635745812" expanded="true" signature="15771:15807" placeholder="delete from ..." />
-            <marker date="1424635745812" expanded="true" signature="15771:16108" placeholder="delete from ..." />
-            <marker date="1424635745812" expanded="true" signature="16340:16394" placeholder="select resou..resources..." />
-            <marker date="1424635745812" expanded="true" signature="16979:17033" placeholder="select resou..resources..." />
-            <marker date="1424635745812" expanded="true" signature="17604:17665" placeholder="select resou..resources..." />
-            <marker date="1424635745812" expanded="true" signature="18320:18588" placeholder="select r.res..groups..." />
-            <marker date="1424635745812" expanded="true" signature="21721:21788" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="22557:22737" placeholder="update resou..." />
-            <marker date="1424635745812" expanded="true" signature="23331:23388" placeholder="select privi..privileges..." />
-            <marker date="1424635745812" expanded="true" signature="24252:24371" placeholder="select privi..user_access_to_resource..." />
-            <marker date="1424635745812" expanded="true" signature="25948:26076" placeholder="select privi..user_privilege_over_resource..." />
-            <marker date="1424635745812" expanded="true" signature="31007:31162" placeholder="update user_..." />
-            <marker date="1424635745812" expanded="true" signature="31394:31471" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="31926:32047" placeholder="select privi..group_access_to_resource..." />
-            <marker date="1424635745812" expanded="true" signature="34966:35123" placeholder="update group..." />
-            <marker date="1424635745812" expanded="true" signature="35688:35766" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="36430:36500" placeholder="select id fr..user_membership_in_group..." />
-            <marker date="1424635745812" expanded="true" signature="37499:37573" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="38409:38476" placeholder="delete from ..." />
-            <marker date="1424635745812" expanded="true" signature="39235:39348" placeholder="select privi..user_access_to_group..." />
-            <marker date="1424635745812" expanded="true" signature="40792:40873" placeholder="select privi..user_privilege_over_group..." />
-            <marker date="1424635745812" expanded="true" signature="45699:45848" placeholder="update user_..." />
-            <marker date="1424635745812" expanded="true" signature="46407:46481" placeholder="insert into ..." />
-            <marker date="1424635745812" expanded="true" signature="47096:47320" placeholder="select disti..user_resource_privilege..." />
-            <marker date="1424635745812" expanded="true" signature="47915:48106" placeholder="select disti..user_membership_in_group..." />
+            <element signature="e#257#272#0" expanded="true" />
+            <marker date="1425254434078" expanded="true" signature="3771:3799" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="4681:4756" placeholder="SELECT user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="5764:6045" placeholder="select u.use..users..." />
+            <marker date="1425254434078" expanded="true" signature="8227:8270" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="9237:9279" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="10325:10370" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="11198:11243" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="12191:12233" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="13191:13236" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="14501:14547" placeholder="select user_..users..." />
+            <marker date="1425254434078" expanded="true" signature="18567:18634" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="19857:20058" placeholder="update users..." />
+            <marker date="1425254434078" expanded="true" signature="21352:21425" placeholder="SELECT group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="22108:22655" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="23684:23942" placeholder="select g.gro..groups..." />
+            <marker date="1425254434078" expanded="true" signature="25741:25786" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="26661:26708" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="27573:27618" placeholder="select group..groups..." />
+            <marker date="1425254434078" expanded="true" signature="31888:31948" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="32761:32987" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="34314:34362" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="34563:34597" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="35303:35357" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="36262:36318" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="37079:37133" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="38362:38423" placeholder="select resou..resources..." />
+            <marker date="1425254434078" expanded="true" signature="39962:40286" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="46678:46745" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="48002:48208" placeholder="update resou..." />
+            <marker date="1425254434078" expanded="true" signature="49813:49870" placeholder="select privi..privileges..." />
+            <marker date="1425254434078" expanded="true" signature="51487:51674" placeholder="select min(p..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="60194:60313" placeholder="select privi..user_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="61393:61548" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="62426:62503" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="64068:64141" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="68746:68867" placeholder="select privi..group_access_to_resource..." />
+            <marker date="1425254434078" expanded="true" signature="69912:70111" placeholder="update group..." />
+            <marker date="1425254434078" expanded="true" signature="70923:71001" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="71989:72062" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="73108:73184" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="78822:78898" placeholder="select privi..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="84723:84893" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="85576:85655" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="86366:86484" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="87339:87457" placeholder="select privi..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="88662:88785" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="89798:90352" placeholder="select g.gro..user_invitations_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="96178:96291" placeholder="select privi..user_access_to_group..." />
+            <marker date="1425254434078" expanded="true" signature="98169:98334" placeholder="update user_..." />
+            <marker date="1425254434078" expanded="true" signature="99207:99281" placeholder="insert into ..." />
+            <marker date="1425254434078" expanded="true" signature="100750:100813" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="102311:102621" placeholder="select disti..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="103639:103984" placeholder="select r.res..resources..." />
+            <marker date="1425254434078" expanded="true" signature="105109:105304" placeholder="select disti..user_membership_in_group..." />
+            <marker date="1425254434078" expanded="true" signature="111678:111812" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="112420:112548" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="113332:113466" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="114282:114410" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="115245:115358" placeholder="select count..user_resource_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="116309:116416" placeholder="select count..user_group_privilege..." />
+            <marker date="1425254434078" expanded="true" signature="118989:119022" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119060:119095" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119133:119169" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119283:119320" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119358:119390" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119428:119463" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119501:119525" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119563:119584" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119622:119640" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119678:119699" placeholder="delete from ..." />
+            <marker date="1425254434078" expanded="true" signature="119737:119773" placeholder="delete from ..." />
           </folding>
         </state>
       </provider>
