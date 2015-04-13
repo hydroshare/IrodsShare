@@ -4008,15 +4008,10 @@ class HSAccessCore(object):
         2.  If folder is not None, report on only one chosen folder.
 
         """
-        if folder is not None:
-            folder_length = len(folder)
-            all_folders = self.__get_all_folders()
-
-            #list comprehension to find subfolders of provided folders based on string match from left
-            subfolders = [subfolder for subfolder in all_folders if subfolder[:folder_length] == folder]
-
+        if folder is None:
+            folders = self.__get_all_folders()
         else:
-            subfolders = self.__get_all_folders()
+            folders = [folder]
 
         self.__cur.execute("""SELECT f.user_folder_name, r.resource_uuid, r.resource_title, 'none' AS privilege_code FROM user_folders f
                               LEFT OUTER JOIN user_folder_of_resource ufr ON ufr.user_folder_id = f.user_folder_id
@@ -4038,11 +4033,11 @@ class HSAccessCore(object):
                               LEFT OUTER JOIN privileges p ON p.privilege_id = uar.privilege_id
                               WHERE uar.user_id = %s
                               AND f.user_folder_name = ANY(%s)""",
-                              (subfolders,
+                              (folders,
                                self.__user_id,
-                               subfolders,
+                               folders,
                                self.__user_id,
-                               subfolders,))
+                               folders,))
 
         resources_in_folders = {}
 
