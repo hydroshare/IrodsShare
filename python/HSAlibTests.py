@@ -1243,8 +1243,7 @@ class T15TagTests(unittest.TestCase):
         #happy path
         ha_dog.assert_resource_has_tag(resource_dog, 'dog_food')
 
-        # TODO: implement this
-        # self.assertTrue("resource has tag. write a helper method in HSAlib for this")
+        self.assertEqual(ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
 
         ##############################
         # Remove tag from resource
@@ -1288,8 +1287,7 @@ class T15TagTests(unittest.TestCase):
         #happy path
         ha_dog.retract_resource_has_tag(resource_dog, 'dog_food')
 
-        # TODO: implement this
-        # self.assertTrue("resource does not have tag. write a helper method in HSAlib for this")
+        self.assertEqual(ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {}} )
 
 
         ##############################
@@ -1305,10 +1303,37 @@ class T15TagTests(unittest.TestCase):
 
         self.assertEqual(cat_tags, [])
 
+        #returns only folders that were created by the current user, and none that were created by anyone else
+        ha_cat.assert_tag('cat_food')
+        dog_tags = ha_dog.get_tags()
+
+        self.assertEqual(dog_tags, ['dog_food', 'dog_toys'])
+
 
         ##############################
         # Get resources by tags
         ##############################
+        #should return an empty dictionary for folders with no resources
+        self.assertEqual(ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {}} )
+
+        #should return 'none' for access code if user does not have a privilege for a resource in a folder
+        ha_admin = startup('admin')
+        ha_admin.unshare_resource_with_user('resource_dog', context['users']['dog'])
+
+        ha_dog.assert_resource_has_tag(resource_dog, 'dog_toys')
+
+        self.assertEqual(ha_dog.get_resources_by_tag('dog_toys'), {'dog_toys': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
+
+        #should return the privilege code as access code if user has a privilege for a resource in a folder
+        ha_dog.assert_resource_has_tag(resource_dog, 'dog_food')
+        ha_admin.share_resource_with_user('resource_dog', context['users']['dog'], 'own')
+
+        self.assertEqual(ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
+
+        #should return data for all folders for all users if folder parameter is not passed
+        ha_dog.retract_resource_has_tag(resource_dog, 'dog_toys')
+
+        self.assertEqual(ha_dog.get_resources_by_tag(), {'dog_food': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}, 'dog_toys': {}, 'cat_food': {}} )
 
 if __name__ == '__main__':
     unittest.main()

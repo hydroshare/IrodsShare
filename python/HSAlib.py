@@ -3772,7 +3772,7 @@ class HSAccessCore(object):
         return result
 
     # ##########################################################
-    # stubs for folder subsystem
+    # folder subsystem
     # ##########################################################
     def __get_folder_id_from_name(self, folder_name):
         """
@@ -3795,8 +3795,20 @@ class HSAccessCore(object):
         else:
             raise HSAException("Folder name '" + folder_name + "' does not exist")
 
-    #TODO: write documentation before merging with master
     def __check_folder_and_resource_exist(self, resource_uuid, folder_name):
+        """
+        PRIVATE: check that the provided folder and resource exist
+
+        :type resource_uuid: str
+        :type folder_name: str
+        :param resource_uuid: identifier of resource to put into tag
+        :param folder_name: name of the folder
+        :return: nothing. Raise exception if invalid
+
+        Helper validations for folder assert/retract_resource_in_folder
+
+        Note: this method is not subject to access control. 
+        """
         if not resource_uuid:
             raise HSAException("resource_uuid is required")
         elif not folder_name:
@@ -3874,7 +3886,6 @@ class HSAccessCore(object):
 
         return
 
-    #TODO: remove resources from folders as well. retract_resource_in_folder(ALL_RESOURCE_IDS, folder_name)
     def retract_folder(self, folder_name):
         """
         Remove a folder; things in the folder become "unfiled"
@@ -3889,14 +3900,11 @@ class HSAccessCore(object):
             folder_exists = self.folder_exists(folder_name)
 
             if folder_exists:
-                #TODO: are we removing any subfolders?
-                #if self._user_owns_folder(folder_name):
+                self.__cur.execute("""delete from user_folder_of_resource where user_folder_id = %s""",
+                (self.__get_folder_id_from_name(folder_name),))
                 self.__cur.execute("""delete from user_folders where user_folder_name = %s""",
                 (folder_name,))
                 self.__conn.commit()
-                #else:
-                #    raise HSAException("user_uuid=" + self._user_uuid + " does not have permission to remove folder_name=" + folder_name)
-
             else:
                 raise HSAException("no folder exists with folder_name=" + folder_name)
 
@@ -3963,7 +3971,7 @@ class HSAccessCore(object):
 
     def get_resources_in_folders(self, folder=None):
         """
-        STUB: Get a structured dictionary of folders and their contents
+        Get a structured dictionary of folders and their contents
 
         :type folder: str
         :param folder: the optional name of a folder to use as the top of the hierarchy
@@ -4029,10 +4037,22 @@ class HSAccessCore(object):
         return resources_in_folders
 
     # ##########################################################
-    # stubs for tag subsystem
+    # tag subsystem
     # ##########################################################
-    #TODO: write documentation before merging with master
     def __check_tag_and_resource_exist(self, resource_uuid, tag_name):
+        """
+        PRIVATE: check that the provided tag and resource exist
+
+        :type resource_uuid: str
+        :type tag_name: str
+        :param resource_uuid: identifier of resource to put into tag
+        :param tag_name: name of the tag
+        :return: nothing. Raise exception if invalid
+
+        Helper validations for assert/retract_resource_has_tag
+
+        Note: this method is not subject to access control. 
+        """
         if not resource_uuid:
             raise HSAException("resource_uuid is required")
         elif not tag_name:
@@ -4130,7 +4150,6 @@ class HSAccessCore(object):
 
         return
 
-    #TODO: remove folder to tag relations also
     def retract_tag(self, tag_name):
         """
         Remove a tag; things in the tag become "untagged"
@@ -4147,6 +4166,9 @@ class HSAccessCore(object):
             tag_exists = self.tag_exists(tag_name)
 
             if tag_exists:
+                self.__cur.execute("""delete from user_tags_of_resource where user_tag_id = %s""",
+                (self.__get_tag_id_from_name(tag_name),))
+
                 self.__cur.execute("""delete from user_tags where user_tag_name = %s""",
                 (tag_name,))
                 self.__conn.commit()
@@ -4219,10 +4241,9 @@ class HSAccessCore(object):
             result += [row['user_tag_name']]
         return result
 
-    #TODO: implement this last, after get_resources_in_folder
     def get_resources_by_tag(self, tag=None):
         """
-        STUB: Get a structured dictionary of tags and their contents
+        Get a structured dictionary of tags and their contents
 
         :type tag: str
         :param tag: the name of a tag to use
@@ -4236,7 +4257,47 @@ class HSAccessCore(object):
 
         If tag argument is not None, report on only one tag.
         """
-        return
+        if tag is None:
+            tags = self.__get_all_tags()
+        else:
+            tags = [tag]
+
+        self.__cur.execute("""select t.user_tag_name, r.resource_uuid, r.resource_title, 'none' AS privilege_code FROM user_tags t
+            LEFT OUTER JOIN user_tags_of_resource utr ON utr.user_tag_id = t.user_tag_id
+            LEFT OUTER JOIN resources r ON r.resource_id = utr.resource_id
+            WHERE t.user_tag_name = ANY(%s)
+            EXCEPT
+            SELECT t.user_tag_name, r.resource_uuid, r.resource_title, 'none' AS privilege_code FROM user_tags t
+            LEFT OUTER JOIN user_tags_of_resource utr ON utr.user_tag_id = t.user_tag_id
+            LEFT OUTER JOIN resources r ON r.resource_id = utr.resource_id
+            LEFT OUTER JOIN user_access_to_resource uar ON uar.resource_id = r.resource_id
+            LEFT OUTER JOIN privileges p ON p.privilege_id = uar.privilege_id
+            WHERE uar.user_id = %s
+            AND t.user_tag_name = ANY(%s)
+            UNION 
+            SELECT t.user_tag_name, r.resource_uuid, r.resource_title, p.privilege_code from user_tags t
+            LEFT OUTER JOIN user_tags_of_resource utr ON utr.user_tag_id = t.user_tag_id
+            LEFT OUTER JOIN resources r ON r.resource_id = utr.resource_id
+            LEFT OUTER JOIN user_access_to_resource uar ON uar.resource_id = r.resource_id
+            LEFT OUTER JOIN privileges p ON p.privilege_id = uar.privilege_id
+            WHERE uar.user_id = %s
+            AND t.user_tag_name = ANY(%s)""", (tags, self.__user_id, tags, self.__user_id, tags,))
+
+        resources_by_tag = {}
+
+        rows = self.__cur.fetchall()
+        for row in rows:
+            if not row['user_tag_name'] in resources_by_tag:
+                resources_by_tag[row['user_tag_name']] = {}
+
+                if row['resource_uuid'] is not None:
+                    if not row['resource_uuid'] in resources_by_tag[row['user_tag_name']]:
+                        resources_by_tag[row['user_tag_name']][row['resource_uuid']] = {}
+                    
+                    resources_by_tag[row['user_tag_name']][row['resource_uuid']]['title'] = row['resource_title']
+                    resources_by_tag[row['user_tag_name']][row['resource_uuid']]['access'] = row['privilege_code']
+
+        return resources_by_tag
 
     ####################################################################
     # statistics
