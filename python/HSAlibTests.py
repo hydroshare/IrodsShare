@@ -935,7 +935,7 @@ class T13CascadeDelete(unittest.TestCase):
         ha.retract_group(context['groups']['singers'])
         self.assertFalse(ha.group_exists(context['groups']['singers']))
 
-class T17AssertFolder(unittest.TestCase):
+class T16AssertFolder(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -986,7 +986,7 @@ class T17AssertFolder(unittest.TestCase):
         self.assertTrue(self.ha_dog.folder_exists('dog_toys'))
         self.assertTrue(self.ha_cat.folder_exists('cat_food'))
 
-class T18RetractFolder(unittest.TestCase):
+class T17RetractFolder(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1032,7 +1032,7 @@ class T18RetractFolder(unittest.TestCase):
 
         self.assertFalse(self.ha_cat.folder_exists('cat_food'))
 
-class T19AssertResourceInFolder(unittest.TestCase):
+class T18AssertResourceInFolder(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1097,7 +1097,7 @@ class T19AssertResourceInFolder(unittest.TestCase):
 
         self.assertEqual(self.ha_dog.get_resources_in_folders('dog_food'), {'dog_food': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
 
-class T20RetractResourceInFolder(unittest.TestCase):
+class T19RetractResourceInFolder(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1179,7 +1179,7 @@ class T20RetractResourceInFolder(unittest.TestCase):
 
         self.assertEqual(self.ha_dog.get_resources_in_folders('dog_food'), {'dog_food': {}} )
 
-class T21GetFolders(unittest.TestCase):
+class T20GetFolders(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1219,7 +1219,7 @@ class T21GetFolders(unittest.TestCase):
 
         self.assertEqual(self.cat_folders, [])
 
-class T22GetResourcesInFolders(unittest.TestCase):
+class T21GetResourcesInFolders(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1270,7 +1270,7 @@ class T22GetResourcesInFolders(unittest.TestCase):
 
         self.ha_dog.retract_resource_in_folder(self.resource_dog, 'dog_food')
 
-class T23AssertTag(unittest.TestCase):
+class T22AssertTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1321,7 +1321,7 @@ class T23AssertTag(unittest.TestCase):
         self.assertTrue(self.ha_dog.tag_exists('dog_toys'))
         self.assertTrue(self.ha_cat.tag_exists('cat_food'))
 
-class T24RetractTag(unittest.TestCase):
+class T23RetractTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1367,7 +1367,7 @@ class T24RetractTag(unittest.TestCase):
 
         self.assertFalse(self.ha_cat.tag_exists('cat_food'))
 
-class T25AssertResourceHasTag(unittest.TestCase):
+class T24AssertResourceHasTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1432,7 +1432,7 @@ class T25AssertResourceHasTag(unittest.TestCase):
 
         self.assertEqual(self.ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
 
-class T26RetractResourceHasTag(unittest.TestCase):
+class T25RetractResourceHasTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1514,7 +1514,7 @@ class T26RetractResourceHasTag(unittest.TestCase):
 
         self.assertEqual(self.ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {}} )
 
-class T27GetTags(unittest.TestCase):
+class T26GetTags(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1554,7 +1554,7 @@ class T27GetTags(unittest.TestCase):
 
         self.assertEqual(self.cat_tags, [])
 
-class T28GetResourcesByTag(unittest.TestCase):
+class T27GetResourcesByTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
