@@ -1270,24 +1270,6 @@ class T22GetResourcesInFolders(unittest.TestCase):
 
         self.ha_dog.retract_resource_in_folder(self.resource_dog, 'dog_food')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class T23AssertTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
