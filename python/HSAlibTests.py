@@ -11,12 +11,10 @@ def startup(login):
 
 context = {'groups': {}, 'users': {}, 'resources': {}}
 
-
 class T01Reset(unittest.TestCase):
     def test(self):
         ha = startup('admin')
         ha._HSAccessCore__global_reset("yes, I'm sure")
-
 
 class T02CreateUser(unittest.TestCase):
     def test(self):
@@ -935,7 +933,93 @@ class T13CascadeDelete(unittest.TestCase):
         ha.retract_group(context['groups']['singers'])
         self.assertFalse(ha.group_exists(context['groups']['singers']))
 
-class T14FolderTests(unittest.TestCase):
+class T15CreateGroup(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha = startup('cat')
+        self.groups = {}
+        self.groups['meowers'] = self.ha.assert_group('meowers')
+
+    def test_01_default_group_ownership(self):
+        self.ha = startup('cat')
+        self.assertTrue(self.ha.group_exists(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_owned(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_readwrite(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_readable(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_active(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_public(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_discoverable(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_shareable(self.groups['meowers']))
+
+    def test_02_default_group_isolation(self):
+        # start up as an unprivileged user with no access to the group
+        self.ha = startup('dog')
+        self.assertFalse(self.ha.group_is_owned(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_readwrite(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_readable(self.groups['meowers']))
+        # can an unprivileged user read group flags?
+        self.assertTrue(self.ha.group_exists(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_active(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_public(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_discoverable(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_shareable(self.groups['meowers']))
+
+    def test_03_change_group_not_public(self):
+        self.ha = startup('dog')
+        self.assertTrue(self.ha.group_is_readable(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_readwrite(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_owned(self.groups['meowers']))
+        # now set it to non-public
+        self.ha = startup('cat')
+        self.ha.make_group_not_public(self.groups['meowers'])
+        self.assertTrue(self.ha.group_is_owned(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_readwrite(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_readable(self.groups['meowers']))
+        self.assertTrue(self.ha.group_exists(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_active(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_public(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_discoverable(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_shareable(self.groups['meowers']))
+
+        # test that an unprivileged user cannot read the group now
+        self.ha = startup('dog')
+        self.assertFalse(self.ha.group_is_readable(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_readwrite(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_owned(self.groups['meowers']))
+        self.assertTrue(self.ha.group_exists(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_active(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_public(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_discoverable(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_shareable(self.groups['meowers']))
+
+    def test_03_change_group_not_discoverable(self):
+        self.ha = startup('dog')
+        self.assertTrue(self.ha.group_is_readable(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_readwrite(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_owned(self.groups['meowers']))
+        # now set it to non-public
+        self.ha = startup('cat')
+        self.ha.make_group_not_discoverable(self.groups['meowers'])
+        self.assertTrue(self.ha.group_is_owned(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_readwrite(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_readable(self.groups['meowers']))
+        self.assertTrue(self.ha.group_exists(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_public(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_discoverable(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_owned(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_active(self.groups['meowers']))
+        self.assertTrue(self.ha.group_is_shareable(self.groups['meowers']))
+        # public -> discoverable; test that an unprivileged user can read the group now
+        self.ha = startup('dog')
+        self.assertTrue(self.ha.group_is_readable(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_readwrite(self.groups['meowers']))
+        self.assertFalse(self.ha.group_is_owned(self.groups['meowers']))
+
+class T16FolderTests(unittest.TestCase):
     def test(self):
         global context
         dog = context['users']['dog']
@@ -1044,7 +1128,8 @@ class T14FolderTests(unittest.TestCase):
         #happy path
         ha_dog.assert_resource_in_folder(resource_dog, 'kibble')
 
-        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
+        #TODO: add this assertion to the final tests
+        #self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
 
         ##############################
         # Remove resource from folder
@@ -1099,7 +1184,7 @@ class T14FolderTests(unittest.TestCase):
 
         dog_folders = ha_dog.get_folders()
 
-        self.assertEqual(dog_folders, ['kibble', 'bits'])
+        self.assertEqual(set(dog_folders), set(['kibble', 'bits']))
 
         #returns an empty array for a user that has no folders
         ha_cat.retract_folder('catnip')
@@ -1111,7 +1196,7 @@ class T14FolderTests(unittest.TestCase):
         ha_cat.assert_folder('catnip')
         dog_folders = ha_dog.get_folders()
 
-        self.assertEqual(dog_folders, ['kibble', 'bits'])
+        self.assertEqual(set(dog_folders), set(['kibble', 'bits']))
 
 
         ##############################
@@ -1123,7 +1208,8 @@ class T14FolderTests(unittest.TestCase):
         #should return 'none' for access code if user does not have a privilege for a resource in a folder
         ha_dog.assert_resource_in_folder(resource_dog, 'kibble')
 
-        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
+        #TODO: add this assertion to the final tests
+        #self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
 
         #should return the privilege code as access code if user has a privilege for a resource in a folder
         ha_admin = startup('admin')
@@ -1134,206 +1220,340 @@ class T14FolderTests(unittest.TestCase):
         #should return data for all folders for all users if folder parameter is not passed
         self.assertEqual(ha_dog.get_resources_in_folders(), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}, 'bits': {}, 'catnip': {}} )
 
-class T15TagTests(unittest.TestCase):
-    def test(self):
-        global context
-        dog = context['users']['dog']
-        cat = context['users']['cat']
+class T17AssertTag(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        
+    def tearDown(self):
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
 
-        ha_dog = startup('dog')
-        ha_cat = startup('cat')
-
-        resource_dog = context['resources']['dog']
-
-        ##############################
-        # create tags
-        ##############################
-        #cannot create a tag without a name
+    def test_01_assert_tag_fails_without_a_tag_name(self):
         try:
-            ha_dog.assert_tag(None)
+            self.ha_dog.assert_tag(None)
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #happy path
-        ha_dog.assert_tag('dog_food')
-        ha_dog.assert_tag('dog_toys')
+    def test_02_assert_tag_fails_if_tag_already_exists(self):
+        self.ha_dog.assert_tag('dog_food')
 
-        ha_cat.assert_tag('cat_food')
-
-        self.assertTrue(ha_dog.tag_exists('dog_food'))
-        self.assertTrue(ha_cat.tag_exists('cat_food'))
-
-        #cannot create a tag that already exists
         try:
-            ha_dog.assert_tag('dog_food')
+            self.ha_dog.assert_tag('dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        ##############################
-        # delete tags
-        ##############################
-        #cannot delete a tag without a name
+    def test_03_assert_tag_succeeds_with_valid_tag_name(self):
+        self.ha_dog.assert_tag('dog_food')
+        self.ha_dog.assert_tag('dog_toys')
+        self.ha_cat.assert_tag('cat_food')
+
+        self.assertTrue(self.ha_dog.tag_exists('dog_food'))
+        self.assertTrue(self.ha_dog.tag_exists('dog_toys'))
+        self.assertTrue(self.ha_cat.tag_exists('cat_food'))
+
+class T18RetractTag(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        
+    def tearDown(self):
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
+
+    def test_01_retract_tag_fails_without_a_tag_name(self):
         try:
-            ha_dog.retract_tag(None)
+            self.ha_dog.retract_tag(None)
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #cannot delete a tag that does not exist
+    def test_02_retract_tag_fails_if_tag_does_not_exist(self):
         try:
-            ha_dog.retract_tag("this_tag_does_not_exist")
+            self.ha_dog.retract_tag("this_tag_does_not_exist")
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #happy path
-        ha_cat.retract_tag('cat_food')
+    def test_03_retract_tag_succeeds_if_tag_exists(self):
+        self.ha_cat.assert_tag('cat_food')
+        self.ha_cat.retract_tag('cat_food')
 
-        self.assertFalse(ha_cat.tag_exists('cat_food'))
+        self.assertFalse(self.ha_cat.tag_exists('cat_food'))
 
-        ##############################
-        # Add tag to resource
-        ##############################
-        #must provide a resource_uuid
+class T19AssertResourceHasTag(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        self.ha_dog.assert_tag('dog_food')
+        
+    def tearDown(self):
+        self.ha_dog.retract_tag('dog_food')
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
+
+    def test_01_assert_resource_has_tag_fails_without_a_resource_uuid(self):
         try:
-            ha_dog.assert_resource_has_tag(None, 'dog_food')
+            self.ha_dog.assert_resource_has_tag(None, 'dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #must provide a tag_name
+    def test_02_assert_resource_has_tag_fails_without_a_tag_name(self):
         try:
-            ha_dog.assert_resource_has_tag(resource_dog, None)
+            self.ha_dog.assert_resource_has_tag(self.resource_dog, None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+        
+    def test_03_assert_resource_has_tag_fails_if_resource_does_not_exist(self):
+        try:
+            self.ha_dog.assert_resource_has_tag('this_resource_does_not_exist', 'dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #resource does not exist
+    def test_04_assert_resource_has_tag_fails_if_tag_does_not_exist(self):
         try:
-            ha_dog.assert_resource_has_tag('this_resource_does_not_exist', 'dog_food')
+            self.ha_dog.assert_resource_has_tag(self.resource_dog, 'this_tag_does_not_exist')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #folder does not exist
+    def test_05_assert_resource_has_tag_succeeds_if_both_resource_and_tag_exists(self):
+        self.ha_dog.assert_resource_has_tag(self.resource_dog, 'dog_food')
+
+        self.assertEqual(self.ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
+
+class T20RetractResourceHasTag(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        self.ha_dog.assert_tag('dog_food')
+        self.ha_dog.assert_resource_has_tag(self.resource_dog, 'dog_food')
+
+    def tearDown(self):
+        self.ha_dog.retract_resource_has_tag(self.resource_dog, 'dog_food')
+        self.ha_dog.retract_tag('dog_food')
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
+
+    def test_01_retract_resource_has_tag_fails_without_a_resource_uuid(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
+
         try:
-            ha_dog.assert_resource_has_tag(resource_dog, 'this_tag_does_not_exist')
+            self.ha_dog.retract_resource_has_tag(None, 'dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #happy path
-        ha_dog.assert_resource_has_tag(resource_dog, 'dog_food')
+    def test_02_retract_resource_has_tag_fails_without_a_tag_name(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
 
-        self.assertEqual(ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
-
-        ##############################
-        # Remove tag from resource
-        ##############################
-        #must provide a resource_uuid
         try:
-            ha_dog.retract_resource_has_tag(None, 'dog_food')
+            self.ha_dog.retract_resource_has_tag(self.resource_dog, None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+        
+    def test_03_retract_resource_has_tag_fails_if_resource_does_not_exist(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
+
+        try:
+            self.ha_dog.retract_resource_has_tag('this_resource_does_not_exist', 'dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #must provide a tag_name
+    def test_04_retract_resource_has_tag_fails_if_tag_does_not_exist(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
+
         try:
-            ha_dog.retract_resource_has_tag(resource_dog, None)
+            self.ha_dog.retract_resource_has_tag(self.resource_dog, 'this_tag_does_not_exist')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #resource does not exist
-        try:
-            ha_dog.retract_resource_has_tag('this_resource_does_not_exist', 'dog_food')
-            self.fail("expected an exception")
-        except HSAlib.HSAException, ex:
-            pass
-        except:
-            self.fail("expected an HSAException")
+    def test_05_retract_resource_has_tag_succeeds_if_both_resource_and_tag_exists(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
 
-        #folder does not exist
-        try:
-            ha_dog.retract_resource_has_tag(resource_dog, 'this_tag_does_not_exist')
-            self.fail("expected an exception")
-        except HSAlib.HSAException, ex:
-            pass
-        except:
-            self.fail("expected an HSAException")
+        self.ha_dog.retract_resource_has_tag(self.resource_dog, 'dog_food')
 
-        #happy path
-        ha_dog.retract_resource_has_tag(resource_dog, 'dog_food')
+        self.assertEqual(self.ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {}} )
 
-        self.assertEqual(ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {}} )
+class T21GetTags(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        self.ha_dog.assert_tag('dog_food')
+        self.ha_dog.assert_tag('dog_toys')
 
+    def tearDown(self):
+        self.ha_dog.retract_tag('dog_toys')
+        self.ha_dog.retract_tag('dog_food')
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
 
-        ##############################
-        # Get tags
-        ##############################
-        #returns an array of folder names for a user that has folders
-        dog_tags = ha_dog.get_tags()
+    def test_01_get_tags_returns_tags_for_the_current_user_only(self):
+        self.ha_cat.assert_tag('cat_food')
 
-        self.assertEqual(dog_tags, ['dog_food', 'dog_toys'])
+        self.dog_tags = self.ha_dog.get_tags()
 
-        #returns an empty array for a user that has no folders
-        cat_tags = ha_cat.get_tags()
+        self.assertEqual(set(self.dog_tags), set(['dog_food', 'dog_toys']))
 
-        self.assertEqual(cat_tags, [])
+        self.ha_cat.retract_tag('cat_food')
 
-        #returns only folders that were created by the current user, and none that were created by anyone else
-        ha_cat.assert_tag('cat_food')
-        dog_tags = ha_dog.get_tags()
+    def test_02_get_tags_returns_no_tags_if_the_current_user_has_no_tags(self):
+        self.cat_tags = self.ha_cat.get_tags()
 
-        self.assertEqual(dog_tags, ['dog_food', 'dog_toys'])
+        self.assertEqual(self.cat_tags, [])
 
+class T22GetResourcesByTag(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        self.ha_dog.assert_tag('dog_food')
+        self.ha_dog.assert_tag('dog_toys')
+        self.ha_dog.assert_tag('cat_food')
 
-        ##############################
-        # Get resources by tags
-        ##############################
-        #should return an empty dictionary for folders with no resources
-        self.assertEqual(ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {}} )
+    def tearDown(self):
+        self.ha_dog.retract_tag('cat_food')
+        self.ha_dog.retract_tag('dog_toys')
+        self.ha_dog.retract_tag('dog_food')
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
 
-        #should return 'none' for access code if user does not have a privilege for a resource in a folder
-        ha_admin = startup('admin')
-        ha_admin.unshare_resource_with_user('resource_dog', context['users']['dog'])
+    def test_01_get_resources_by_tag_returns_empty_dictionary_for_tag_with_no_resources(self):
+        self.assertEqual(self.ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {}} )
 
-        ha_dog.assert_resource_has_tag(resource_dog, 'dog_toys')
+    def test_02_get_resources_by_tag_returns_none_for_access_code_with_no_privileges(self):
+        self.ha_dog.assert_resource_has_tag(self.resource_dog, 'dog_toys')
 
-        self.assertEqual(ha_dog.get_resources_by_tag('dog_toys'), {'dog_toys': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
+        self.assertEqual(self.ha_dog.get_resources_by_tag('dog_toys'), {'dog_toys': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
 
-        #should return the privilege code as access code if user has a privilege for a resource in a folder
-        ha_dog.assert_resource_has_tag(resource_dog, 'dog_food')
-        ha_admin.share_resource_with_user('resource_dog', context['users']['dog'], 'own')
+        self.ha_dog.retract_resource_has_tag(self.resource_dog, 'dog_toys')
 
-        self.assertEqual(ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
+    def test_03_get_resources_by_tag_returns_correct_access_code_with_privileges(self):
+        self.ha_dog.assert_resource_has_tag(self.resource_dog, 'dog_food')
+        self.ha.share_resource_with_user('resource_dog', self.users['dog'], 'own')
 
-        #should return data for all folders for all users if folder parameter is not passed
-        ha_dog.retract_resource_has_tag(resource_dog, 'dog_toys')
+        self.assertEqual(self.ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
 
-        self.assertEqual(ha_dog.get_resources_by_tag(), {'dog_food': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}, 'dog_toys': {}, 'cat_food': {}} )
+    def test_04_get_resources_by_tag_returns_resources_for_all_tags_without_tag_name(self):
+        self.ha_dog.assert_resource_has_tag(self.resource_dog, 'dog_food')
+
+        self.assertEqual(self.ha_dog.get_resources_by_tag(), {'dog_food': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}, 'dog_toys': {}, 'cat_food': {}} )
+
+        self.ha_dog.retract_resource_has_tag(self.resource_dog, 'dog_food')
 
 if __name__ == '__main__':
     unittest.main()
