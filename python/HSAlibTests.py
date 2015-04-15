@@ -1131,6 +1131,17 @@ class T16FolderTests(unittest.TestCase):
 
         self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
 
+        #should return data for 'kibble' only, even if there exists a folder 'kibble/bits'
+        ha_dog.assert_folder('kibble/bits')
+
+        dog_kibble_bits_resource_uuid = ha_dog.assert_resource('/dog/kibble/bits', 'Kibbles And Bits')
+        ha_dog.assert_resource_in_folder(dog_kibble_bits_resource_uuid, 'kibble/bits')
+
+        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
+
+        ha_dog.retract_resource(dog_kibble_bits_resource_uuid)
+        ha_dog.retract_folder('kibble/bits')
+
         #should return data for all folders for all users if folder parameter is not passed
         self.assertEqual(ha_dog.get_resources_in_folders(), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}, 'bits': {}, 'catnip': {}} )
 
