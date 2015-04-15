@@ -11,10 +11,12 @@ def startup(login):
 
 context = {'groups': {}, 'users': {}, 'resources': {}}
 
+
 class T01Reset(unittest.TestCase):
     def test(self):
         ha = startup('admin')
         ha._HSAccessCore__global_reset("yes, I'm sure")
+
 
 class T02CreateUser(unittest.TestCase):
     def test(self):
@@ -933,219 +935,360 @@ class T13CascadeDelete(unittest.TestCase):
         ha.retract_group(context['groups']['singers'])
         self.assertFalse(ha.group_exists(context['groups']['singers']))
 
-class T16FolderTests(unittest.TestCase):
-    def test(self):
-        global context
-        dog = context['users']['dog']
-        cat = context['users']['cat']
+class T17AssertFolder(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        
+    def tearDown(self):
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
 
-        ha_dog = startup('dog')
-        ha_cat = startup('cat')
-
-        resource_dog = context['resources']['dog']
-
-        ##############################
-        # create folders
-        ##############################
-        #cannot create a folder without a name
+    def test_01_assert_folder_fails_without_a_folder_name(self):
         try:
-            ha_dog.assert_folder(None)
+            self.ha_dog.assert_folder(None)
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #happy path
-        ha_dog.assert_folder('kibble')
-        ha_dog.assert_folder('bits')
-        ha_cat.assert_folder('catnip')
+    def test_02_assert_folder_fails_if_folder_already_exists(self):
+        self.ha_dog.assert_folder('dog_food')
 
-        self.assertTrue(ha_dog.folder_exists('kibble'))
-        self.assertTrue(ha_dog.folder_exists('bits'))
-        self.assertTrue(ha_cat.folder_exists('catnip'))
-
-        #cannot create a folder that already exists
         try:
-            ha_dog.assert_folder('kibble')
+            self.ha_dog.assert_folder('dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        ##############################
-        # delete folders
-        ##############################
-        #cannot delete a folder without a name
+    def test_03_assert_folder_succeeds_with_valid_folder_name(self):
+        self.ha_dog.assert_folder('dog_food')
+        self.ha_dog.assert_folder('dog_toys')
+        self.ha_cat.assert_folder('cat_food')
+
+        self.assertTrue(self.ha_dog.folder_exists('dog_food'))
+        self.assertTrue(self.ha_dog.folder_exists('dog_toys'))
+        self.assertTrue(self.ha_cat.folder_exists('cat_food'))
+
+class T18RetractFolder(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        
+    def tearDown(self):
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
+
+    def test_01_retract_folder_fails_without_a_folder_name(self):
         try:
-            ha_dog.retract_folder(None)
+            self.ha_dog.retract_folder(None)
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #cannot delete a folder that does not exist
+    def test_02_retract_folder_fails_if_folder_does_not_exist(self):
         try:
-            ha_dog.retract_folder("this_folder_does_not_exist")
+            self.ha_dog.retract_folder("this_folder_does_not_exist")
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #happy path
-        ha_dog.retract_folder('bits')
+    def test_03_retract_folder_succeeds_if_folder_exists(self):
+        self.ha_cat.assert_folder('cat_food')
+        self.ha_cat.retract_folder('cat_food')
 
-        self.assertFalse(ha_dog.folder_exists('bits'))
+        self.assertFalse(self.ha_cat.folder_exists('cat_food'))
 
-        ##############################
-        # Add resource to folder
-        ##############################
-        #must provide a resource_uuid
+class T19AssertResourceInFolder(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        self.ha_dog.assert_folder('dog_food')
+        
+    def tearDown(self):
+        self.ha_dog.retract_folder('dog_food')
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
+
+    def test_01_assert_resource_in_folder_fails_without_a_resource_uuid(self):
         try:
-            ha_dog.assert_resource_in_folder(None, 'kibble')
+            self.ha_dog.assert_resource_in_folder(None, 'dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #must provide a folder_name
+    def test_02_assert_resource_in_folder_fails_without_a_folder_name(self):
         try:
-            ha_dog.assert_resource_in_folder(resource_dog, None)
+            self.ha_dog.assert_resource_in_folder(self.resource_dog, None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+        
+    def test_03_assert_resource_in_folder_fails_if_resource_does_not_exist(self):
+        try:
+            self.ha_dog.assert_resource_in_folder('this_resource_does_not_exist', 'dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #resource does not exist
+    def test_04_assert_resource_in_folder_fails_if_folder_does_not_exist(self):
         try:
-            ha_dog.assert_resource_in_folder('this_resource_does_not_exist', 'kibble')
+            self.ha_dog.assert_resource_in_folder(self.resource_dog, 'this_folder_does_not_exist')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #folder does not exist
+    def test_05_assert_resource_in_folder_succeeds_if_both_resource_and_folder_exists(self):
+        self.ha_dog.assert_resource_in_folder(self.resource_dog, 'dog_food')
+
+        self.assertEqual(self.ha_dog.get_resources_in_folders('dog_food'), {'dog_food': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
+
+class T20RetractResourceInFolder(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        self.ha_dog.assert_folder('dog_food')
+        self.ha_dog.assert_resource_in_folder(self.resource_dog, 'dog_food')
+
+    def tearDown(self):
+        self.ha_dog.retract_resource_in_folder(self.resource_dog, 'dog_food')
+        self.ha_dog.retract_folder('dog_food')
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
+
+    def test_01_retract_resource_in_folder_fails_without_a_resource_uuid(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
+
         try:
-            ha_dog.assert_resource_in_folder(resource_dog, 'this_folder_does_not_exist')
+            self.ha_dog.retract_resource_in_folder(None, 'dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #happy path
-        ha_dog.assert_resource_in_folder(resource_dog, 'kibble')
+    def test_02_retract_resource_in_folder_fails_without_a_folder_name(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
 
-        #TODO: add this assertion to the final tests
-        #self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
-
-        ##############################
-        # Remove resource from folder
-        ##############################
-        #must provide a resource_uuid
         try:
-            ha_dog.retract_resource_in_folder(None, 'kibble')
+            self.ha_dog.retract_resource_in_folder(self.resource_dog, None)
+            self.fail("expected an exception")
+        except HSAlib.HSAException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+        
+    def test_03_retract_resource_in_folder_fails_if_resource_does_not_exist(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
+
+        try:
+            self.ha_dog.retract_resource_in_folder('this_resource_does_not_exist', 'dog_food')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #must provide a folder_name
+    def test_04_retract_resource_in_folder_fails_if_folder_does_not_exist(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
+
         try:
-            ha_dog.retract_resource_in_folder(resource_dog, None)
+            self.ha_dog.retract_resource_in_folder(self.resource_dog, 'this_folder_does_not_exist')
             self.fail("expected an exception")
         except HSAlib.HSAException, ex:
             pass
         except:
             self.fail("expected an HSAException")
 
-        #resource does not exist
-        try:
-            ha_dog.retract_resource_in_folder('this_resource_does_not_exist', 'kibble')
-            self.fail("expected an exception")
-        except HSAlib.HSAException, ex:
-            pass
-        except:
-            self.fail("expected an HSAException")
+    def test_05_retract_resource_in_folder_succeeds_if_both_resource_and_folder_exists(self):
+        self.ha.assert_user('cat', 'not a dog', True, False)
+        self.ha.assert_user('dog', 'a little arfer', True, False)
 
-        #folder does not exist
-        try:
-            ha_dog.retract_resource_in_folder(resource_dog, 'this_folder_does_not_exist')
-            self.fail("expected an exception")
-        except HSAlib.HSAException, ex:
-            pass
-        except:
-            self.fail("expected an HSAException")
+        self.ha_dog.retract_resource_in_folder(self.resource_dog, 'dog_food')
 
-        #happy path
-        ha_dog.retract_resource_in_folder(resource_dog, 'kibble')
+        self.assertEqual(self.ha_dog.get_resources_in_folders('dog_food'), {'dog_food': {}} )
 
-        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {}} )
+class T21GetFolders(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        self.ha_dog.assert_folder('dog_food')
+        self.ha_dog.assert_folder('dog_toys')
+
+    def tearDown(self):
+        self.ha_dog.retract_folder('dog_toys')
+        self.ha_dog.retract_folder('dog_food')
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
+
+    def test_01_get_folders_returns_folders_for_the_current_user_only(self):
+        self.ha_cat.assert_folder('cat_food')
+
+        self.dog_folders = self.ha_dog.get_folders()
+
+        self.assertEqual(set(self.dog_folders), set(['dog_food', 'dog_toys']))
+
+        self.ha_cat.retract_folder('cat_food')
+
+    def test_02_get_folders_returns_no_folders_if_the_current_user_has_no_folders(self):
+        self.cat_folders = self.ha_cat.get_folders()
+
+        self.assertEqual(self.cat_folders, [])
+
+class T22GetResourcesInFolders(unittest.TestCase):
+    def setUp(self):
+        self.ha = startup('admin')
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.users = {}
+        self.users['cat'] = self.ha.assert_user('cat', 'not a dog', True, False)
+        self.users['dog'] = self.ha.assert_user('dog', 'a little arfer', True, False)
+        self.ha_dog = startup('dog')
+        self.ha_cat = startup('cat')
+        self.resource_dog = self.ha.assert_resource('/cat/foo', 'all about dogs',
+                                                         resource_uuid='resource_dog')
+        self.ha_dog.assert_folder('dog_food')
+        self.ha_dog.assert_folder('dog_toys')
+        self.ha_dog.assert_folder('cat_food')
+
+    def tearDown(self):
+        self.ha_dog.retract_folder('cat_food')
+        self.ha_dog.retract_folder('dog_toys')
+        self.ha_dog.retract_folder('dog_food')
+        self.ha.retract_resource('resource_dog')
+        # self.ha.retract_user('dog')
+        # self.ha.retract_user('cat')
+        self.ha_cat = None
+        self.ha_dog = None
+        self.users = None
+        self.ha._HSAccessCore__global_reset("yes, I'm sure")
+        self.ha = None
+
+    def test_01_get_resources_in_folders_returns_empty_dictionary_for_folder_with_no_resources(self):
+        self.assertEqual(self.ha_dog.get_resources_in_folders('dog_food'), {'dog_food': {}} )
+
+    def test_02_get_resources_in_folders_returns_none_for_access_code_with_no_privileges(self):
+        self.ha_dog.assert_resource_in_folder(self.resource_dog, 'dog_toys')
+
+        self.assertEqual(self.ha_dog.get_resources_in_folders('dog_toys'), {'dog_toys': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
+
+        self.ha_dog.retract_resource_in_folder(self.resource_dog, 'dog_toys')
+
+    def test_03_get_resources_in_folders_returns_correct_access_code_with_privileges(self):
+        self.ha_dog.assert_resource_in_folder(self.resource_dog, 'dog_food')
+        self.ha.share_resource_with_user('resource_dog', self.users['dog'], 'own')
+
+        self.assertEqual(self.ha_dog.get_resources_in_folders('dog_food'), {'dog_food': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
+
+    def test_04_get_resources_in_folders_returns_resources_for_all_folders_without_folder_name(self):
+        self.ha_dog.assert_resource_in_folder(self.resource_dog, 'dog_food')
+
+        self.assertEqual(self.ha_dog.get_resources_in_folders(), {'dog_food': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}, 'dog_toys': {}, 'cat_food': {}} )
+
+        self.ha_dog.retract_resource_in_folder(self.resource_dog, 'dog_food')
 
 
-        ##############################
-        # Get folders
-        ##############################
-        #returns an array of folder names for a user that has folders
-        ha_dog.assert_folder('bits')
-
-        dog_folders = ha_dog.get_folders()
-
-        self.assertEqual(set(dog_folders), set(['kibble', 'bits']))
-
-        #returns an empty array for a user that has no folders
-        ha_cat.retract_folder('catnip')
-        cat_folders = ha_cat.get_folders()
-
-        self.assertEqual(cat_folders, [])
-
-        #returns only folders that were created by the current user, and none that were created by anyone else
-        ha_cat.assert_folder('catnip')
-        dog_folders = ha_dog.get_folders()
-
-        self.assertEqual(set(dog_folders), set(['kibble', 'bits']))
 
 
-        ##############################
-        # Get resources in folder
-        ##############################
-        #should return an empty dictionary for folders with no resources
-        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {}} )
 
-        #should return 'none' for access code if user does not have a privilege for a resource in a folder
-        ha_dog.assert_resource_in_folder(resource_dog, 'kibble')
 
-        #TODO: add this assertion to the final tests
-        #self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
 
-        #should return the privilege code as access code if user has a privilege for a resource in a folder
-        ha_admin = startup('admin')
-        ha_admin.share_resource_with_user('resource_dog', context['users']['dog'], 'own')
 
-        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
 
-        #should return data for 'kibble' only, even if there exists a folder 'kibble/bits'
-        ha_dog.assert_folder('kibble/bits')
 
-        dog_kibble_bits_resource_uuid = ha_dog.assert_resource('/dog/kibble/bits', 'Kibbles And Bits')
-        ha_dog.assert_resource_in_folder(dog_kibble_bits_resource_uuid, 'kibble/bits')
 
-        self.assertEqual(ha_dog.get_resources_in_folders('kibble'), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}} )
 
-        ha_dog.retract_resource(dog_kibble_bits_resource_uuid)
-        ha_dog.retract_folder('kibble/bits')
 
-        #should return data for all folders for all users if folder parameter is not passed
-        self.assertEqual(ha_dog.get_resources_in_folders(), {'kibble': {'resource_dog': {'access': 'own', 'title': 'all about dogs'}}, 'bits': {}, 'catnip': {}} )
 
-class T17AssertTag(unittest.TestCase):
+
+
+
+
+
+class T23AssertTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1196,7 +1339,7 @@ class T17AssertTag(unittest.TestCase):
         self.assertTrue(self.ha_dog.tag_exists('dog_toys'))
         self.assertTrue(self.ha_cat.tag_exists('cat_food'))
 
-class T18RetractTag(unittest.TestCase):
+class T24RetractTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1242,7 +1385,7 @@ class T18RetractTag(unittest.TestCase):
 
         self.assertFalse(self.ha_cat.tag_exists('cat_food'))
 
-class T19AssertResourceHasTag(unittest.TestCase):
+class T25AssertResourceHasTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1307,7 +1450,7 @@ class T19AssertResourceHasTag(unittest.TestCase):
 
         self.assertEqual(self.ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {'resource_dog': {'access': 'none', 'title': 'all about dogs'}}} )
 
-class T20RetractResourceHasTag(unittest.TestCase):
+class T26RetractResourceHasTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1389,7 +1532,7 @@ class T20RetractResourceHasTag(unittest.TestCase):
 
         self.assertEqual(self.ha_dog.get_resources_by_tag('dog_food'), {'dog_food': {}} )
 
-class T21GetTags(unittest.TestCase):
+class T27GetTags(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
@@ -1429,7 +1572,7 @@ class T21GetTags(unittest.TestCase):
 
         self.assertEqual(self.cat_tags, [])
 
-class T22GetResourcesByTag(unittest.TestCase):
+class T28GetResourcesByTag(unittest.TestCase):
     def setUp(self):
         self.ha = startup('admin')
         self.ha._HSAccessCore__global_reset("yes, I'm sure")
