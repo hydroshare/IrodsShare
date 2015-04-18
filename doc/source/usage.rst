@@ -87,7 +87,7 @@ In the library, there are several strong naming conventions:
 
 * Methods starting with *can_* return boolean and report high-level privileges necessary for django representations of objects. 
 
-    * E.g., :py:meth:`HSAccessCore.can_change_resource` reports whether the current user can change a particular resource. 
+    * E.g., :py:meth:`HSAccess.can_change_resource` reports whether the current user can change a particular resource. 
 
 * Methods containing *_is_* return boolean and report on the state of objects. 
 
@@ -190,7 +190,7 @@ Handling invitations
 
 The invitation system is a state-machine model of sharing, to wit: 
 
-1. One user invites another to a group with :py:meth:`HSAccessiCore.invite_user_to_group`. 
+1. One user invites another to a group with :py:meth:`HSAccessCore.invite_user_to_group`. 
 2. The user can: 
    a. List invitations through :py:meth:`HSAccessCore.get_group_invitations_for_user`. 
    b. Accept invitations through :py:meth:`HSAccessCore.accept_invitation_to_group`. 
@@ -210,8 +210,8 @@ The following is an abbreviated list of the most common methods in :py:mod:`HSAl
         * :py:meth:`HSAccessCore.get_user_metadata`: get a user record. 
         * :py:meth:`HSAccessCore.assert_user_metadata`: push a user record with changes. 
         * :py:meth:`HSAccess.get_user_print_name`: get the print name of a user. 
-        * :py:meth:`HSAccessCore.make_user_admin`: make a user an administrator. 
-        * :py:meth:`HSAccessCore.make_user_not_active`: deactivate a user. 
+        * :py:meth:`HSAccess.make_user_admin`: make a user an administrator. 
+        * :py:meth:`HSAccess.make_user_not_active`: deactivate a user. 
     * User status 
         * :py:meth:`HSAccessCore.user_exists`: True if user is valid. 
         * :py:meth:`HSAccessCore.user_is_active`: True if the user is active and enabled. 
@@ -234,11 +234,11 @@ The following is an abbreviated list of the most common methods in :py:mod:`HSAl
         * :py:meth:`HSAccessCore.group_is_discoverable`: whether a group is discoverable and its existence can be discovered by anyone. 
         * :py:meth:`HSAccessCore.group_is_shareable`: whether a group is shareable and can be shared by non-owners. 
     * Django interface
-        * :py:meth:`HSAccessCore.can_change_group`: whether the current user can add someone to a group. 
-        * :py:meth:`HSAccessCore.can_change_group_flags`: whether the current user can change group status, including 
+        * :py:meth:`HSAccess.can_change_group`: whether the current user can add someone to a group. 
+        * :py:meth:`HSAccess.can_change_group_flags`: whether the current user can change group status, including 
           the flags 'public, 'discoverable', 'shareable', and 'active'. 
-        * :py:meth:`HSAccessCore.can_view_group`: whether the current user can list group members. 
-        * :py:meth:`HSAccessCore.can_share_group`: whether the current user can invite a user to the group. 
+        * :py:meth:`HSAccess.can_view_group`: whether the current user can list group members. 
+        * :py:meth:`HSAccess.can_share_group`: whether the current user can invite a user to the group. 
 * Managing resources
     * Creation and update: 
         * :py:meth:`HSAccessCore.assert_resource`: register a resource or update resource registration. 
@@ -247,18 +247,17 @@ The following is an abbreviated list of the most common methods in :py:mod:`HSAl
         * :py:meth:`HSAccess.get_resource_print_name`: get the print name of a resource. 
     * Status of a resource
         * :py:meth:`HSAccessCore.resource_exists`: whether resource is valid. 
-        * :py:meth:`HSAccessCore.resource_accessible`: whether a resource is accessible to a user. 
         * :py:meth:`HSAccessCore.resource_is_published`: whether a resource is published and thus archival. 
         * :py:meth:`HSAccessCore.resource_is_immutable`: whether a resource is immutable and cannot be changed. 
         * :py:meth:`HSAccessCore.resource_is_public`: whether a resource is public and can be viewed by anyone. 
         * :py:meth:`HSAccessCore.resource_is_discoverable`: whether a resource is discoverable and its existence can be discovered by anyone. 
         * :py:meth:`HSAccessCore.resource_is_shareable`: whether a resource is shareable and can be shared by non-owners. 
     * Django interface
-        * :py:meth:`HSAccessCore.can_change_resource`: whether the current user can add someone to a resource. 
-        * :py:meth:`HSAccessCore.can_change_resource_flags`: whether the current user can change resource status, including 
+        * :py:meth:`HSAccess.can_change_resource`: whether the current user can add someone to a resource. 
+        * :py:meth:`HSAccess.can_change_resource_flags`: whether the current user can change resource status, including 
           the flags 'public, 'discoverable', 'published', 'immutable', and 'shareable'. 
-        * :py:meth:`HSAccessCore.can_view_resource`: whether the current user can list resource members. 
-        * :py:meth:`HSAccessCore.can_share_resource`: whether the current user can invite a user to use the resource. 
+        * :py:meth:`HSAccess.can_view_resource`: whether the current user can list resource members. 
+        * :py:meth:`HSAccess.can_share_resource`: whether the current user can invite a user to use the resource. 
 * Access control 
     * For resources: 
         * Access status: 
@@ -289,7 +288,7 @@ The following is an abbreviated list of the most common methods in :py:mod:`HSAl
             * :py:meth:`HSAccessCore.share_group_with_user`:  group membership without invitation. 
             * :py:meth:`HSAccessCore.unshare_group_with_user`: remove all access to a group for a user. 
         * Membership reporting
-            * :py:meth:`HSAccessCore.user_in_group`: True if user is in a given group. 
+            * :py:meth:`HSAccessCore.user_is_in_group`: True if user is in a given group. 
             * :py:meth:`HSAccessCore.get_groups_for_user`: list all groups to which a user belongs. 
         * Invitation logic 
             * :py:meth:`HSAccessCore.invite_user_to_group`: invite a user. 

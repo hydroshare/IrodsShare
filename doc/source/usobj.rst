@@ -1,4 +1,5 @@
-=============================
+Using HSAccessObjects 
+=====================
 
 .. module:: HSAccessObjects 
 
@@ -23,8 +24,8 @@ to determine what is permitted in a particular situation. :py:mod:`HSAccessObjec
 by maintaining lists of capabilities that a user has over each kind of thing, which makes writing a user interface 
 much easier. 
 
-Using HSAccessObjects
----------------------
+Usage
+-----
 
 To use this class, one establishes a connection via the :py:class:`HSAlib.HSAccess` constructor
 and then creates an :py:class:`HSAccessUser` instance *representing the current user*. This user object 
@@ -67,7 +68,7 @@ For each kind of object, a user can determine the possible methods returned by '
 'get_methods'. This returns a simple list of method names available. 
 
 Public, private, and unexposed private members
-----------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In :py:mod:`HSAccessObjects`, the public methods of each class are always available 
 to the user. Capabilities are exposed as private methods that are bound to the capability

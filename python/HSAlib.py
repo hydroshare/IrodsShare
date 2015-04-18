@@ -4231,24 +4231,58 @@ class HSAccess(HSAccessCore):
     ###########################################################
 
     def make_user_active(self, user_uuid):
+        """
+        Make a user active (admin only)
+
+        :type user_uuid: basestring
+        :param user_uuid: UUID of user to change
+
+        Administrative privilege required. 
+        """
         meta = self.get_user_metadata(user_uuid)
         if not meta['active']:
             meta['active'] = True
             self.assert_user_metadata(meta)
 
     def make_user_not_active(self, user_uuid):
+        """
+        Make a user inactive (admin only)
+
+        :type user_uuid: basestring
+        :param user_uuid: UUID of user to change
+
+        Administrative privilege required. 
+        """
         meta = self.get_user_metadata(user_uuid)
         if meta['active']:
             meta['active'] = False
             self.assert_user_metadata(meta)
 
     def make_user_admin(self, user_uuid):
+        """
+        Make a user an adminstrator (admin only)
+
+        :type user_uuid: basestring
+        :param user_uuid: UUID of user to change
+
+        Administrative privilege required. 
+        """
         meta = self.get_user_metadata(user_uuid)
         if not meta['admin']:
             meta['admin'] = True
             self.assert_user_metadata(meta)
 
     def make_user_not_admin(self, user_uuid):
+        """
+        Make a user not an adminstrator (admin only)
+
+        :type user_uuid: basestring
+        :param user_uuid: UUID of user to change
+
+        Administrative privilege required. 
+
+        Note: it is possible for an administrator to remove privileges from *self*. 
+        """
         meta = self.get_user_metadata(user_uuid)
         if meta['admin']:
             meta['admin'] = False
