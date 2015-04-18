@@ -480,11 +480,11 @@ class HSAccessCore(object):
         Return format is a list of dictionaries of the form::
 
             {
-            'login': *user_login*,
-            'uuid': *user uuid*,
-            'name': *user name*,
-            'active': *true if user is active*,
-            'admin':  *true if user is admin*
+                'login': *user_login*,
+                'uuid': *user uuid*,
+                'name': *user name*,
+                'active': *true if user is active*,
+                'admin':  *true if user is admin*
             }
 
         These entries can be edited and used as input to 'assert_user_metadata'.
@@ -581,7 +581,10 @@ class HSAccessCore(object):
 
         This returns a list of elements of the form::
 
-            { 'uuid': *uuid of group*, 'name': *name of group* }
+            { 
+                'uuid': *uuid of group*, 
+                'name': *name of group* 
+            }
 
         sorted in order of group name. Group names do not have to be unique.
 
@@ -606,7 +609,11 @@ class HSAccessCore(object):
         :rtype: list[dict[str, str]] 
 
         This returns a list of groups in the following format::
-            { 'name': *name of group*, 'uuid': *uuid of group* } ]
+
+            { 
+                'name': *name of group*, 
+                'uuid': *uuid of group* 
+            } 
         """
         if user_uuid is None:
             user_uuid = self.get_uuid()
@@ -635,7 +642,11 @@ class HSAccessCore(object):
         :rtype: list[dict[str, str]]
 
         This returns a list of groups in the following format::
-            { 'name': *name of group*, 'uuid': *uuid of group* } ]
+
+            { 
+                'name': *name of group*, 
+                'uuid': *uuid of group* 
+            }
         """
         self.__cur.execute("""select g.group_uuid, g.group_name, 'ro' AS privilege_code
                            from groups g
@@ -655,7 +666,11 @@ class HSAccessCore(object):
         :rtype: list[dict[str, str]]
 
         This returns a list of groups in the following format::
-            { 'name': *name of group*, 'uuid': *uuid of group* } ]
+
+            { 
+                'name': *name of group*, 
+                'uuid': *uuid of group* 
+            }
         """
         self.__cur.execute("""select g.group_uuid, g.group_name,
                            CASE WHEN g.group_public THEN 'ro'
@@ -680,7 +695,11 @@ class HSAccessCore(object):
         :rtype: list[dict[str, str]] 
 
         This returns a list of groups in the following format::
-            { 'name': *name of group*, 'uuid': *uuid of group* } ]
+
+            { 
+                'name': *name of group*, 
+                'uuid': *uuid of group* 
+            }
         """
         if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
@@ -1168,17 +1187,17 @@ class HSAccessCore(object):
         This returns a dictionary item of the format::
 
             {
-            'title': *title of resource*,
-            'uuid': *uuid of resource*,
-            'path': *path of resource*,
-            'shareable': *whether resource is shareable*,
-            'discoverable': *whether resource is discoverable*,
-            'public': *whether resource is publicly accessible*,
-            'published': *whether resource is published and has a DOI*,
-            'immutable': *whether resource is immutable*,
-            'asserting_login': *login of user who made last change to metadata*,
-            'asserting_uuid': *uuid of user who made last change to metadata*,
-            'assertion_time': *time of last change to metadata*
+                'title': *title of resource*,
+                'uuid': *uuid of resource*,
+                'path': *path of resource*,
+                'shareable': *whether resource is shareable*,
+                'discoverable': *whether resource is discoverable*,
+                'public': *whether resource is publicly accessible*,
+                'published': *whether resource is published and has a DOI*,
+                'immutable': *whether resource is immutable*,
+                'asserting_login': *login of user who made last change to metadata*,
+                'asserting_uuid': *uuid of user who made last change to metadata*,
+                'assertion_time': *time of last change to metadata*
             }
 
         The record returned from 'get_resource_metadata' is suitable for use in
@@ -2934,12 +2953,12 @@ class HSAccessCore(object):
         List group invitations in the form::
 
             {
-                'group_uuid': {uuid of group},
-                'group_name': {name of group},
-                'group_privilege': {privilege_code},
-                'inviting_user_uuid': {uuid of inviting user},
-                'inviting_user_name': {name of inviting user},
-                'inviting_user_login': {login of inviting user}
+                'group_uuid': *uuid of group*,
+                'group_name': *name of group*,
+                'group_privilege': *privilege_code*,
+                'inviting_user_uuid': *uuid of inviting user*,
+                'inviting_user_name': *name of inviting user*,
+                'inviting_user_login': *login of inviting user*
             }
 
         Note: this has been refactored to have a single level of dict objects rather than two.
@@ -2982,12 +3001,12 @@ class HSAccessCore(object):
         This is from the point of view of the inviting user. List group invitations in the form::
 
             {
-                'group_uuid': {uuid of group},
-                'group_name': {name of group},
-                'group_privilege': {privilege_code},
-                'inviting_user_uuid': {uuid of inviting user},
-                'inviting_user_name': {name of inviting user},
-                'inviting_user_login': {login of inviting user}
+                'group_uuid': *uuid of group*,
+                'group_name': *name of group*,
+                'group_privilege': *privilege_code*,
+                'inviting_user_uuid': *uuid of inviting user*,
+                'inviting_user_name': *name of inviting user*,
+                'inviting_user_login': *login of inviting user*
             }
 
         Note: this has been refactored to have a single level of dict objects rather than two.
@@ -3241,12 +3260,12 @@ class HSAccessCore(object):
         List resource invitations in the form::
 
             {
-                'resource_uuid': {uuid of resource},
-                'resource_title': {name of resource},
-                'resource_privilege': {privilege_code},
-                'inviting_user_uuid': {uuid of inviting user},
-                'inviting_user_name': {name of inviting user},
-                'inviting_user_login': {login of inviting user}
+                'resource_uuid': *uuid of resource*,
+                'resource_title': *name of resource*,
+                'resource_privilege': *privilege_code*,
+                'inviting_user_uuid': *uuid of inviting user*,
+                'inviting_user_name': *name of inviting user*,
+                'inviting_user_login': *login of inviting user*
             }
 
         Note: this has been refactored to have a single level of dict objects rather than two.
@@ -3288,12 +3307,12 @@ class HSAccessCore(object):
         This is from the point of view of the inviting user. List resource invitations in the form::
 
             {
-                'resource_uuid': {uuid of resource},
-                'resource_title': {name of resource},
-                'resource_privilege': {privilege_code},
-                'inviting_user_uuid': {uuid of inviting user},
-                'inviting_user_name': {name of inviting user},
-                'inviting_user_login': {login of inviting user}
+                'resource_uuid': *uuid of resource*,
+                'resource_title': *name of resource*,
+                'resource_privilege': *privilege_code*,
+                'inviting_user_uuid': *uuid of inviting user*,
+                'inviting_user_name': *name of inviting user*,
+                'inviting_user_login': *login of inviting user*
             }
 
         Note: this has been refactored to have a single level of dict objects rather than two.
@@ -3582,10 +3601,10 @@ class HSAccessCore(object):
         This returns a list of resource dict records, in the format::
 
             {
-            'uuid': *uuid of resource*,
-            'title': *title of resource*,
-            'path': *path of resource*,
-            'privilege': *privilege code*
+                'uuid': *uuid of resource*,
+                'title': *title of resource*,
+                'path': *path of resource*,
+                'privilege': *privilege code*
             }
 
         Note: this is not currently subject to access control.
@@ -3620,10 +3639,10 @@ class HSAccessCore(object):
         This returns a list of user dict records, in the format::
 
             {
-            'uuid': *uuid of user*,
-            'name': *name of user*,
-            'login': *login of user*,
-            'privilege': *privilege code*
+                'uuid': *uuid of user*,
+                'name': *name of user*,
+                'login': *login of user*,
+                'privilege': *privilege code*
             }
 
         Note: this is not currently subject to access control.
@@ -3657,10 +3676,10 @@ class HSAccessCore(object):
         This returns a list of resources accessible to a specific group, in the format::
 
             {
-            'uuid': *uuid of resource*,
-            'title': *title of resource*,
-            'path': *path of resource*,
-            'privilege': *privilege code*
+                'uuid': *uuid of resource*,
+                'title': *title of resource*,
+                'path': *path of resource*,
+                'privilege': *privilege code*
             }
 
         Note: this is not subject to access control.
@@ -3730,10 +3749,10 @@ class HSAccessCore(object):
         This returns a list of resource dict records, in the format::
 
             {
-            'uuid': *uuid of resource*,
-            'title': *title of resource*,
-            'path': *path of resource*,
-            'privilege': *privilege code*
+                'uuid': *uuid of resource*,
+                'title': *title of resource*,
+                'path': *path of resource*,
+                'privilege': *privilege code*
             }
 
         Note: this is not currently subject to access control.
@@ -3761,10 +3780,10 @@ class HSAccessCore(object):
         This returns a list of resource dict records, in the format::
 
             {
-            'uuid': *uuid of resource*,
-            'title': *title of resource*,
-            'path': *path of resource*,
-            'privilege': *privilege code*
+                'uuid': *uuid of resource*,
+                'title': *title of resource*,
+                'path': *path of resource*,
+                'privilege': *privilege code*
             }
 
         Note: this is not currently subject to access control.
@@ -3798,8 +3817,8 @@ class HSAccessCore(object):
         This returns a list of dictionaries, each of the form::
 
             {
-            'uuid': *group's uuid*,
-            'name': *group's name*
+                'uuid': *group's uuid*,
+                'name': *group's name*
             }
 
         for use in displaying group data.
@@ -3896,7 +3915,11 @@ class HSAccessCore(object):
 
         This returns a dictionary structure of the form::
 
+<<<<<<< HEAD
             { folder: { resource_uuid : { title : <resource title>, 'access' : <access code> }}}
+=======
+            { 'folder': { 'resource_uuid': { 'title' : *resource title*, 'access' : *access code* }}}
+>>>>>>> master
 
         1. If folder is None, report on the whole hierarchy of user folders
 
@@ -3989,7 +4012,7 @@ class HSAccessCore(object):
         Uses: self.get_uuid(): the current user.
         This returns a dictionary structure of the form::
 
-            { "tag": { resource_uuid : { title : *resource title*, 'access' : *access code* }}}
+            { 'tag': { 'resource_uuid' : { 'title' : *resource title*, 'access' : *access code* }}}
 
         If tag argument is not None, report on only one tag.
         """
@@ -4652,3 +4675,4 @@ class HSAccess(HSAccessCore):
         :rtype: bool
         """
         return self.user_is_admin() or self.group_is_owned(group_uuid)
+

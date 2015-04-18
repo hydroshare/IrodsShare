@@ -12,8 +12,10 @@ Contents:
    :maxdepth: 2
 
    usage
+   usobj
    module
    objects
+   django
    uiobj
    uiprim
 

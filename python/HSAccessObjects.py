@@ -283,7 +283,7 @@ class HSAccessUser(HSAccessObject):
 
         This registers a new user, which must already exist in iRODS. 
        
-        To modify an already registered user, see other methods, including :py:meth:`_HSAccessObject__change_name`, etc. 
+        To modify an already registered user, see other methods, including :py:meth:`_HSAccessUser__change_name`, etc. 
         """
         if not isinstance(user_login, basestring):
             raise HSAUsageException("user_login is not a string")
@@ -492,13 +492,13 @@ class HSAccessUser(HSAccessObject):
         Get the capabilities of this particular user. 
 
         :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
-        :rtype: Dict
+        :rtype: dict
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the 
         capabilities of the represented user. The format of the return value
         is::
 
-            {'capability_key': bound_method, ...}
+            {'capability_key': *bound_method*, ...}
 
         This is used via the following pattern::
 
@@ -558,7 +558,7 @@ class HSAccessUser(HSAccessObject):
         Get a list of method names exposed by get_capabilities
 
         :return: List of method names returned by get_capabilities.
-        :rtype: List
+        :rtype: list[str]
         """
         return [
                 'register_user', 'register_group', 'register_resource',
@@ -870,13 +870,13 @@ class HSAccessGroup(HSAccessObject):
         Get the capabilities of our user over this group. 
 
         :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
-        :rtype: Dict 
+        :rtype: dict
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the 
         capabilities of the represented user. The format of the return value
         is::
 
-            {'capability_key': bound_method, ...}
+            {'capability_key': *bound_method*, ...}
 
         This is used via the following pattern::
 
@@ -970,7 +970,7 @@ class HSAccessGroup(HSAccessObject):
         Return a list of methods exposed by get_capabilities
 
         :return: List of method names for private methods exposed by get_capabilities.
-        :rtype: List
+        :rtype: list[str]
 
         This returns the possible capabilities that can be enabled (or not) via
         the access control system.
@@ -1165,13 +1165,13 @@ class HSAccessGroupInvitation(HSAccessGroup):
         Get the capabilities of our user over this invitation. 
 
         :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
-        :rtype: Dict 
+        :rtype: dict 
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the 
         capabilities of the represented user. The format of the return value
         is::
 
-            {'capability_key': bound_method, ...}
+            {'capability_key': *bound_method*, ...}
 
         This is used via the following pattern::
 
@@ -1209,7 +1209,7 @@ class HSAccessGroupInvitation(HSAccessGroup):
         Get a list of method names exposed by get_capabilities
 
         :return: List of method names returned by get_capabilities.
-        :rtype: List
+        :rtype: list[str]
         """
         return ['accept', 'refuse']
 
@@ -1418,13 +1418,13 @@ class HSAccessResource(HSAccessObject):
         Get the capabilities of our user over this resource. 
 
         :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
-        :rtype: Dict 
+        :rtype: dict 
 
         This function exposes private methods of :py:class:`HSAccessResource` based upon the 
         capabilities of the current user. The format of the return value
         is::
 
-            {'capability_key': bound_method, ...}
+            {'capability_key': *bound_method*, ...}
 
         This is used via the following pattern::
 
@@ -1545,7 +1545,7 @@ class HSAccessResource(HSAccessObject):
         Get a list of method names exposed by get_capabilities
 
         :return: List of method names returned by get_capabilities.
-        :rtype: List
+        :rtype: list[str]
         """
         return [
             'share_with_user', 'share_with_group',
