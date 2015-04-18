@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; IrodsShare 0.2 documentation</title>
+    <title>Index &mdash; IrodsShare 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="IrodsShare 0.2 documentation" href="index.html" /> 
+    <link rel="top" title="IrodsShare 0.3.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">IrodsShare 0.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">IrodsShare 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -51,6 +51,7 @@
 <div class="genindex-jumpbox">
  <a href="#_"><strong>_</strong></a>
  | <a href="#A"><strong>A</strong></a>
+ | <a href="#C"><strong>C</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
@@ -79,23 +80,9 @@
 
       </dl></dd>
       
-  <dt><a href="objects.html#HSAccessObjects.HSAccessGroup.__weakref__">__weakref__ (HSAccessObjects.HSAccessGroup attribute)</a>
+  <dt><a href="module.html#HSAlib.HSAccessCore.__weakref__">__weakref__ (HSAlib.HSAccessCore attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="objects.html#HSAccessObjects.HSAccessResource.__weakref__">(HSAccessObjects.HSAccessResource attribute)</a>
-  </dt>
-
-        
-  <dt><a href="objects.html#HSAccessObjects.HSAccessUser.__weakref__">(HSAccessObjects.HSAccessUser attribute)</a>
-  </dt>
-
-        
-  <dt><a href="module.html#HSAlib.HSAccessCore.__weakref__">(HSAlib.HSAccessCore attribute)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="module.html#HSAlib.HSAccessCore._HSAccessCore__assert_group_add">_HSAccessCore__assert_group_add() (HSAlib.HSAccessCore method)</a>
   </dt>
@@ -236,12 +223,12 @@
   <dt><a href="module.html#HSAlib.HSAccessCore._HSAccessCore__share_resource_group_update">_HSAccessCore__share_resource_group_update() (HSAlib.HSAccessCore method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="module.html#HSAlib.HSAccessCore._HSAccessCore__share_resource_user_add">_HSAccessCore__share_resource_user_add() (HSAlib.HSAccessCore method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="module.html#HSAlib.HSAccessCore._HSAccessCore__share_resource_user_update">_HSAccessCore__share_resource_user_update() (HSAlib.HSAccessCore method)</a>
   </dt>
@@ -331,7 +318,15 @@
   </dt>
 
       
+  <dt><a href="objects.html#HSAccessObjects.HSAccessResource._HSAccessResource__make_not_immutable">_HSAccessResource__make_not_immutable() (HSAccessObjects.HSAccessResource method)</a>
+  </dt>
+
+      
   <dt><a href="objects.html#HSAccessObjects.HSAccessResource._HSAccessResource__make_not_public">_HSAccessResource__make_not_public() (HSAccessObjects.HSAccessResource method)</a>
+  </dt>
+
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessResource._HSAccessResource__make_not_published">_HSAccessResource__make_not_published() (HSAccessObjects.HSAccessResource method)</a>
   </dt>
 
       
@@ -441,9 +436,111 @@
   </dl></td>
 </tr></table>
 
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessGroup.can_change">can_change() (HSAccessObjects.HSAccessGroup method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="objects.html#HSAccessObjects.HSAccessResource.can_change">(HSAccessObjects.HSAccessResource method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessGroup.can_change_flags">can_change_flags() (HSAccessObjects.HSAccessGroup method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="objects.html#HSAccessObjects.HSAccessResource.can_change_flags">(HSAccessObjects.HSAccessResource method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_change_group">can_change_group() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_change_group_flags">can_change_group_flags() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_change_resource">can_change_resource() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_change_resource_flags">can_change_resource_flags() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessGroup.can_delete">can_delete() (HSAccessObjects.HSAccessGroup method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="objects.html#HSAccessObjects.HSAccessResource.can_delete">(HSAccessObjects.HSAccessResource method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_delete_group">can_delete_group() (HSAlib.HSAccess method)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_delete_resource">can_delete_resource() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessGroup.can_share">can_share() (HSAccessObjects.HSAccessGroup method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="objects.html#HSAccessObjects.HSAccessResource.can_share">(HSAccessObjects.HSAccessResource method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_share_group">can_share_group() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_share_resource">can_share_resource() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessGroup.can_view">can_view() (HSAccessObjects.HSAccessGroup method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="objects.html#HSAccessObjects.HSAccessResource.can_view">(HSAccessObjects.HSAccessResource method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_view_group">can_view_group() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.can_view_resource">can_view_resource() (HSAlib.HSAccess method)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessUser.get_access">get_access() (HSAccessObjects.HSAccessUser method)</a>
+  </dt>
+
       
   <dt><a href="objects.html#HSAccessObjects.HSAccessGroup.get_capabilities">get_capabilities() (HSAccessObjects.HSAccessGroup method)</a>
   </dt>
@@ -466,6 +563,26 @@
   <dt><a href="module.html#HSAlib.HSAccessCore.get_cumulative_user_privilege_over_resource">get_cumulative_user_privilege_over_resource() (HSAlib.HSAccessCore method)</a>
   </dt>
 
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessUser.get_discoverable_groups">get_discoverable_groups() (HSAccessObjects.HSAccessUser method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="module.html#HSAlib.HSAccessCore.get_discoverable_groups">(HSAlib.HSAccessCore method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessUser.get_discoverable_resources">get_discoverable_resources() (HSAccessObjects.HSAccessUser method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="module.html#HSAlib.HSAccessCore.get_discoverable_resources">(HSAlib.HSAccessCore method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="module.html#HSAlib.HSAccessCore.get_folders">get_folders() (HSAlib.HSAccessCore method)</a>
   </dt>
@@ -506,6 +623,10 @@
 
       
   <dt><a href="module.html#HSAlib.HSAccessCore.get_groups_holding_resource">get_groups_holding_resource() (HSAlib.HSAccessCore method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccessCore.get_groups_of_user">get_groups_of_user() (HSAlib.HSAccessCore method)</a>
   </dt>
 
       
@@ -592,12 +713,32 @@
   <dt><a href="objects.html#HSAccessObjects.HSAccessUser.get_privilege_over_resource">get_privilege_over_resource() (HSAccessObjects.HSAccessUser method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessUser.get_public_groups">get_public_groups() (HSAccessObjects.HSAccessUser method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="module.html#HSAlib.HSAccessCore.get_public_groups">(HSAlib.HSAccessCore method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessUser.get_public_resources">get_public_resources() (HSAccessObjects.HSAccessUser method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="module.html#HSAlib.HSAccessCore.get_public_resources">(HSAlib.HSAccessCore method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="module.html#HSAlib.HSAccessCore.get_resource_invitations_for_user">get_resource_invitations_for_user() (HSAlib.HSAccessCore method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="module.html#HSAlib.HSAccessCore.get_resource_invitations_sent_by_user">get_resource_invitations_sent_by_user() (HSAlib.HSAccessCore method)</a>
   </dt>
@@ -716,10 +857,6 @@
   <dt><a href="module.html#HSAlib.HSAccessCore.group_is_shareable">group_is_shareable() (HSAlib.HSAccessCore method)</a>
   </dt>
 
-      
-  <dt><a href="module.html#HSAlib.HSAccessCore.groups_of_user">groups_of_user() (HSAlib.HSAccessCore method)</a>
-  </dt>
-
   </dl></td>
 </tr></table>
 
@@ -743,7 +880,7 @@
   </dt>
 
       
-  <dt><a href="uiobj.html#module-HSAccessObjects">HSAccessObjects (module)</a>, <a href="objects.html#module-HSAccessObjects">[1]</a>
+  <dt><a href="uiobj.html#module-HSAccessObjects">HSAccessObjects (module)</a>, <a href="usobj.html#module-HSAccessObjects">[1]</a>, <a href="objects.html#module-HSAccessObjects">[2]</a>
   </dt>
 
   </dl></td>
@@ -761,7 +898,7 @@
   </dt>
 
       
-  <dt><a href="uiprim.html#module-HSAlib">HSAlib (module)</a>, <a href="module.html#module-HSAlib">[1]</a>, <a href="usage.html#module-HSAlib">[2]</a>
+  <dt><a href="uiprim.html#module-HSAlib">HSAlib (module)</a>, <a href="module.html#module-HSAlib">[1]</a>, <a href="django.html#module-HSAlib">[2]</a>, <a href="usage.html#module-HSAlib">[3]</a>
   </dt>
 
       
@@ -877,7 +1014,93 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="objects.html#HSAccessObjects.HSAccessResource.make_not_published">make_not_published() (HSAccessObjects.HSAccessResource method)</a>
+  <dt><a href="module.html#HSAlib.HSAccess.make_group_active">make_group_active() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_group_discoverable">make_group_discoverable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_group_not_active">make_group_not_active() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_group_not_discoverable">make_group_not_discoverable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_group_not_public">make_group_not_public() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_group_not_shareable">make_group_not_shareable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_group_public">make_group_public() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_group_shareable">make_group_shareable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_discoverable">make_resource_discoverable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_immutable">make_resource_immutable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_not_discoverable">make_resource_not_discoverable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_not_immutable">make_resource_not_immutable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_not_public">make_resource_not_public() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_not_published">make_resource_not_published() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_not_shareable">make_resource_not_shareable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_public">make_resource_public() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_published">make_resource_published() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_resource_shareable">make_resource_shareable() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_user_active">make_user_active() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_user_admin">make_user_admin() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_user_not_active">make_user_not_active() (HSAlib.HSAccess method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccess.make_user_not_admin">make_user_not_admin() (HSAlib.HSAccess method)</a>
   </dt>
 
   </dl></td>
@@ -906,6 +1129,20 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="objects.html#HSAccessObjects.HSAccessGroup.refresh">refresh() (HSAccessObjects.HSAccessGroup method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="objects.html#HSAccessObjects.HSAccessResource.refresh">(HSAccessObjects.HSAccessResource method)</a>
+  </dt>
+
+        
+  <dt><a href="objects.html#HSAccessObjects.HSAccessUser.refresh">(HSAccessObjects.HSAccessUser method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="module.html#HSAlib.HSAccessCore.refuse_invitation_to_group">refuse_invitation_to_group() (HSAlib.HSAccessCore method)</a>
   </dt>
@@ -942,12 +1179,12 @@
   <dt><a href="module.html#HSAlib.HSAccessCore.resource_is_public">resource_is_public() (HSAlib.HSAccessCore method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="module.html#HSAlib.HSAccessCore.resource_is_published">resource_is_published() (HSAlib.HSAccessCore method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="module.html#HSAlib.HSAccessCore.resource_is_readable">resource_is_readable() (HSAlib.HSAccessCore method)</a>
   </dt>
@@ -1037,15 +1274,15 @@
   </dt>
 
       
-  <dt><a href="module.html#HSAlib.HSAccessCore.user_in_group">user_in_group() (HSAlib.HSAccessCore method)</a>
-  </dt>
-
-      
   <dt><a href="module.html#HSAlib.HSAccessCore.user_is_active">user_is_active() (HSAlib.HSAccessCore method)</a>
   </dt>
 
       
   <dt><a href="module.html#HSAlib.HSAccessCore.user_is_admin">user_is_admin() (HSAlib.HSAccessCore method)</a>
+  </dt>
+
+      
+  <dt><a href="module.html#HSAlib.HSAccessCore.user_is_in_group">user_is_in_group() (HSAlib.HSAccessCore method)</a>
   </dt>
 
   </dl></td>
@@ -1087,7 +1324,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">IrodsShare 0.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">IrodsShare 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

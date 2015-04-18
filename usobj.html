@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using HSAccessObjects &mdash; IrodsShare 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="IrodsShare 0.3.0 documentation" href="index.html" />
+    <link rel="next" title="IrodsShare module documentation" href="module.html" />
+    <link rel="prev" title="Using the HSAlib HSAccess implementation" href="usage.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="module.html" title="IrodsShare module documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="usage.html" title="Using the HSAlib HSAccess implementation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">IrodsShare 0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-HSAccessObjects">
+<span id="using-hsaccessobjects"></span><h1>Using HSAccessObjects<a class="headerlink" href="#module-HSAccessObjects" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-HSAccessObjects" title="HSAccessObjects"><tt class="xref py py-mod docutils literal"><span class="pre">HSAccessObjects</span></tt></a> library is a wrapper around
+the <a class="reference internal" href="usage.html#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a> module that is intended to make using <a class="reference internal" href="usage.html#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a> easier.
+While <a class="reference internal" href="usage.html#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a> manipulates opaque UUIDs, <a class="reference internal" href="#module-HSAccessObjects" title="HSAccessObjects"><tt class="xref py py-mod docutils literal"><span class="pre">HSAccessObjects</span></tt></a> exposes three
+wrapper classes that make handling of the three kinds of entities more transparent:</p>
+<ul class="simple">
+<li><a class="reference internal" href="objects.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> represents a user and the user&#8217;s capabilities.</li>
+<li><a class="reference internal" href="objects.html#HSAccessObjects.HSAccessGroup" title="HSAccessObjects.HSAccessGroup"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessGroup</span></tt></a> represents a user group.</li>
+<li><a class="reference internal" href="objects.html#HSAccessObjects.HSAccessResource" title="HSAccessObjects.HSAccessResource"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessResource</span></tt></a> represents a HydroShare resource.</li>
+</ul>
+<p>Instances of these classes maintain a list of &#8216;capabilities&#8217; that each object acquires as a result of user privilege.
+Thus there is no doubt at any time as to what the user is allowed to do with an object.</p>
+<div class="section" id="rationale-and-need">
+<h2>Rationale and need<a class="headerlink" href="#rationale-and-need" title="Permalink to this headline">¶</a></h2>
+<p>While <a class="reference internal" href="usage.html#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a> functionally accomplishes the needs of IrodsShare, it is notably difficult to use, because
+the business logic of the access control system is rather complex. Thus, it is difficult for a user of <a class="reference internal" href="usage.html#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a>
+to determine what is permitted in a particular situation. <a class="reference internal" href="#module-HSAccessObjects" title="HSAccessObjects"><tt class="xref py py-mod docutils literal"><span class="pre">HSAccessObjects</span></tt></a> provides this missing piece,
+by maintaining lists of capabilities that a user has over each kind of thing, which makes writing a user interface
+much easier.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>To use this class, one establishes a connection via the <a class="reference internal" href="module.html#HSAlib.HSAccess" title="HSAlib.HSAccess"><tt class="xref py py-class docutils literal"><span class="pre">HSAlib.HSAccess</span></tt></a> constructor
+and then creates an <a class="reference internal" href="objects.html#HSAccessObjects.HSAccessUser" title="HSAccessObjects.HSAccessUser"><tt class="xref py py-class docutils literal"><span class="pre">HSAccessUser</span></tt></a> instance <em>representing the current user</em>. This user object
+exposes methods the user can utilize, and also exposes dynamic methods depending upon user privilege
+via the class <a class="reference internal" href="objects.html#HSAccessObjects.HSAccessUser.get_capabilities" title="HSAccessObjects.HSAccessUser.get_capabilities"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccessUser.get_capabilities()</span></tt></a>. This function returns references to methods
+that can be used according to the user&#8217;s privilege level.</p>
+<div class="section" id="capabilities">
+<h3>Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h3>
+<p>The concept of &#8216;get_capabilities&#8217; is ubiquitous in <a class="reference internal" href="#module-HSAccessObjects" title="HSAccessObjects"><tt class="xref py py-mod docutils literal"><span class="pre">HSAccessObjects</span></tt></a>. Each kind of object, whether
+it represents a user, group, or resource, maintains a list of methods (capabilities) that can be done to it.
+These are all relative to the authorization of the current user. These capabilities distinguish &#8211; among other
+things &#8211; whether a user is allowed to modify a resource or its metadata; whether a user is allowed to
+invite other users to a group, and whether a user is allowed to share a resource with either another user or
+a group of users.</p>
+</div>
+<div class="section" id="sharing-in-hsaccessobjects">
+<h3>Sharing in HSAccessObjects<a class="headerlink" href="#sharing-in-hsaccessobjects" title="Permalink to this headline">¶</a></h3>
+<p>For example, <em>the ability to share a group or resource is a capability.</em> One discovers that capability by
+calling &#8216;get_capabilities&#8217; for the object one wishes to share. This call exposes some methods as capabilities
+and leaves others unexposed. Unexposed methods are those that will raise an access control exception if used.
+So, for example, to determine whether a resource can be shared with another user, one might write:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">resource_object</span> <span class="o">=</span> <span class="n">HSAccessResource</span><span class="p">(</span><span class="n">resource_uuid</span><span class="p">)</span>
+<span class="n">caps</span> <span class="o">=</span> <span class="n">resource_object</span><span class="o">.</span><span class="n">get_capabilities</span><span class="p">()</span>
+<span class="k">if</span> <span class="s">&#39;share_with_user&#39;</span> <span class="ow">in</span> <span class="n">caps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">user_object</span> <span class="o">=</span> <span class="n">HSAccessUser</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">)</span>
+    <span class="n">caps</span><span class="p">[</span><span class="s">&#39;share_with_user&#39;</span><span class="p">](</span><span class="n">user_object</span><span class="p">,</span> <span class="s">&#39;ro&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where &#8216;ro&#8217; is the sharing privilege. Note that the values in caps are so-called &#8220;bound methods&#8221;, in the sense that
+they contain a reference to the referenced object. Thus, the object need not be mentioned.</p>
+<p>In the unlikely event that the current user is not allowed to share the object, the capability will be absent from caps.
+There are many ways this could happen, including not having sufficient privilege over the resource, or being stopped
+from sharing by the owner.</p>
+<p>For each kind of object, a user can determine the possible methods returned by &#8216;get_capabilities&#8217; by calling
+&#8216;get_methods&#8217;. This returns a simple list of method names available.</p>
+</div>
+<div class="section" id="public-private-and-unexposed-private-members">
+<h3>Public, private, and unexposed private members<a class="headerlink" href="#public-private-and-unexposed-private-members" title="Permalink to this headline">¶</a></h3>
+<p>In <a class="reference internal" href="#module-HSAccessObjects" title="HSAccessObjects"><tt class="xref py py-mod docutils literal"><span class="pre">HSAccessObjects</span></tt></a>, the public methods of each class are always available
+to the user. Capabilities are exposed as private methods that are bound to the capability
+when appropriate. Thus there are three kinds of methods in each object:</p>
+<ul class="simple">
+<li>Public methods that can always be used.</li>
+<li>Private, bindable methods that can be used in certain situations.</li>
+<li>Private methods that are not exposed via binding.</li>
+</ul>
+<p>Note that <em>this is not an access control mechanism</em> and that all that <a class="reference internal" href="#module-HSAccessObjects" title="HSAccessObjects"><tt class="xref py py-mod docutils literal"><span class="pre">HSAccessObjects</span></tt></a> does is to obey
+the access control from <a class="reference internal" href="usage.html#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a> and avoid exceptions from that source. Thus <em>one cannot work around
+access control limits by calling unbound methods directly.</em> This will result in an access control exception, just like
+it would if you called the corresponding <a href="#id1"><span class="problematic" id="id2">:pu:mod:`HSAlib`</span></a> function.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using HSAccessObjects</a><ul>
+<li><a class="reference internal" href="#rationale-and-need">Rationale and need</a></li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#capabilities">Capabilities</a></li>
+<li><a class="reference internal" href="#sharing-in-hsaccessobjects">Sharing in HSAccessObjects</a></li>
+<li><a class="reference internal" href="#public-private-and-unexposed-private-members">Public, private, and unexposed private members</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="usage.html"
+                        title="previous chapter">Using the HSAlib HSAccess implementation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="module.html"
+                        title="next chapter">IrodsShare module documentation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/usobj.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="module.html" title="IrodsShare module documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="usage.html" title="Using the HSAlib HSAccess implementation"
+             >previous</a> |</li>
+        <li><a href="index.html">IrodsShare 0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Alva Couch et al..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

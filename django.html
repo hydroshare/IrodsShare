@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Interfacing IrodsShare with Django &mdash; IrodsShare 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="IrodsShare 0.3.0 documentation" href="index.html" />
+    <link rel="next" title="Thoughts on the IrodsShare/Django Object Interface" href="uiobj.html" />
+    <link rel="prev" title="IrodsShare Object Library" href="objects.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="uiobj.html" title="Thoughts on the IrodsShare/Django Object Interface"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="objects.html" title="IrodsShare Object Library"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">IrodsShare 0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-HSAlib">
+<span id="interfacing-irodsshare-with-django"></span><h1>Interfacing IrodsShare with Django<a class="headerlink" href="#module-HSAlib" title="Permalink to this headline">¶</a></h1>
+<p>In this version of IrodsShare, there are new methods in <a class="reference internal" href="usage.html#module-HSAlib" title="HSAlib"><tt class="xref py py-mod docutils literal"><span class="pre">HSAlib</span></tt></a> for interfacing to Django&#8217;s access control system.
+Each one takes one argument that is the uuid of a resource or group.</p>
+<ul>
+<li><dl class="first docutils">
+<dt>For resources:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.can_change_resource" title="HSAlib.HSAccess.can_change_resource"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.can_change_resource()</span></tt></a> returns True if the current user can
+change the referenced resource.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.can_change_resource_flags" title="HSAlib.HSAccess.can_change_resource_flags"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.can_change_resource_flags()</span></tt></a> returns True if the current user can
+change the referenced resource&#8217;s flags, including &#8216;public&#8217;, &#8216;discoverable&#8217;, &#8216;published&#8217;,
+&#8216;immutable&#8217;, and &#8216;shareable&#8217;.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.can_view_resource" title="HSAlib.HSAccess.can_view_resource"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.can_view_resource()</span></tt></a> returns True if the current user can view the resource.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.can_share_resource" title="HSAlib.HSAccess.can_share_resource"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.can_share_resource()</span></tt></a> returns True if the current user can share the resource with others.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>For groups:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.can_change_group" title="HSAlib.HSAccess.can_change_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.can_change_group()</span></tt></a> returns True if the current user can change group metadata.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.can_change_group_flags" title="HSAlib.HSAccess.can_change_group_flags"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.can_change_group_flags()</span></tt></a> returns True if the current user can
+change the referenced group&#8217;s flags, including &#8216;public&#8217;, &#8216;discoverable&#8217;, and &#8216;shareable&#8217;.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.can_view_group" title="HSAlib.HSAccess.can_view_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.can_view_group()</span></tt></a> returns True if the current user can list members of the group.</li>
+<li><a class="reference internal" href="module.html#HSAlib.HSAccess.can_share_group" title="HSAlib.HSAccess.can_share_group"><tt class="xref py py-meth docutils literal"><span class="pre">HSAccess.can_share_group()</span></tt></a> returns True if the current user can invite group members.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Likewise, in <a class="reference internal" href="usobj.html#module-HSAccessObjects" title="HSAccessObjects"><tt class="xref py py-mod docutils literal"><span class="pre">HSAccessObjects</span></tt></a>, each object has exposed public methods
+&#8216;can_change&#8217;, &#8216;can_change_flags&#8217;, &#8216;can_view&#8217;, and &#8216;can_share&#8217;.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="objects.html"
+                        title="previous chapter">IrodsShare Object Library</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="uiobj.html"
+                        title="next chapter">Thoughts on the IrodsShare/Django Object Interface</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/django.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="uiobj.html" title="Thoughts on the IrodsShare/Django Object Interface"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="objects.html" title="IrodsShare Object Library"
+             >previous</a> |</li>
+        <li><a href="index.html">IrodsShare 0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Alva Couch et al..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
