@@ -176,22 +176,29 @@ class HSAccessCore(object):
         :todo: check logic for what a user can change.
         """
         # anti-bug main arguments
-	if not isinstance(user_name, basestring):
+        if not isinstance(user_name, basestring):
             raise HSAUsageException("user_name is not a string")
-	if not isinstance(user_login, basestring):
+        if not isinstance(user_login, basestring):
             raise HSAUsageException("user_login is not a string")
         if not isinstance(user_active, bool):
             raise HSAUsageException("user_active is not boolean")
         if not isinstance(user_admin, bool):
             raise HSAUsageException("user_admin is not boolean")
 
-        if not self.user_exists(self.__user_uuid):
+        if not self.user_exists(self.get_uuid()):
             raise HSAUsageException("User uuid does not exist")
-        if not (self.user_is_active(self.__user_uuid)):
+        if not (self.user_is_active(self.get_uuid())):
             raise HSAccessException("User is inactive")
-        if not (self.user_is_admin(self.__user_uuid)):
-            raise HSAccessException("User is not an administrator")
-
+        if not (self.user_is_admin(self.get_uuid())):
+            if user_uuid is None or self.get_uuid() != user_uuid:
+                raise HSAccessException("Regular users cannot create users")
+            current_meta = self.get_user_metadata(user_uuid)
+            if user_admin != current_meta['admin']:
+                raise HSAccessException("Regular users cannot make themselves administrators")
+            if user_active != current_meta['active']:
+                raise HSAccessException("Regular users cannot deactivate themselves")
+            if user_login != current_meta['login']:
+                raise HSAccessException("Regular users cannot change their login names")
         if user_uuid is None:
             # try the other keys to see if it is defined
             try:
@@ -201,7 +208,7 @@ class HSAccessCore(object):
         # print "resource uuid is", resource_uuid
 
         if not isinstance(user_uuid, basestring):
-            raise HSAUsageException("user_uuid is not a unicode or str")
+            raise HSAUsageException("user_uuid is not a string")
 
         assert_id = self.__get_user_id_from_uuid(self.__user_uuid)
 
@@ -541,22 +548,22 @@ class HSAccessCore(object):
 
         Permissible assertions are those permissible to the currently logged-in user.
         """
-        user_uuid = metadata['uuid']
+        user_uuid = self.get_uuid()
         if not self.user_exists(user_uuid):
             raise HSAUsageException("User uuid does not exist")
         if not self.user_is_active(user_uuid):
             raise HSAUsageException("User uuid is inactive")
         if user_uuid != self.get_uuid() and not self.user_is_admin(self.get_uuid()):
             raise HSAccessException("Regular user cannot assert metadata for users other than self")
-	# allow regular users to change their names and nothing else 
-	if not self.user_is_admin(): 
-	    current_meta = get_user_metadata(user_uuid)
-	    if metadata['admin'] != current_meta['admin']:
-            	raise HSAccessException("Regular users cannot make themselves administrators")
-	    if metadata['active'] != current_meta['active']:
-		raise HSAccessException("Regular users cannot deactivate themselves")
-	    if metadata['login'] != current_meta['login']:
-		raise HSAccessException("Regular users cannot change their login names")
+        # allow regular users to change their names and nothing else
+        if not self.user_is_admin():
+            current_meta = self.get_user_metadata(user_uuid)
+            if metadata['admin'] != current_meta['admin']:
+                raise HSAccessException("Regular users cannot make themselves administrators")
+            if metadata['active'] != current_meta['active']:
+                raise HSAccessException("Regular users cannot deactivate themselves")
+            if metadata['login'] != current_meta['login']:
+                raise HSAccessException("Regular users cannot change their login names")
         self.assert_user(metadata['login'], metadata['name'],
                          metadata['active'], metadata['admin'], metadata['uuid'])
 
@@ -717,22 +724,22 @@ class HSAccessCore(object):
 
         This value can be edited and used as an argument to 'assert_group_metadata'.
 
-	Note that there is an intentional disparity between the flags and actual function due to the implications: 
+        Note that there is an intentional disparity between the flags and actual function due to the implications: 
 
-	    * public -> discoverable
+            * public -> discoverable
 
-	    * published -> immutable
+            * published -> immutable
 
-	which are implemented at the logic level rather than the flag level. 
+        which are implemented at the logic level rather than the flag level. 
 
-	The reason that these are not implemented at the flag level is so that
+        The reason that these are not implemented at the flag level is so that
 
-	    * make_X_not_public undoes make_X_public (x = group, resource)
+            * make_X_not_public undoes make_X_public (x = group, resource)
 
-	    * make_X_not_published undoes make_X_published (x = group, resource)
-	
-	Otherwise, if these were implemented at the flag level, these operations would not restore initial state.
-	One would also need "make_X_not_discoverable" or "make_X_not_immutable", respectively. 
+            * make_X_not_published undoes make_X_published (x = group, resource)
+        
+        Otherwise, if these were implemented at the flag level, these operations would not restore initial state.
+        One would also need "make_X_not_discoverable" or "make_X_not_immutable", respectively. 
         """
         if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
@@ -837,7 +844,7 @@ class HSAccessCore(object):
         :param group_shareable: bool: whether group can be managed by non-owners.
         :param group_discoverable: bool: whether group and owners are discoverable in listings.
         :param group_public: bool: whether group members are publicly accessible.
-        :param group_uuid: basestring: group identifier, if omitted or unset, then a new group_uuid is created and returned.
+        :param group_uuid: basestring: group identifier, if omitted, then a new group_uuid is created and returned.
         :param user_uuid: user identifier; omit to utilize current user.
         :return: uuid of group just modified; created if necessary.
         :rtype: basestring 
@@ -1081,7 +1088,7 @@ class HSAccessCore(object):
         if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a unicode or str")
         meta = self.get_group_metadata(group_uuid)
-        return meta['discoverable'] or meta['public']
+        return meta['discoverable']  # or meta['public']
 
     def group_is_public(self, group_uuid):
         """
@@ -1180,22 +1187,22 @@ class HSAccessCore(object):
         The 'asserting_uuid' is not used during 'assert_resource_metadata'; this is a record
         of "who to blame" for the last change.
 
-	Note that there is an intentional disparity between the flags and actual function due to the implications: 
+        Note that there is an intentional disparity between the flags and actual function due to the implications: 
 
-	    * public -> discoverable
+            * public -> discoverable
 
-	    * published -> immutable
+            * published -> immutable
 
-	which are implemented at the logic level rather than the flag level. 
+        which are implemented at the logic level rather than the flag level. 
 
-	The reason that these are not implemented at the flag level is so that
+        The reason that these are not implemented at the flag level is so that
 
-	    * make_X_not_public undoes make_X_public (x = group, resource)
+            * make_X_not_public undoes make_X_public (x = group, resource)
 
-	    * make_X_not_published undoes make_X_published (x = group, resource)
-	
-	Otherwise, if these were implemented at the flag level, these operations would not restore initial state.
-	One would also need "make_X_not_discoverable" or "make_X_not_immutable", respectively. 
+            * make_X_not_published undoes make_X_published (x = group, resource)
+        
+        Otherwise, if these were implemented at the flag level, these operations would not restore initial state.
+        One would also need "make_X_not_discoverable" or "make_X_not_immutable", respectively. 
 
         """
         if not isinstance(resource_uuid, basestring):
@@ -1565,7 +1572,7 @@ class HSAccessCore(object):
             raise HSAUsageException("resource_uuid is not a string")
 
         meta = self.get_resource_metadata(resource_uuid)
-        return meta['immutable'] or meta['published']
+        return meta['immutable']  # or meta['published']
 
     def resource_is_published(self, resource_uuid):
         """
@@ -1594,7 +1601,7 @@ class HSAccessCore(object):
         if not isinstance(resource_uuid, basestring):
             raise HSAUsageException("resource_uuid is not a string")
         meta = self.get_resource_metadata(resource_uuid)
-        return meta['discoverable'] or meta['public']
+        return meta['discoverable']  # or meta['public']
 
     def resource_is_public(self, resource_uuid):
         """
@@ -1709,7 +1716,7 @@ class HSAccessCore(object):
 
             'rw'
 
-                User can change thsi resource
+                User can change this resource
 
             'ro'
 
@@ -1824,6 +1831,7 @@ class HSAccessCore(object):
         :param resource_uuid: uuid of resource
         :param user_uuid: uuid of user; omit to report on current user
         :returns: int: privilege number 1-4
+        :rtype: int
 
         The access privileges are the minimum (most powerful) privilege granted by any one user.
         These include:
@@ -3716,8 +3724,6 @@ class HSAccessCore(object):
         """
         Make a list of public resources, sorted by title
 
-        :type user_uuid: basestring
-        :param user_uuid: uuid of user; omit for current user.
         :return: list of resources containing dict items
         :rtype: list[dict[str, str]]
 
@@ -3749,8 +3755,6 @@ class HSAccessCore(object):
         """
         Make a list of public resources, sorted by title
 
-        :type user_uuid: basestring
-        :param user_uuid: uuid of user; omit for current user.
         :return: list of resources containing dict items
         :rtype: list[dict[str, str]]
 
@@ -3892,7 +3896,7 @@ class HSAccessCore(object):
 
         This returns a dictionary structure of the form::
 
-            { folder: { resource_uuid : { title : *resource title*, 'access' : *access code* }}}
+            { folder: { resource_uuid : { title : <resource title>, 'access' : <access code> }}}
 
         1. If folder is None, report on the whole hierarchy of user folders
 
@@ -4183,8 +4187,10 @@ class HSAccessCore(object):
         else:
             raise HSAccessException("User is not an administrator")
 
-
+############################################################
 # class encapsulates all access control actions, including convenience functions
+# Members of this class that are not inherited do not contact iRODS directly
+############################################################
 class HSAccess(HSAccessCore):
     """
     Access control class for HydroShare Users, Resources, and Groups
@@ -4231,6 +4237,12 @@ class HSAccess(HSAccessCore):
 
     # there is no 'make_resource_mutable' for normal users: this is discouraged!
     def make_resource_immutable(self, resource_uuid):
+        """
+        Make a resource immutable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if not meta['immutable']:
             meta['immutable'] = True
@@ -4238,6 +4250,12 @@ class HSAccess(HSAccessCore):
 
     # admin only
     def make_resource_not_immutable(self, resource_uuid):
+        """
+        Make a resource not immutable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if meta['immutable']:
             meta['immutable'] = False
@@ -4245,6 +4263,14 @@ class HSAccess(HSAccessCore):
 
     # making a resource public -- as a side effect -- makes it discoverable
     def make_resource_public(self, resource_uuid):
+        """
+        Make a resource public (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+
+        Public resources are automatically discoverable.
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if not meta['public']:  # or not meta['discoverable']:
             meta['public'] = True
@@ -4253,6 +4279,12 @@ class HSAccess(HSAccessCore):
             self.assert_resource_metadata(meta)
 
     def make_resource_not_public(self, resource_uuid):
+        """
+        Make a resource not public (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if meta['public']:
             meta['public'] = False
@@ -4260,6 +4292,12 @@ class HSAccess(HSAccessCore):
             self.assert_resource_metadata(meta)
 
     def make_resource_discoverable(self, resource_uuid):
+        """
+        Make a resource discoverable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if not meta['discoverable']:
             meta['discoverable'] = True
@@ -4267,6 +4305,12 @@ class HSAccess(HSAccessCore):
             self.assert_resource_metadata(meta)
 
     def make_resource_not_discoverable(self, resource_uuid):
+        """
+        Make a resource not discoverable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if meta['discoverable']:
             meta['discoverable'] = False
@@ -4274,6 +4318,14 @@ class HSAccess(HSAccessCore):
             self.assert_resource_metadata(meta)
 
     def make_resource_published(self, resource_uuid):
+        """
+        Make a resource published (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+
+        Published resources are automatically immutable.
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if not meta['published']:  # or not meta['discoverable']:
             meta['published'] = True
@@ -4282,6 +4334,12 @@ class HSAccess(HSAccessCore):
             self.assert_resource_metadata(meta)
 
     def make_resource_not_published(self, resource_uuid):
+        """
+        Make a resource not published (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if meta['published']:
             meta['published'] = False
@@ -4289,6 +4347,14 @@ class HSAccess(HSAccessCore):
             self.assert_resource_metadata(meta)
 
     def make_resource_shareable(self, resource_uuid):
+        """
+        Make a resource shareable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+
+        A user must additionally have access to the resource in order to share it.
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if not meta['shareable']:
             meta['shareable'] = True
@@ -4296,6 +4362,12 @@ class HSAccess(HSAccessCore):
             self.assert_resource_metadata(meta)
 
     def make_resource_not_shareable(self, resource_uuid):
+        """
+        Make a resource not shareable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of resource to change
+        """
         meta = self.get_resource_metadata(resource_uuid)
         if meta['shareable']:
             meta['shareable'] = False
@@ -4306,48 +4378,100 @@ class HSAccess(HSAccessCore):
     # Convenience functions for group state
     ###########################################################
     def make_group_active(self, group_uuid):
+        """
+        Make a group active (admin only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group to change
+        """
         meta = self.get_group_metadata(group_uuid)
         if not meta['active']:
             meta['active'] = True
             self.assert_group_metadata(meta)
 
     def make_group_not_active(self, group_uuid):
+        """
+        Make a group not active (admin only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group to change
+        """
         meta = self.get_group_metadata(group_uuid)
         if meta['active']:
             meta['active'] = False
             self.assert_group_metadata(meta)
 
     def make_group_shareable(self, group_uuid):
+        """
+        Make a group shareable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group to change
+
+        A user must be a group member in order to share a group.
+        """
         meta = self.get_group_metadata(group_uuid)
         if not meta['shareable']:
             meta['shareable'] = True
             self.assert_group_metadata(meta)
 
     def make_group_not_shareable(self, group_uuid):
+        """
+        Make a group not shareable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group to change
+        """
         meta = self.get_group_metadata(group_uuid)
         if meta['shareable']:
             meta['shareable'] = False
             self.assert_group_metadata(meta)
 
     def make_group_public(self, group_uuid):
+        """
+        Make a group public (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group to change
+
+        A public group is automatically discoverable.
+        """
         meta = self.get_group_metadata(group_uuid)
         if not meta['public']:
             meta['public'] = True
             self.assert_group_metadata(meta)
 
     def make_group_not_public(self, group_uuid):
+        """
+        Make a group not public (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group to change
+        """
         meta = self.get_group_metadata(group_uuid)
         if meta['public']:
             meta['public'] = False
             self.assert_group_metadata(meta)
 
     def make_group_discoverable(self, group_uuid):
+        """
+        Make a group discoverable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group to change
+        """
         meta = self.get_group_metadata(group_uuid)
         if not meta['discoverable']:
             meta['discoverable'] = True
             self.assert_group_metadata(meta)
 
     def make_group_not_discoverable(self, group_uuid):
+        """
+        Make a group not discoverable (admin or owner only)
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group to change
+        """
         meta = self.get_group_metadata(group_uuid)
         if meta['discoverable']:
             meta['discoverable'] = False
@@ -4400,3 +4524,131 @@ class HSAccess(HSAccessCore):
             raise HSAUsageException("group_uuid is not a string")
         meta = self.get_group_metadata(group_uuid)
         return meta['name'] + '(' + meta['uuid'] + ')'
+
+    ###########################################################
+    # capability functions combine flag and invited protections
+    ###########################################################
+
+    ###############################
+    # resource management
+    ###############################
+
+    def can_view_resource(self, resource_uuid):
+        """
+        Return True if current user can view this resource
+
+        :type resource_uuid: basestring
+        :param resource_uuid: UUID of resource
+        :return: True if user can view resource
+        :rtype: bool
+        """
+        return self.user_is_admin() or self.resource_is_readable(resource_uuid)
+
+    def can_change_resource(self, resource_uuid):
+        """
+        Return True if current user can change data or metadata for this resource
+
+        :type resource_uuid: basestring
+        :param resource_uuid: UUID of resource
+        :return: True if user can change resource
+        :rtype: bool
+        """
+        return self.user_is_admin() or self.resource_is_readwrite(resource_uuid)
+
+    def can_delete_resource(self, resource_uuid):
+        """
+        Return True if current user can delete this resource
+
+        :type resource_uuid: basestring
+        :param resource_uuid: UUID of resource
+        :return: True if user can delete resource
+        :rtype: bool
+        """
+        return self.user_is_admin() or self.resource_is_owned(resource_uuid)
+
+    def can_share_resource(self, resource_uuid):
+        """
+        Return True if current user can share this resource with others
+
+        :type resource_uuid: basestring
+        :param resource_uuid: UUID of resource
+        :return: True if user can share resource
+        :rtype: bool
+        """
+        return self.user_is_admin() \
+               or self.resource_is_owned(resource_uuid) \
+               or (self.resource_is_readable(resource_uuid) \
+                   and self.resource_is_shareable(resource_uuid))
+
+    def can_change_resource_flags(self, resource_uuid):
+        """
+        Return True if current user can change resource accessibility flags
+
+        :type resource_uuid: basestring
+        :param resource_uuid: UUID of resource
+        :return: True if user can share resource
+        :rtype: bool
+        """
+        return self.user_is_admin() or self.resource_is_owned(resource_uuid)
+
+    ###############################
+    # group management
+    ###############################
+
+    def can_view_group(self, group_uuid):
+        """
+        Return True if current user can view this group's members
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group
+        :return: True if user can view group
+        :rtype: bool
+        """
+        return self.user_is_admin() or self.group_is_readable(group_uuid)
+
+    def can_change_group(self, group_uuid):
+        """
+        Return True if current user can invite members to group
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group
+        :return: True if user can invite members to group
+        :rtype: bool
+        """
+        return self.user_is_admin() or self.group_is_readwrite(group_uuid)
+
+    def can_delete_group(self, group_uuid):
+        """
+        Return True if current user can delete this group
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group
+        :return: True if user can delete this group
+        :rtype: bool
+        """
+        return self.user_is_admin() or self.group_is_owned(group_uuid)
+
+    def can_share_group(self, group_uuid):
+        """
+        Return True if current user can share this group with others
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group
+        :return: True if user can share this group
+        :rtype: bool
+        """
+        return self.user_is_admin() \
+               or self.group_is_owned(group_uuid) \
+               or (self.group_is_readable(group_uuid) \
+                   and self.group_is_shareable(group_uuid))
+
+    def can_change_group_flags(self, group_uuid):
+        """
+        Return True if current user can change group flags
+
+        :type group_uuid: basestring
+        :param group_uuid: UUID of group
+        :return: True if user change group flags
+        :rtype: bool
+        """
+        return self.user_is_admin() or self.group_is_owned(group_uuid)

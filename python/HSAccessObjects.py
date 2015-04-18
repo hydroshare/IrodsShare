@@ -544,7 +544,7 @@ class HSAccessUser(HSAccessObject):
             else:
                 capabilities['make_active'] = self.__make_active
 
-	capabilities['change_name'] = self.__change_name
+        capabilities['change_name'] = self.__change_name
 
         # if the user is the currently logged-in user
         # if self.__hsa.get_uuid() == self.__uuid:
@@ -814,6 +814,56 @@ class HSAccessGroup(HSAccessObject):
         :rtype: bool
         """
         return self.__member
+
+    ###############################
+    # convenience functions express access control logic in django terms
+    ###############################
+
+    def can_view(self):
+        """
+        Return True if user can view group
+
+        :rtype: bool
+        :return: True if user can view group
+        """
+        return self.__hsa.user_is_admin() or self.is_readable()
+
+    def can_change(self):
+        """
+        Return True if user can change a group
+
+        :rtype: bool
+        :return: True if user can change group
+        """
+        return self.__hsa.user_is_admin() or self.is_writeable()
+
+    def can_delete(self):
+        """
+        Return True if user can delete a group
+
+        :rtype: bool
+        :return: True if user can delete group
+        """
+        return self.__hsa.user_is_admin() or self.is_owned()
+
+    def can_change_flags(self):
+        """
+        Return True if user can change flags of a group
+
+        :rtype: bool
+        :return: True if user can change flags of a group
+        """
+        return self.__hsa.user_is_admin() or self.is_owned()
+
+    def can_share(self):
+        """
+        Return True if user can share a group
+
+        :rtype: bool
+        :return: True if user can share the group
+        """
+        return self.__hsa.user_is_admin() or self.is_owned() \
+               or (self.is_readable() and self.is_shareable())
 
     def get_capabilities(self):
         """
@@ -1275,7 +1325,7 @@ class HSAccessResource(HSAccessObject):
         :return: True if resource is discoverable by the currently authenticated user. 
         :rtype: int
         """
-        return self.__meta['discoverable'] or self.__meta['public']
+        return self.__meta['discoverable']  # or self.__meta['public']
 
     def is_public(self):
         """
@@ -1311,7 +1361,57 @@ class HSAccessResource(HSAccessObject):
         :return: True if resource is immutable. This overrides normal ownership privileges. 
         :rtype: int
         """
-        return self.__meta['immutable'] or self.__meta['published']
+        return self.__meta['immutable']  # or self.__meta['published']
+
+    ###############################
+    # convenience functions express access control logic in django terms
+    ###############################
+
+    def can_view(self):
+        """
+        Return True if user can view resource
+
+        :rtype: bool
+        :return: True if user can view resource
+        """
+        return self.__hsa.user_is_admin() or self.is_readable()
+
+    def can_change(self):
+        """
+        Return True if user can change a resource
+
+        :rtype: bool
+        :return: True if user can change resource
+        """
+        return self.__hsa.user_is_admin() or self.is_writeable()
+
+    def can_delete(self):
+        """
+        Return True if user can delete a resource
+
+        :rtype: bool
+        :return: True if user can delete resource
+        """
+        return self.__hsa.user_is_admin() or self.is_owned()
+
+    def can_change_flags(self):
+        """
+        Return True if user can change flags of a resource
+
+        :rtype: bool
+        :return: True if user can change flags of a resource
+        """
+        return self.__hsa.user_is_admin() or self.is_owned()
+
+    def can_share(self):
+        """
+        Return True if user can share a resource
+
+        :rtype: bool
+        :return: True if user can share the resource
+        """
+        return self.__hsa.user_is_admin() or self.is_owned() \
+               or (self.is_readable() and self.is_shareable())
 
     def get_capabilities(self):
         """
@@ -1430,10 +1530,10 @@ class HSAccessResource(HSAccessObject):
             if not self.is_immutable():
                 capabilities['make_immutable'] = self.__make_immutable
             else:
-                if self.__hsa.user_is_admin():
-                    capabilities['make_not_immutable'] = self.__make_not_immutable()
+                capabilities['make_not_immutable'] = self.__make_not_immutable
 
-        if self.is_owned() or self.is_shareable():
+        # tricky: must check whether the user has the privileges
+        if self.is_owned() or (self.is_readable() and self.is_shareable()):
             capabilities['share_with_user'] = self.__share_with_user
             capabilities['share_with_group'] = self.__share_with_group
 
