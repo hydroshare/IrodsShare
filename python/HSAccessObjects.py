@@ -551,7 +551,7 @@ class HSAccessUser(object):
 
     def get_folders(self):
         """
-        STUB: Get a list of folders for the current user.
+        Get a list of folders for the current user.
 
         :return: List of :py:class:`HSAccessFolder` instances.
         :rtype: list[HSAccessFolder]
@@ -559,11 +559,16 @@ class HSAccessUser(object):
         This gets the list of folders registered by the current user, as objects.
         """
 
-        return
+        user_folder_names = self.__hsa.get_folders()
+        result = []
+        for folder_name in user_folder_names:
+            result += [HSAccessFolder(self.__hsa, folder_name)]
+
+        return result
 
     def get_tags(self):
         """
-        STUB: Get a list of tags for the current user.
+        Get a list of tags for the current user.
 
         :return: List of :py:class:`HSAccessTag` instances.
         :rtype: list[HSAccessTag]
@@ -571,11 +576,16 @@ class HSAccessUser(object):
         This gets the list of tags registered by the current user, as objects.
         """
 
-        return
+        user_tag_names = self.__hsa.get_tags()
+        result = []
+        for tag_name in user_tag_names:
+            result += [HSAccessTag(self.__hsa, tag_name)]
+
+        return result
 
     def register_folder(self, folder_name):
         """
-        STUB: Register a new folder with the provided folder_name.
+        Register a new folder with the provided folder_name.
 
         :type folder_name: str
         :param folder_name: the name of the folder to be registered
@@ -588,12 +598,22 @@ class HSAccessUser(object):
 
             * Anyone can create a folder; this is not a privileged action.
         """
+        
+        if type(folder_name) is not str:
+            raise HSAUsageException("folder_name is not a string")
 
-        return
+        if len(folder_name) == 0:            
+            raise HSAUsageException("folder_name cannot be empty")
+
+        self.__hsa.assert_folder(folder_name)
+
+        assert self.__hsa.folder_exists(folder_name)
+
+        return HSAccessFolder(self.__hsa, folder_name)
 
     def register_tag(self, tag_name):
         """
-        STUB: Register a new tag with the provided tag_name.
+        Register a new tag with the provided tag_name.
 
         :type tag_name: str
         :param tag_name: the name of the tag to be registered
@@ -607,16 +627,26 @@ class HSAccessUser(object):
             * Anyone can create a tag; this is not a privileged action.
         """
 
-        return
+        if type(tag_name) is not str:
+            raise HSAUsageException("tag_name is not a string")
+
+        if len(tag_name) == 0:            
+            raise HSAUsageException("tag_name cannot be empty")
+
+        self.__hsa.assert_tag(tag_name)
+
+        assert self.__hsa.tag_exists(tag_name)
+
+        return HSAccessTag(self.__hsa, tag_name)
 
     def unregister_folder(self, folder_name):
         """
-        STUB: Unregister an existing folder with the provided folder_name.
+        Unregister an existing folder with the provided folder_name.
 
         :type folder_name: str
         :param folder_name: the name of the folder to be unregistered
-        :return: True if folder was successfully unregistered
-        :rtype: bool
+        :return: object representing the removed folder
+        :rtype: HSAccessFolder
 
         Some notes:
             * The provided folder must exist. Attempting to remove a folder that does
@@ -628,16 +658,29 @@ class HSAccessUser(object):
             * Anyone can remove a folder; this is not a privileged action.
         """
 
-        return True
+        if type(folder_name) is not str:
+            raise HSAUsageException("folder_name is not a string")
+
+        if len(folder_name) == 0:            
+            raise HSAUsageException("folder_name cannot be empty")
+
+        if not self.__hsa.folder_exists(folder_name):
+            raise HSAUsageException("no folder exists with folder_name=" + folder_name)
+
+        self.__hsa.retract_folder(folder_name)
+
+        assert not self.__hsa.folder_exists(folder_name)
+
+        return HSAccessFolder(self.__hsa, folder_name)
 
     def unregister_tag(self, tag_name):
         """
-        STUB: Unregister an existing tag with the provided tag_name.
+        Unregister an existing tag with the provided tag_name.
 
         :type tag_name: str
         :param tag_name: the name of the tag to be unregistered
-        :return: True if tag was successfully unregistered
-        :rtype: bool
+        :return: object representing the removed tag
+        :rtype: HSAccessTag
 
         Some notes:
             * The provided tag must exist. Attempting to remove a tag that does
@@ -649,7 +692,20 @@ class HSAccessUser(object):
             * Anyone can remove a tag; this is not a privileged action.
         """
 
-        return True
+        if type(tag_name) is not str:
+            raise HSAUsageException("tag_name is not a string")
+
+        if len(tag_name) == 0:            
+            raise HSAUsageException("tag_name cannot be empty")
+
+        if not self.__hsa.tag_exists(tag_name):
+            raise HSAUsageException("no tag exists with tag_name=" + tag_name)
+
+        self.__hsa.retract_tag(tag_name)
+
+        assert not self.__hsa.tag_exists(tag_name)
+
+        return HSAccessTag(self.__hsa, tag_name)
 
     @staticmethod
     def get_methods(self):
@@ -702,6 +758,12 @@ class HSAccessUser(object):
             print self.__spaces(indent+3), "uuid: ", n.get_uuid(), \
                 " priv: ", n.get_privilege(), \
                 " name: ", n.get_title()
+        print self.__spaces(indent), "  get_folders(): "
+        for n in self.get_folders():
+            print self.__spaces(indent+3), "name: ", n.get_user_folder_name()
+        print self.__spaces(indent), "  get_tags(): "
+        for n in self.get_tags():
+            print self.__spaces(indent+3), "name: ", n.get_user_tag_name()
 
 # there is a basic question as to how to handle these objects.
 # there really should be only one connection for all objects.
@@ -1747,16 +1809,30 @@ class HSAccessResource(object):
 
 class HSAccessFolder(self):
     """
-    Represent a folder than can contain 0 to many resources.
-    """
+    Represent a folder as a python object. A folder can contain 0 to many resources.
 
+    This is a simple reflection interface that informs one as to whether folder operations are possible
+    """
     def __init__(self, hsa, user_folder_name):
+        """
+        Initialize a folder object
+
+        :type hsa: HSAccess
+        :type user_folder_name: str:
+        :param hsa: Object describing the current (primitive) session.
+        :param user_folder_name: name of folder.
+
+        This builds a folder object from a folder name, and caches the state of the
+        folder to save time during rendering.
+        """
         if type(hsa) is not HSAccess:
             raise HSAUsageException("hsa is not an instance of HSAccess")
         if type(user_folder_name) is not str:
             raise HSAUsageException("user_folder_name is not a string")
 
+        self.__hsa = hsa
         self.__user_folder_name = user_folder_name
+        self.refresh()
 
     def get_user_folder_name(self):
         """
@@ -1769,7 +1845,7 @@ class HSAccessFolder(self):
 
     def add_resource(self, resource_uuid):
         """
-        STUB: Add a resource to the current folder.
+        Add a resource to the current folder.
 
         :type resource_uuid: str
         :param resource_uuid: the uuid of the resource to add to the current folder
@@ -1784,11 +1860,23 @@ class HSAccessFolder(self):
               privileged action.
         """
 
-        return
+        if type(resource_uuid) is not str:
+            raise HSAUsageException("resource_uuid is not a string")
+
+        if len(resource_uuid) == 0:            
+            raise HSAUsageException("resource_uuid cannot be empty")
+
+        self.__hsa.assert_resource_in_folder(resource_uuid, self.__user_folder_name)
+
+        result = self.__hsa.get_resources_in_folders(self.__user_folder_name)
+
+        assert resource_uuid in result.keys()
+
+        return HSAccessResource(self.__hsa, resource_uuid)
 
     def remove_resource(self, resource_uuid):
         """
-        STUB: Remove a resource from the current folder.
+        Remove a resource from the current folder.
 
         :type resource_uuid: str
         :param resource_uuid: the uuid of the resource to remove from the current folder
@@ -1803,32 +1891,42 @@ class HSAccessFolder(self):
             * Anyone can remove a resource from a folder; this is not a privileged action.
         """
 
-        return
+        if type(resource_uuid) is not str:
+            raise HSAUsageException("resource_uuid is not a string")
 
-    #TODO: redo this documentation after implementation
-    def get_resources(self, folder_name):
+        if len(resource_uuid) == 0:            
+            raise HSAUsageException("resource_uuid cannot be empty")
+
+        result = self.__hsa.get_resources_in_folders(self.__user_folder_name)
+
+        if not resource_uuid in result.keys()
+            raise HSAUsageException("folder_name=" + self.__user_folder_name + " has no resource_uuid=" + resource_uuid)
+
+        self.__hsa.retract_resource_in_folder(resource_uuid, self.__user_folder_name)
+
+        result = self.__hsa.get_resources_in_folders(self.__user_folder_name)
+
+        assert resource_uuid not in result.keys()
+
+        return HSAccessResource(self.__hsa, resource_uuid)
+
+    def get_resources(self):
         """
-        STUB: Get a dictionary of resources in the current folder, with mappings
-        to the current user's permissions to those resources.
+        Get a list of HSAccessResources in the current folder
 
-        :return: Dict of :py:class:`HSAccessFolder` instances.
-        :rtype: dict[HSAccessFolder]
+        :return: list of :py:class:`HSAccessFolder` objects
+        :rtype: list[HSAccessResource]
 
-        This gets a dictionary of resources in the current folder, along with user
-        permissions for each resource.
-
-        Example return types:
-        1) User has 'own' permissions to two resources:
-            { folder_name: { resource_uuid1: { title: title1, permissions: 'own' }, resource_uuid2: { title: title2, permissions: 'own' } }
-
-        2) User has no permissions to a single resource:
-            { folder_name: { resource_uuid3: { title: title3, permissions: 'none' } }
-
-        3) Folder has no resources:
-            { folder_name: { } }
+        This gets a list of resources in the current folder
         """
+        result = []
 
-        return
+        resources_in_folder = self.__hsa.get_resources_in_folder(self.__user_folder_name)
+
+        for resource_uuid in resources_in_folder.keys():
+            result += [HSAccessResource(self.__hsa, resource_uuid)]
+        
+        return result
 
     @staticmethod
     def get_methods(self):
@@ -1848,47 +1946,50 @@ class HSAccessFolder(self):
             s += '  '
         return s
 
-    # def pprint(self, indent=0):
-    #     """
-    #     Pretty-print an HSAccessFolder for debugging purposes.
+    def pprint(self, indent=0):
+        """
+        Pretty-print an HSAccessFolder for debugging purposes.
 
-    #     :type indent: int
-    #     :param indent: indentation for printout in two-space units.
+        :type indent: int
+        :param indent: indentation for printout in two-space units.
 
-    #     Indentation allows hierarchical listings of sub-objects.
-    #     """
-    #     print self.__spaces(indent), "==========="
-    #     print self.__spaces(indent), "FOLDER RECORD"
-    #     print self.__spaces(indent), "  User folder name: ", self.__user_folder_name
-    #     print self.__spaces(indent), "  User login: ", self.__meta['login']
-    #     print self.__spaces(indent), "  is_active(): ", self.is_active()
-    #     print self.__spaces(indent), "  is_admin(): ", self.is_admin()
-    #     print self.__spaces(indent), "  get_capabilities(): "
-    #     for n in self.get_capabilities().keys():
-    #         print self.__spaces(indent+3), n
-    #     print self.__spaces(indent), "  get_groups(): "
-    #     for n in self.get_groups():
-    #         print self.__spaces(indent+3), "uuid: ", n.get_uuid(), \
-    #             " priv: ", n.get_privilege(), \
-    #             " name: ", n.get_name()
-    #     print self.__spaces(indent), "  get_resources(): "
-    #     for n in self.get_resources():
-    #         print self.__spaces(indent+3), "uuid: ", n.get_uuid(), \
-    #             " priv: ", n.get_privilege(), \
-    #             " name: ", n.get_title()
+        Indentation allows hierarchical listings of sub-objects.
+        """
+        print self.__spaces(indent), "==========="
+        print self.__spaces(indent), "FOLDER RECORD"
+        print self.__spaces(indent), "  User folder name: ", self.__user_folder_name
+        print self.__spaces(indent), "  get_resources(): "
+        for n in self.get_resources():
+            print self.__spaces(indent+3), "uuid: ", n.get_uuid(), \
+                " priv: ", n.get_privilege(), \
+                " name: ", n.get_title()
 
 class HSAccessTag(self):
     """
-    Represent a folder than can contain 0 to many resources.
-    """
+    Represent a tag as a python object. A resource can have 0 to many tags.
 
+    This is a simple reflection interface that informs one as to whether tag operations are possible
+    """
     def __init__(self, hsa, user_tag_name):
+        """
+        Initialize a tag object
+
+        :type hsa: HSAccess
+        :type user_tag_name: str:
+        :param hsa: Object describing the current (primitive) session.
+        :param user_tag_name: name of tag.
+
+        This builds a tag object from a tag name, and caches the state of the
+        tag to save time during rendering.
+        """
         if type(hsa) is not HSAccess:
             raise HSAUsageException("hsa is not an instance of HSAccess")
         if type(user_tag_name) is not str:
             raise HSAUsageException("user_tag_name is not a string")
 
+        self.__hsa = hsa
         self.__user_tag_name = user_tag_name
+        self.refresh()
 
     def get_user_tag_name(self):
         """
@@ -1901,7 +2002,7 @@ class HSAccessTag(self):
 
     def add_resource(self, resource_uuid):
         """
-        STUB: Add a resource to the current tag.
+        Add a resource to the current tag.
 
         :type resource_uuid: str
         :param resource_uuid: the uuid of the resource to add to the current tag
@@ -1916,11 +2017,23 @@ class HSAccessTag(self):
               privileged action.
         """
 
-        return
+        if type(resource_uuid) is not str:
+            raise HSAUsageException("resource_uuid is not a string")
+
+        if len(resource_uuid) == 0:            
+            raise HSAUsageException("resource_uuid cannot be empty")
+
+        self.__hsa.assert_resource_has_tag(resource_uuid, self.__user_tag_name)
+
+        result = self.__hsa.get_resources_by_tag(self.__user_tag_name)
+
+        assert resource_uuid in result.keys()
+
+        return HSAccessResource(self.__hsa, resource_uuid)
 
     def remove_resource(self, resource_uuid):
         """
-        STUB: Remove a resource from the current tag.
+        Remove a resource from the current tag.
 
         :type resource_uuid: str
         :param resource_uuid: the uuid of the resource to remove from the current tag
@@ -1934,32 +2047,43 @@ class HSAccessTag(self):
             * Anyone can remove a resource from a tag; this is not a privileged action.
         """
 
-        return
+        if type(resource_uuid) is not str:
+            raise HSAUsageException("resource_uuid is not a string")
 
-    #TODO: redo this documentation after implementation
-    def get_resources(self, tag_name):
+        if len(resource_uuid) == 0:            
+            raise HSAUsageException("resource_uuid cannot be empty")
+
+        result = self.__hsa.get_resources_by_tag(self.__user_tag_name)
+
+        if not resource_uuid in result.keys()
+            raise HSAUsageException("tag_name=" + self.__user_tag_name + " has no resource_uuid=" + resource_uuid)
+
+        self.__hsa.retract_resource_has_tag(resource_uuid, self.__user_tag_name)
+
+        result = self.__hsa.get_resources_by_tag(self.__user_tag_name)
+
+        assert resource_uuid not in result.keys()
+
+        return HSAccessResource(self.__hsa, resource_uuid)
+
+    def get_resources(self):
         """
-        STUB: Get a dictionary of resources with the current tag, with mappings
-        to the current user's permissions to those resources.
+        Get a list of HSAccessTags in the current folder
 
-        :return: Dict of :py:class:`HSAccessTag` instances.
-        :rtype: dict[HSAccessTag]
+        :return: list of :py:class:`HSAccessTag` objects
+        :rtype: list[HSAccessResource]
 
-        This gets a dictionary of resources with the current tag, along with user
-        permissions for each resource.
-
-        Example return types:
-        1) User has 'own' permissions to two resources:
-            { tag_name: { resource_uuid1: { title: title1, permissions: 'own' }, resource_uuid2: { title: title2, permissions: 'own' } }
-
-        2) User has no permissions to a single resource:
-            { tag_name: { resource_uuid3: { title: title3, permissions: 'none' } }
-
-        3) Tag has no resources:
-            { tag_name: { } }
+        This gets a list of resources for the current tag
         """
 
-        return
+        result = []
+
+        resources_by_tag = self.__hsa.get_resources_by_tag(self.__user_tag_name)
+
+        for resource_uuid in resources_by_tag.keys():
+            result += [HSAccessResource(self.__hsa, resource_uuid)]
+        
+        return result
 
     @staticmethod
     def get_methods(self):
@@ -1979,31 +2103,20 @@ class HSAccessTag(self):
             s += '  '
         return s
 
-    # def pprint(self, indent=0):
-    #     """
-    #     Pretty-print an HSAccessTag for debugging purposes.
+    def pprint(self, indent=0):
+        """
+        Pretty-print an HSAccessFolder for debugging purposes.
 
-    #     :type indent: int
-    #     :param indent: indentation for printout in two-space units.
+        :type indent: int
+        :param indent: indentation for printout in two-space units.
 
-    #     Indentation allows hierarchical listings of sub-objects.
-    #     """
-    #     print self.__spaces(indent), "==========="
-    #     print self.__spaces(indent), "USER RECORD"
-    #     print self.__spaces(indent), "  User uuid: ", self.__uuid
-    #     print self.__spaces(indent), "  User login: ", self.__meta['login']
-    #     print self.__spaces(indent), "  is_active(): ", self.is_active()
-    #     print self.__spaces(indent), "  is_admin(): ", self.is_admin()
-    #     print self.__spaces(indent), "  get_capabilities(): "
-    #     for n in self.get_capabilities().keys():
-    #         print self.__spaces(indent+3), n
-    #     print self.__spaces(indent), "  get_groups(): "
-    #     for n in self.get_groups():
-    #         print self.__spaces(indent+3), "uuid: ", n.get_uuid(), \
-    #             " priv: ", n.get_privilege(), \
-    #             " name: ", n.get_name()
-    #     print self.__spaces(indent), "  get_resources(): "
-    #     for n in self.get_resources():
-    #         print self.__spaces(indent+3), "uuid: ", n.get_uuid(), \
-    #             " priv: ", n.get_privilege(), \
-    #             " name: ", n.get_title()
+        Indentation allows hierarchical listings of sub-objects.
+        """
+        print self.__spaces(indent), "==========="
+        print self.__spaces(indent), "TAG RECORD"
+        print self.__spaces(indent), "  User tag name: ", self.__user_tag_name
+        print self.__spaces(indent), "  get_resources(): "
+        for n in self.get_resources():
+            print self.__spaces(indent+3), "uuid: ", n.get_uuid(), \
+                " priv: ", n.get_privilege(), \
+                " name: ", n.get_title()
