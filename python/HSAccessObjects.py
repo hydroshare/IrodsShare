@@ -3,26 +3,28 @@ __author__ = 'Alva'
 from HSAlib import HSAccess, HSAccessCore, HSAException, HSAccessException, HSAIntegrityException, HSAUsageException
 from pprint import pprint
 
-################################################
-# a generic object that can kick off basic queries:
-# - list users
-# - list resources
-# and the like.
-################################################
-
 
 class HSAccessObject(object):
     """
-    Generic object interface: does not assume anything about user environment
+    Abstract base class solely used for object polymorphism
     """
-
     def __init__(self, hsa):
-        if type(hsa) is not HSAccess:
+        """
+        Initialize a user object
+
+        :type hsa: HSAccess
+        :param hsa: A raw HSAccess object with non-object interface.
+
+        This stores a primitive HSAccess object as a sub-object and then stores context as to what
+        specific user it represents. It reads and caches metadata in order to reduce database calls.
+        """
+        if not isinstance(hsa, HSAccess):
             raise HSAUsageException("hsa is not an instance of HSAccess")
+
         self.__hsa = hsa
 
 
-class HSAccessUser(object):
+class HSAccessUser(HSAccessObject):
     """
     Representation of an IrodsShare user, including all actions that apply to a user.
 
@@ -35,19 +37,19 @@ class HSAccessUser(object):
         Initialize a user object
 
         :type hsa: HSAccess
-        :type user_uuid: str?
-        :param hsa: A raw HSAccess object with non-object interface.
-        :param user_uuid: uuid of the user to represent with this object.
+        :type user_uuid: basestring
+        :param hsa: A raw HSAccess object with non-object interface. 
+        :param user_uuid: uuid of the user to represent with this object. 
 
-        This stores a primitive HSAccess object as a sub-object and then stores test_context as to what
-        specific user it represents. It reads and caches metadata in order to reduce database calls.
+        This stores a primitive HSAccess object as a sub-object and then stores context as to what
+        specific user it represents. It reads and caches metadata in order to reduce database calls. 
         """
-        if type(hsa) is not HSAccess:
+        if not isinstance(hsa, HSAccess):
             raise HSAUsageException("hsa is not an instance of HSAccess")
 
         self.__hsa = hsa
         if user_uuid is not None:
-            if type(user_uuid) is not str:
+            if not isinstance(user_uuid, basestring):
                 raise HSAUsageException("user_uuid is not a string")
             self.__uuid = user_uuid
         else:
@@ -78,7 +80,7 @@ class HSAccessUser(object):
         Get the uuid of the user that this object represents.
 
         :return: uuid of current user
-        :rtype: str
+        :rtype: basestring
         """
         return self.__uuid
 
@@ -87,7 +89,7 @@ class HSAccessUser(object):
         Get the login name in iRODS of the user that this object represents.
 
         :return: login name of current user
-        :rtype: str
+        :rtype: basestring
         """
         return self.__meta['login']
 
@@ -96,7 +98,7 @@ class HSAccessUser(object):
         Get the print name of the user that this object represents.
 
         :return: print name of current user
-        :rtype: str
+        :rtype: basestring
         """
         return self.__meta['name']
 
@@ -125,7 +127,7 @@ class HSAccessUser(object):
         :type resource: HSAccessResource
         :param resource: HSAccessResource object representing the resource to check.
         :return: one of 'own', 'rw', 'ro', 'none'.
-        :rtype: str
+        :rtype: basestring
 
         This returns one of the following codes:
 
@@ -145,7 +147,7 @@ class HSAccessUser(object):
 
                 No privilege over resource
         """
-        if type(resource) is not HSAccessResource:
+        if not isinstance(resource, HSAccessResource):
             raise HSAUsageException("Argument is not a resource")
         return self.__hsa.get_user_privilege_over_resource(resource.get_uuid())
 
@@ -156,7 +158,7 @@ class HSAccessUser(object):
         :type group: HSAccesGroup
         :param group_uuid: HSAccessGroup describing the group to check.
         :return: one of 'own', 'rw', 'ro', 'none'.
-        :rtype: str
+        :rtype: basestring
 
         This returns one of the following codes:
 
@@ -176,7 +178,7 @@ class HSAccessUser(object):
 
                 No privilege over group; user cannot see members of the group.
         """
-        if type(group) is not HSAccessGroup:
+        if not isinstance(group, HSAccessGroup):
             raise HSAUsageException("Argument is not a group")
 
         return self.__hsa.get_user_privilege_over_group(group.get_uuid())
@@ -186,8 +188,8 @@ class HSAccessUser(object):
         """
         PRIVATE: change the name of a user.
 
-        :type new_name: str
-        :param new_name: new name to assign.
+        :type new_name: basestring
+        :param new_name: new name to assign. 
 
         This function is exposed via :py:meth:`get_capabilities` as capability key 'change_name'.
         """
@@ -270,8 +272,8 @@ class HSAccessUser(object):
         """
         Register a new user; requires administrative privilege.
 
-        :type user_login: str
-        :type user_name: str
+        :type user_login: basestring
+        :type user_name: basestring
         :type user_active: bool
         :type user_admin: bool
         :param user_login: iRODS login for the user.
@@ -280,16 +282,16 @@ class HSAccessUser(object):
         :param user_admin: whether user is initially an administrator: default is False.
 
         This registers a new user, which must already exist in iRODS.
-
-        To modify an already registered user, see other methods, including :py:meth:`_HSAccessObject__change_name`, etc.
+       
+        To modify an already registered user, see other methods, including :py:meth:`_HSAccessUser__change_name`, etc. 
         """
-        if type(user_login) is not str:
+        if not isinstance(user_login, basestring):
             raise HSAUsageException("user_login is not a string")
-        if type(user_name) is not str:
+        if not isinstance(user_name, basestring):
             raise HSAUsageException("user_name is not a string")
-        if type(user_active) is not bool:
+        if not isinstance(user_active, bool):
             raise HSAUsageException("user_active is not boolean")
-        if type(user_admin) is not bool:
+        if not isinstance(user_admin, bool):
             raise HSAUsageException("user_admin is not boolean")
 
         uuid = self.__hsa.assert_user(user_login, user_name, user_active, user_admin)
@@ -301,7 +303,7 @@ class HSAccessUser(object):
         """
         Register a new group.
 
-        :type group_name: str
+        :type group_name: basestring
         :type group_active: bool
         :type group_shareable: bool
         :type group_discoverable: bool
@@ -321,15 +323,15 @@ class HSAccessUser(object):
 
             * Anyone can create a group; this is not a privileged action.
         """
-        if type(group_name) is not str:
+        if not isinstance(group_name, basestring):
             raise HSAUsageException("group_name is not a string")
-        if type(group_active) is not bool:
+        if not isinstance(group_active, bool):
             raise HSAUsageException("group_active is not boolean")
-        if type(group_shareable) is not bool:
+        if not isinstance(group_shareable, bool):
             raise HSAUsageException("group_shareable is not boolean")
-        if type(group_discoverable) is not bool:
+        if not isinstance(group_discoverable, bool):
             raise HSAUsageException("group_discoverable is not boolean")
-        if type(group_public) is not bool:
+        if not isinstance(group_public, bool):
             raise HSAUsageException("group_public is not boolean")
         uuid = self.__hsa.assert_group(group_name, group_active, group_shareable,
                                        group_discoverable, group_public)
@@ -343,7 +345,7 @@ class HSAccessUser(object):
         """
         Register a new group.
 
-        :type resource_title: str
+        :type resource_title: basestring
         :type resource_immutable: bool
         :type resource_published: bool
         :type resource_discoverable: bool
@@ -489,14 +491,14 @@ class HSAccessUser(object):
         """
         Get the capabilities of this particular user.
 
-        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... }
-        :rtype: Dict
+        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+        :rtype: dict
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the
         capabilities of the represented user. The format of the return value
         is::
 
-            {'capability_key': bound_method, ...}
+            {'capability_key': *bound_method*, ...}
 
         This is used via the following pattern::
 
@@ -541,7 +543,8 @@ class HSAccessUser(object):
                 capabilities['make_not_active'] = self.__make_not_active
             else:
                 capabilities['make_active'] = self.__make_active
-            capabilities['change_name'] = self.__change_name
+
+        capabilities['change_name'] = self.__change_name
 
         # if the user is the currently logged-in user
         # if self.__hsa.get_uuid() == self.__uuid:
@@ -713,7 +716,7 @@ class HSAccessUser(object):
         Get a list of method names exposed by get_capabilities
 
         :return: List of method names returned by get_capabilities.
-        :rtype: List
+        :rtype: list[str]
         """
         return [    
                 'register_user', 'register_group', 'register_resource',
@@ -774,7 +777,7 @@ class HSAccessUser(object):
 # via get_capabilities?
 
 
-class HSAccessGroup(object):
+class HSAccessGroup(HSAccessObject):
     """
     Represent a group as a python object
 
@@ -785,13 +788,13 @@ class HSAccessGroup(object):
         Initialize a group object
 
         :type hsa: HSAccess
-        :type uuid: str
-        :param hsa: raw access object: instance of HSAccess.
-        :param uuid: uuid of group to represent.
+        :type uuid: basestring
+        :param hsa: raw access object: instance of HSAccess. 
+        :param uuid: uuid of group to represent. 
         """
-        if type(hsa) is not HSAccess:
+        if not isinstance(hsa, HSAccess):
             raise HSAUsageException("hsa is not an instance of HSAccess")
-        if type(uuid) is not str:
+        if not isinstance(uuid, basestring):
             raise HSAUsageException("uuid is not a string")
 
         self.__hsa = hsa
@@ -808,14 +811,14 @@ class HSAccessGroup(object):
         self.__meta = self.__hsa.get_group_metadata(self.__uuid)
         self.__priv_cum = self.__hsa.get_cumulative_user_privilege_over_group(self.__uuid)
         self.__priv_prim = self.__hsa.get_user_privilege_over_group(self.__uuid)
-        self.__member = self.__hsa.user_in_group(self.__uuid)
+        self.__member = self.__hsa.user_is_in_group(self.__uuid)
 
     def get_uuid(self):
         """
         Get the uuid of the group that this object represents.
 
         :return: uuid of current group
-        :rtype: str
+        :rtype: hasestring
         """
         return self.__uuid
 
@@ -824,7 +827,7 @@ class HSAccessGroup(object):
         Get privilege of current user over group.
 
         :return: one of 'own', 'rw', 'ro', 'none'.
-        :rtype: str
+        :rtype: basestring
 
         This returns one of the following codes:
 
@@ -851,7 +854,7 @@ class HSAccessGroup(object):
         Get the name of the group that this object represents.
 
         :return: name of current group
-        :rtype: str
+        :rtype: basestring
         """
         return self.__meta['name']
 
@@ -977,18 +980,68 @@ class HSAccessGroup(object):
         """
         return self.__member
 
+    ###############################
+    # convenience functions express access control logic in django terms
+    ###############################
+
+    def can_view(self):
+        """
+        Return True if user can view group
+
+        :rtype: bool
+        :return: True if user can view group
+        """
+        return self.__hsa.user_is_admin() or self.is_readable()
+
+    def can_change(self):
+        """
+        Return True if user can change a group
+
+        :rtype: bool
+        :return: True if user can change group
+        """
+        return self.__hsa.user_is_admin() or self.is_writeable()
+
+    def can_delete(self):
+        """
+        Return True if user can delete a group
+
+        :rtype: bool
+        :return: True if user can delete group
+        """
+        return self.__hsa.user_is_admin() or self.is_owned()
+
+    def can_change_flags(self):
+        """
+        Return True if user can change flags of a group
+
+        :rtype: bool
+        :return: True if user can change flags of a group
+        """
+        return self.__hsa.user_is_admin() or self.is_owned()
+
+    def can_share(self):
+        """
+        Return True if user can share a group
+
+        :rtype: bool
+        :return: True if user can share the group
+        """
+        return self.__hsa.user_is_admin() or self.is_owned() \
+               or (self.is_readable() and self.is_shareable())
+
     def get_capabilities(self):
         """
         Get the capabilities of our user over this group.
 
-        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... }
-        :rtype: Dict
+        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+        :rtype: dict
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the
         capabilities of the represented user. The format of the return value
         is::
 
-            {'capability_key': bound_method, ...}
+            {'capability_key': *bound_method*, ...}
 
         This is used via the following pattern::
 
@@ -1082,7 +1135,7 @@ class HSAccessGroup(object):
         Return a list of methods exposed by get_capabilities
 
         :return: List of method names for private methods exposed by get_capabilities.
-        :rtype: List
+        :rtype: list[str]
 
         This returns the possible capabilities that can be enabled (or not) via
         the access control system.
@@ -1099,8 +1152,8 @@ class HSAccessGroup(object):
         """
         Change the name of a group.
 
-        :type new_name: str
-        :param new_name: new name to use.
+        :type new_name: basestring
+        :param new_name: new name to use. 
 
         User must be owner or administrator.
 
@@ -1187,9 +1240,9 @@ class HSAccessGroup(object):
         Share a group with a user immediately.
 
         :type user: HSAccessUser
-        :type privilege_code: str
-        :param user: user to be added to the group.
-        :param privilege_code: one of 'own', 'rw', 'ro', 'none'.
+        :type privilege_code: basestring
+        :param user: user to be added to the group. 
+        :param privilege_code: one of 'own', 'rw', 'ro', 'none'. 
 
         This routine is exposed via :py:meth:`get_capabilities`.
         """
@@ -1257,13 +1310,13 @@ class HSAccessGroupInvitation(HSAccessGroup):
     """
 
     def __init__(self, hsa, user_uuid, group_uuid, inviting_user_uuid):
-        if type(hsa) is not HSAccess:
+        if not isinstance(hsa, HSAccess):
             raise HSAUsageException("hsa is not an instance of HSAccess")
-        if type(user_uuid) is not str:
+        if not isinstance(user_uuid, basestring):
             raise HSAUsageException("user_uuid is not a string")
-        if type(group_uuid) is not str:
+        if not isinstance(group_uuid, basestring):
             raise HSAUsageException("group_uuid is not a string")
-        if type(inviting_user_uuid) is not str:
+        if not isinstance(inviting_user_uuid, basestring):
             raise HSAUsageException("inviting_user_uuid is not a string")
 
         HSAccessGroup.__init__(self, hsa, group_uuid)
@@ -1276,14 +1329,14 @@ class HSAccessGroupInvitation(HSAccessGroup):
         """
         Get the capabilities of our user over this invitation.
 
-        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... }
-        :rtype: Dict
+        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+        :rtype: dict 
 
         This function exposes private methods of :py:class:`HSAccessUser` based upon the
         capabilities of the represented user. The format of the return value
         is::
 
-            {'capability_key': bound_method, ...}
+            {'capability_key': *bound_method*, ...}
 
         This is used via the following pattern::
 
@@ -1321,11 +1374,12 @@ class HSAccessGroupInvitation(HSAccessGroup):
         Get a list of method names exposed by get_capabilities
 
         :return: List of method names returned by get_capabilities.
-        :rtype: List
+        :rtype: list[str]
         """
         return ['accept', 'refuse']
 
-class HSAccessResource(object):
+
+class HSAccessResource(HSAccessObject):
     """
     Represent a resource as a python object
 
@@ -1336,16 +1390,16 @@ class HSAccessResource(object):
         Initialize a resource object
 
         :type hsa: HSAccess
-        :type uuid: str:
+        :type uuid: basestring 
         :param hsa: Object describing the current (primitive) session.
         :param uuid: uuid of resource.
 
         This builds a resource object from a resource uuid, and caches the state of the
         resource to save time during rendering.
         """
-        if type(hsa) is not HSAccess:
+        if not isinstance(hsa, HSAccess):
             raise HSAUsageException("hsa is not an instance of HSAccess")
-        if type(uuid) is not str:
+        if not isinstance(uuid, basestring):
             raise HSAUsageException("uuid is not a string")
 
         self.__hsa = hsa
@@ -1366,37 +1420,37 @@ class HSAccessResource(object):
     # these routines are available to all users
     def get_uuid(self):
         """
-        Get uuid of the current resource.
-
-        :return: uuid of current resource.
-        :rtype: str
+        Get uuid of the current resource. 
+       
+        :return: uuid of current resource. 
+        :rtype: basestring
         """
         return self.__uuid
 
     def get_title(self):
         """
-        Get title of the current resource.
-
-        :return: title of current resource.
-        :rtype: str
+        Get title of the current resource. 
+       
+        :return: title of current resource. 
+        :rtype: basestring
         """
         return self.__meta['title']
 
     def get_path(self):
         """
-        Get file path of the current resource.
-
-        :return: file path of current resource.
-        :rtype: str
+        Get file path of the current resource. 
+       
+        :return: file path of current resource. 
+        :rtype: basestring
         """
         return self.__meta['path']
 
     def get_privilege(self):
         """
         Get privilege of current user over resource.
-
-        :return: 'own', 'rw', 'ro', 'none' (for public resources)
-        :rtype: str
+       
+        :return: 'own', 'rw', 'ro', 'none' (for public resources) 
+        :rtype: basestring
         """
         return self.__priv_cum
 
@@ -1436,7 +1490,7 @@ class HSAccessResource(object):
         :return: True if resource is discoverable by the currently authenticated user.
         :rtype: int
         """
-        return self.__meta['discoverable']
+        return self.__meta['discoverable']  # or self.__meta['public']
 
     def is_public(self):
         """
@@ -1472,20 +1526,70 @@ class HSAccessResource(object):
         :return: True if resource is immutable. This overrides normal ownership privileges.
         :rtype: int
         """
-        return self.__meta['immutable']
+        return self.__meta['immutable']  # or self.__meta['published']
+
+    ###############################
+    # convenience functions express access control logic in django terms
+    ###############################
+
+    def can_view(self):
+        """
+        Return True if user can view resource
+
+        :rtype: bool
+        :return: True if user can view resource
+        """
+        return self.__hsa.user_is_admin() or self.is_readable()
+
+    def can_change(self):
+        """
+        Return True if user can change a resource
+
+        :rtype: bool
+        :return: True if user can change resource
+        """
+        return self.__hsa.user_is_admin() or self.is_writeable()
+
+    def can_delete(self):
+        """
+        Return True if user can delete a resource
+
+        :rtype: bool
+        :return: True if user can delete resource
+        """
+        return self.__hsa.user_is_admin() or self.is_owned()
+
+    def can_change_flags(self):
+        """
+        Return True if user can change flags of a resource
+
+        :rtype: bool
+        :return: True if user can change flags of a resource
+        """
+        return self.__hsa.user_is_admin() or self.is_owned()
+
+    def can_share(self):
+        """
+        Return True if user can share a resource
+
+        :rtype: bool
+        :return: True if user can share the resource
+        """
+        return self.__hsa.user_is_admin() or self.is_owned() \
+               or (self.is_readable() and self.is_shareable())
 
     def get_capabilities(self):
         """
         Get the capabilities of our user over this resource.
 
-        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... }
-        :rtype: Dict
+        :return: Dict of capability pairs of form { 'capability_key': bound_method, ... } 
+        :rtype: dict 
 
         This function exposes private methods of :py:class:`HSAccessResource` based upon the
         capabilities of the current user. The format of the return value
         is::
 
-            {'capability_key': bound_method, ...}
+            {'capability_key': *bound_method*, ...}
 
         This is used via the following pattern::
 
@@ -1591,10 +1695,10 @@ class HSAccessResource(object):
             if not self.is_immutable():
                 capabilities['make_immutable'] = self.__make_immutable
             else:
-                if self.__hsa.user_is_admin():
-                    capabilities['make_not_immutable'] = self.__make_not_immutable()
+                capabilities['make_not_immutable'] = self.__make_not_immutable
 
-        if self.is_owned() or self.is_shareable():
+        # tricky: must check whether the user has the privileges
+        if self.is_owned() or (self.is_readable() and self.is_shareable()):
             capabilities['share_with_user'] = self.__share_with_user
             capabilities['share_with_group'] = self.__share_with_group
 
@@ -1606,7 +1710,7 @@ class HSAccessResource(object):
         Get a list of method names exposed by get_capabilities
 
         :return: List of method names returned by get_capabilities.
-        :rtype: List
+        :rtype: list[str]
         """
         return [
             'share_with_user', 'share_with_group',
@@ -1650,10 +1754,10 @@ class HSAccessResource(object):
         """
         Change title of a resource.
 
-        :param new_name: new name to use for title.
-        :type new_name: str
+        :param new_name: new name to use for title. 
+        :type new_name: basestring
         """
-        if type(new_name) is not str:
+        if not isinstance(new_name, basestring):
             raise HSAUsageException("new_name is not a string")
 
         self.__meta['title'] = new_name
@@ -1737,12 +1841,12 @@ class HSAccessResource(object):
         :param user: :py:class:`HSAccessUser` object describing the user
         :param privilege_code: one of 'own', 'rw', 'ro', 'none'.
         :type user: HSAccessUser
-        :type privilege_code: str
+        :type privilege_code: basestring
 
         """
-        if type(user) is not HSAccessUser:
+        if not isinstance(user, HSAccessUser):
             raise HSAUsageException("user is not an HSAccessUser")
-        if type(privilege_code) is not str:
+        if not isinstance(privilege_code, basestring):
             raise HSAUsageException("privilege_code is not a string")
         self.__hsa.share_resource_with_user(self.__uuid, user.get_uuid(), privilege_code)
 
@@ -1753,12 +1857,12 @@ class HSAccessResource(object):
         :param group: :py:class:`HSAccessGroup` object describing the group
         :param privilege_code: one of 'own', 'rw', 'ro', 'none'.
         :type group: HSAccessGroup
-        :type privilege_code: str
+        :type privilege_code: basestring
 
         """
-        if type(group) is not HSAccessGroup:
+        if not isinstance(group, HSAccessGroup):
             raise HSAUsageException("group is not an HSAccessGroup")
-        if type(privilege_code) is not str:
+        if not isinstance(privilege_code, basestring):
             raise HSAUsageException("privilege_code is not a string")
 
         self.__hsa.share_resource_with_group(self.__uuid, group.get_uuid(), privilege_code)
