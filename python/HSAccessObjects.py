@@ -605,8 +605,11 @@ class HSAccessUser(HSAccessObject):
         if type(folder_name) is not str:
             raise HSAUsageException("folder_name is not a string")
 
-        if len(folder_name) == 0:            
+        if len(folder_name) == 0:
             raise HSAUsageException("folder_name cannot be empty")
+
+        if self.__hsa.folder_exists(folder_name):
+            raise HSAUsageException("folder already exists with folder_name=" + folder_name)
 
         self.__hsa.assert_folder(folder_name)
 
@@ -635,6 +638,9 @@ class HSAccessUser(HSAccessObject):
 
         if len(tag_name) == 0:            
             raise HSAUsageException("tag_name cannot be empty")
+
+        if self.__hsa.tag_exists(tag_name):
+            raise HSAUsageException("tag already exists with tag_name=" + tag_name)
 
         self.__hsa.assert_tag(tag_name)
 
@@ -1911,7 +1917,7 @@ class HSAccessResource(HSAccessObject):
                 " priv: ", n.get_privilege_over_resource(self), \
                 " name: ", n.get_name()
 
-class HSAccessFolder(self):
+class HSAccessFolder(HSAccessObject):
     """
     Represent a folder as a python object. A folder can contain 0 to many resources.
 
@@ -1970,6 +1976,9 @@ class HSAccessFolder(self):
         if len(resource_uuid) == 0:            
             raise HSAUsageException("resource_uuid cannot be empty")
 
+        if not self.__hsa.resource_exists(resource_uuid):
+            raise HSAUsageException("no resource exists with resource_uuid=" + resource_uuid)
+
         self.__hsa.assert_resource_in_folder(resource_uuid, self.__user_folder_name)
 
         result = self.__hsa.get_resources_in_folders(self.__user_folder_name)
@@ -2001,9 +2010,12 @@ class HSAccessFolder(self):
         if len(resource_uuid) == 0:            
             raise HSAUsageException("resource_uuid cannot be empty")
 
+        if not self.__hsa.resource_exists(resource_uuid):
+            raise HSAUsageException("no resource exists with resource_uuid=" + resource_uuid)
+
         result = self.__hsa.get_resources_in_folders(self.__user_folder_name)
 
-        if not resource_uuid in result.keys()
+        if not resource_uuid in result.keys():
             raise HSAUsageException("folder_name=" + self.__user_folder_name + " has no resource_uuid=" + resource_uuid)
 
         self.__hsa.retract_resource_in_folder(resource_uuid, self.__user_folder_name)
@@ -2068,7 +2080,7 @@ class HSAccessFolder(self):
                 " priv: ", n.get_privilege(), \
                 " name: ", n.get_title()
 
-class HSAccessTag(self):
+class HSAccessTag(HSAccessObject):
     """
     Represent a tag as a python object. A resource can have 0 to many tags.
 
@@ -2127,6 +2139,9 @@ class HSAccessTag(self):
         if len(resource_uuid) == 0:            
             raise HSAUsageException("resource_uuid cannot be empty")
 
+        if not self.__hsa.resource_exists(resource_uuid):
+            raise HSAUsageException("no resource exists with resource_uuid=" + resource_uuid)
+
         self.__hsa.assert_resource_has_tag(resource_uuid, self.__user_tag_name)
 
         result = self.__hsa.get_resources_by_tag(self.__user_tag_name)
@@ -2157,9 +2172,12 @@ class HSAccessTag(self):
         if len(resource_uuid) == 0:            
             raise HSAUsageException("resource_uuid cannot be empty")
 
+        if not self.__hsa.resource_exists(resource_uuid):
+            raise HSAUsageException("no resource exists with resource_uuid=" + resource_uuid)
+
         result = self.__hsa.get_resources_by_tag(self.__user_tag_name)
 
-        if not resource_uuid in result.keys()
+        if not resource_uuid in result.keys():
             raise HSAUsageException("tag_name=" + self.__user_tag_name + " has no resource_uuid=" + resource_uuid)
 
         self.__hsa.retract_resource_has_tag(resource_uuid, self.__user_tag_name)

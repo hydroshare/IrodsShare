@@ -879,5 +879,451 @@ class T06RegisterGroup(unittest.TestCase):
 #         rcaps = posts.get_capabilities()
 #         self.assertTrue(match_lists(rcaps.keys(), ['share_with_user', 'share_with_group']))
 
+class T09GetFolders(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_get_folders_returns_folders_for_current_user_only(self):
+        #log in as cat
+        cat = self.login('cat')
+
+        #register a folder for cat
+
+        #login as dog
+
+        #create folders for dog
+
+        #run get_folders, and assert only dog's folders return
+
+        self.assertTrue(True)
+
+    def test_02_get_folders_returns_an_empty_list_if_current_user_has_no_folders(self):
+        #log in as cat
+        cat = self.login('cat')
+
+        #create a folder
+
+        #log in as dog
+
+        #run get_folders, and assert it is an empty list
+        self.assertTrue(True)
+
+class T10GetTags(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_get_tags_returns_tags_for_current_user_only(self):
+        #log in as cat
+        cat = self.login('cat')
+
+        #register a tag for cat
+
+        #login as dog
+
+        #create tags for dog
+
+        #run get_folders, and assert only dog's tags return
+
+        self.assertTrue(True)
+
+    def test_02_get_tags_returns_an_empty_list_if_current_user_has_no_folders(self):
+        #log in as cat
+        cat = self.login('cat')
+
+        #create a folder
+
+        #log in as dog
+
+        #run get_folders, and assert it is an empty list
+        self.assertTrue(True)
+
+class T11RegisterFolder(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_register_folder_fails_if_folder_name_is_none(self):
+        # become an unprivileged user
+        cat = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_02_register_folder_fails_if_folder_name_is_the_wrong_type(self):
+        self.assertTrue(True)
+
+    def test_03_register_folder_fails_if_folder_name_is_empty(self):
+        self.assertTrue(True)
+
+    def test_04_register_folder_fails_if_folder_already_exists(self):
+        self.assertTrue(True)
+
+    def test_05_register_folder_succeeds_if_given_valid_folder_name(self):
+        self.assertTrue(True)
+
+class T12RegisterTag(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_register_tag_fails_if_tag_name_is_none(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        try:
+            dog.register_folder(None)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+    def test_02_register_tag_fails_if_tag_name_is_the_wrong_type(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_03_register_tag_fails_if_tag_name_is_empty(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_04_register_tag_fails_if_tag_already_exists(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_05_register_tag_succeeds_if_given_valid_tag_name(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        self.assertTrue(True)
+
+class T13UnregisterFolder(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_unregister_folder_fails_if_folder_name_is_none(self):
+        # become an unprivileged user
+        cat = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_02_unregister_folder_fails_if_folder_name_is_the_wrong_type(self):
+        self.assertTrue(True)
+
+    def test_03_unregister_folder_fails_if_folder_name_is_empty(self):
+        self.assertTrue(True)
+
+    def test_04_unregister_folder_fails_if_folder_does_not_exist(self):
+        self.assertTrue(True)
+
+    def test_05_unregister_folder_succeeds_if_given_valid_folder_name(self):
+        self.assertTrue(True)
+
+class T14UnregisterTag(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_unregister_tag_fails_if_tag_name_is_none(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        try:
+            dog.unregister_folder(None)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
+
+    def test_02_unregister_tag_fails_if_tag_name_is_the_wrong_type(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_03_unregister_tag_fails_if_tag_name_is_empty(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_04_unregister_tag_fails_if_tag_does_not_exist(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_05_unregister_tag_succeeds_if_given_valid_tag_name(self):
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        self.assertTrue(True)
+
+class T15AddResourceToFolder(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_add_resource_to_folder_fails_if_resource_uuid_is_none(self):
+        # become an unprivileged user
+        cat = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_02_add_resource_to_folder_fails_if_resource_uuid_is_the_wrong_type(self):
+        self.assertTrue(True)
+
+    def test_03_add_resource_to_folder_fails_if_resource_uuid_is_empty(self):
+        self.assertTrue(True)
+
+    def test_04_add_resource_to_folder_fails_if_resource_does_not_exist(self):
+        self.assertTrue(True)
+
+    def test_05_add_resource_to_folder_succeeds_if_given_valid_resource_uuid(self):
+        self.assertTrue(True)
+
+class T16AddResourceToTag(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_add_resource_to_tag_fails_if_resource_uuid_is_none(self):
+        # become an unprivileged user
+        cat = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_02_add_resource_to_tag_fails_if_resource_uuid_is_the_wrong_type(self):
+        self.assertTrue(True)
+
+    def test_03_add_resource_to_tag_fails_if_resource_uuid_is_empty(self):
+        self.assertTrue(True)
+
+    def test_04_add_resource_to_tag_fails_if_resource_does_not_exist(self):
+        self.assertTrue(True)
+
+    def test_05_add_resource_to_tag_succeeds_if_given_valid_resource_uuid(self):
+        self.assertTrue(True)
+
+class T17RemoveResourceFromFolder(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_remove_resource_from_folder_fails_if_resource_uuid_is_none(self):
+        # become an unprivileged user
+        cat = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_02_remove_resource_from_folder_fails_if_resource_uuid_is_the_wrong_type(self):
+        self.assertTrue(True)
+
+    def test_03_remove_resource_from_folder_fails_if_resource_uuid_is_empty(self):
+        self.assertTrue(True)
+
+    def test_04_remove_resource_from_folder_fails_if_resource_does_not_exist(self):
+        self.assertTrue(True)
+
+    def test_05_remove_resource_from_folder_fails_if_folder_does_not_have_the_resource(self):
+        self.assertTrue(True)
+
+    def test_06_remove_resource_from_folder_succeeds_if_given_valid_resource_uuid(self):
+        self.assertTrue(True)
+
+class T18RemoveResourceFromTag(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_remove_resource_from_tag_fails_if_resource_uuid_is_none(self):
+        # become an unprivileged user
+        cat = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_02_remove_resource_from_tag_fails_if_resource_uuid_is_the_wrong_type(self):
+        self.assertTrue(True)
+
+    def test_03_remove_resource_from_tag_fails_if_resource_uuid_is_empty(self):
+        self.assertTrue(True)
+
+    def test_04_remove_resource_from_tag_fails_if_resource_does_not_exist(self):
+        self.assertTrue(True)
+
+    def test_05_remove_resource_from_tag_fails_if_tag_does_not_have_the_resource(self):
+        self.assertTrue(True)
+
+    def test_06_remove_resource_from_tag_succeeds_if_given_valid_resource_uuid(self):
+        self.assertTrue(True)
+
+class T19GetResourcesInFolder(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_get_resources_in_folder_returns_a_list_of_resources(self):
+        # become an unprivileged user
+        cat = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_02_get_resources_in_folder_returns_an_empty_list_in_no_resources_exist(self):
+        self.assertTrue(True)
+
+class T20GetResourcesByTag(unittest.TestCase):
+    def setUp(self):
+        # start as privileged user
+        admin = self.login('admin')
+        admin._HSAccessUser__hsa._HSAccessCore__global_reset("yes, I'm sure")
+        admin_caps = admin.get_capabilities()
+        # don't store user objects; they get stale quickly.
+        admin_caps['register_user']('cat', 'one mean meower')
+        admin_caps['register_user']('dog', 'one little arfer')
+
+    def login(self, login):
+        self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
+        self.login_name = login
+        self.user_object = HSAccessUser(self.hsaccess_instance, self.hsaccess_instance.get_uuid())
+        return self.user_object
+
+    def test_01_get_resources_by_tag_returns_a_list_of_resources(self):
+        # become an unprivileged user
+        cat = self.login('dog')
+
+        self.assertTrue(True)
+
+    def test_02_get_resources_by_tag_returns_an_empty_list_in_no_resources_exist(self):
+        self.assertTrue(True)
+
 if __name__ == '__main__':
     unittest.main()
