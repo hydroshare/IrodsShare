@@ -1942,7 +1942,6 @@ class HSAccessFolder(HSAccessObject):
 
         self.__hsa = hsa
         self.__user_folder_name = user_folder_name
-        self.refresh()
 
     def get_user_folder_name(self):
         """
@@ -1952,6 +1951,20 @@ class HSAccessFolder(HSAccessObject):
         :rtype: str
         """
         return self.__user_folder_name
+
+    def __resource_exists_in_folder(self, resource_uuid):
+        """
+        PRIVATE: Checks whether the given resource_uuid exists in the current folder.
+
+        :return: True if the resource_uuid exists in the current folder, False otherwise
+        :rtype: bool
+        """
+        resources_in_folder = self.__hsa.get_resources_in_folders(self.__user_folder_name)
+
+        for folder_resources in resources_in_folder.values():
+            if resource_uuid in folder_resources.keys():
+                return True
+        return False
 
     def add_resource(self, resource_uuid):
         """
@@ -1981,9 +1994,8 @@ class HSAccessFolder(HSAccessObject):
 
         self.__hsa.assert_resource_in_folder(resource_uuid, self.__user_folder_name)
 
-        result = self.__hsa.get_resources_in_folders(self.__user_folder_name)
-
-        assert resource_uuid in result.keys()
+        if not self.__resource_exists_in_folder(resource_uuid):
+            raise HSAUsageException("folder_name=" + self.__user_folder_name + " has no resource_uuid=" + resource_uuid)
 
         return HSAccessResource(self.__hsa, resource_uuid)
 
@@ -2013,16 +2025,12 @@ class HSAccessFolder(HSAccessObject):
         if not self.__hsa.resource_exists(resource_uuid):
             raise HSAUsageException("no resource exists with resource_uuid=" + resource_uuid)
 
-        result = self.__hsa.get_resources_in_folders(self.__user_folder_name)
-
-        if not resource_uuid in result.keys():
+        if not self.__resource_exists_in_folder(resource_uuid):
             raise HSAUsageException("folder_name=" + self.__user_folder_name + " has no resource_uuid=" + resource_uuid)
 
         self.__hsa.retract_resource_in_folder(resource_uuid, self.__user_folder_name)
 
-        result = self.__hsa.get_resources_in_folders(self.__user_folder_name)
-
-        assert resource_uuid not in result.keys()
+        assert not self.__resource_exists_in_folder(resource_uuid)
 
         return HSAccessResource(self.__hsa, resource_uuid)
 
@@ -2037,10 +2045,11 @@ class HSAccessFolder(HSAccessObject):
         """
         result = []
 
-        resources_in_folder = self.__hsa.get_resources_in_folder(self.__user_folder_name)
+        resources_in_folder = self.__hsa.get_resources_in_folders(self.__user_folder_name)
 
-        for resource_uuid in resources_in_folder.keys():
-            result += [HSAccessResource(self.__hsa, resource_uuid)]
+        for folder_resources in resources_in_folder.values():
+            for resource_uuid in folder_resources.keys():
+                result += [HSAccessResource(self.__hsa, resource_uuid)]
         
         return result
 
@@ -2105,7 +2114,6 @@ class HSAccessTag(HSAccessObject):
 
         self.__hsa = hsa
         self.__user_tag_name = user_tag_name
-        self.refresh()
 
     def get_user_tag_name(self):
         """
@@ -2115,6 +2123,20 @@ class HSAccessTag(HSAccessObject):
         :rtype: str
         """
         return self.__user_tag_name
+
+    def __resource_exists_with_tag(self, resource_uuid):
+        """
+        PRIVATE: Checks whether the given resource_uuid exists with the current tag.
+
+        :return: True if the resource_uuid exists with the current tag, False otherwise
+        :rtype: bool
+        """
+        resources_for_tag = self.__hsa.get_resources_by_tag(self.__user_tag_name)
+
+        for tag_resources in resources_for_tag.values():
+            if resource_uuid in tag_resources.keys():
+                return True
+        return False
 
     def add_resource(self, resource_uuid):
         """
@@ -2144,9 +2166,8 @@ class HSAccessTag(HSAccessObject):
 
         self.__hsa.assert_resource_has_tag(resource_uuid, self.__user_tag_name)
 
-        result = self.__hsa.get_resources_by_tag(self.__user_tag_name)
-
-        assert resource_uuid in result.keys()
+        if not self.__resource_exists_with_tag(resource_uuid):
+            raise HSAUsageException("tag_name=" + self.__user_tag_name + " has no resource_uuid=" + resource_uuid)
 
         return HSAccessResource(self.__hsa, resource_uuid)
 
@@ -2175,16 +2196,12 @@ class HSAccessTag(HSAccessObject):
         if not self.__hsa.resource_exists(resource_uuid):
             raise HSAUsageException("no resource exists with resource_uuid=" + resource_uuid)
 
-        result = self.__hsa.get_resources_by_tag(self.__user_tag_name)
-
-        if not resource_uuid in result.keys():
+        if not self.__resource_exists_with_tag(resource_uuid):
             raise HSAUsageException("tag_name=" + self.__user_tag_name + " has no resource_uuid=" + resource_uuid)
 
         self.__hsa.retract_resource_has_tag(resource_uuid, self.__user_tag_name)
 
-        result = self.__hsa.get_resources_by_tag(self.__user_tag_name)
-
-        assert resource_uuid not in result.keys()
+        assert not self.__resource_exists_with_tag(resource_uuid)
 
         return HSAccessResource(self.__hsa, resource_uuid)
 
@@ -2202,8 +2219,9 @@ class HSAccessTag(HSAccessObject):
 
         resources_by_tag = self.__hsa.get_resources_by_tag(self.__user_tag_name)
 
-        for resource_uuid in resources_by_tag.keys():
-            result += [HSAccessResource(self.__hsa, resource_uuid)]
+        for tag_resources in resources_by_tag.values():
+            for resource_uuid in tag_resources.keys():
+                result += [HSAccessResource(self.__hsa, resource_uuid)]
         
         return result
 

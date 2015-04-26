@@ -1,6 +1,6 @@
 __author__ = 'Alva'
 from HSAlib import HSAccess, HSAccessException, HSAUsageException, HSAIntegrityException
-from HSAccessObjects import HSAccessUser, HSAccessGroup, HSAccessResource
+from HSAccessObjects import HSAccessUser, HSAccessGroup, HSAccessResource, HSAccessFolder, HSAccessTag
 
 import unittest
 from pprint import pprint
@@ -897,28 +897,43 @@ class T09GetFolders(unittest.TestCase):
 
     def test_01_get_folders_returns_folders_for_current_user_only(self):
         #log in as cat
-        cat = self.login('cat')
+        cat = self.login("cat")
 
         #register a folder for cat
+        cat.register_folder("cat_food")
 
         #login as dog
+        dog = self.login("dog")
 
         #create folders for dog
+        dog.register_folder("dog_food")
+        dog.register_folder("dog_toys")
 
         #run get_folders, and assert only dog's folders return
+        results = dog.get_folders()
 
-        self.assertTrue(True)
+        folder_names = []
+
+        for result in results:
+            folder_names.append(result.get_user_folder_name())
+
+        self.assertTrue(type(results) == list)
+        self.assertTrue(type(results[0]) == HSAccessFolder)
+        self.assertTrue('dog_food' in folder_names)
+        self.assertTrue('dog_toys' in folder_names)
 
     def test_02_get_folders_returns_an_empty_list_if_current_user_has_no_folders(self):
         #log in as cat
-        cat = self.login('cat')
+        cat = self.login("cat")
 
-        #create a folder
+        #register a folder for cat
+        cat.register_folder("cat_food")
 
         #log in as dog
+        dog = self.login("dog")
 
-        #run get_folders, and assert it is an empty list
-        self.assertTrue(True)
+        #run get_folders, and assert nothing returns
+        self.assertEqual(dog.get_folders(), [])
 
 class T10GetTags(unittest.TestCase):
     def setUp(self):
@@ -938,28 +953,43 @@ class T10GetTags(unittest.TestCase):
 
     def test_01_get_tags_returns_tags_for_current_user_only(self):
         #log in as cat
-        cat = self.login('cat')
+        cat = self.login("cat")
 
-        #register a tag for cat
+        #register a folder for cat
+        cat.register_tag("cat_food")
 
         #login as dog
+        dog = self.login("dog")
 
-        #create tags for dog
+        #create folders for dog
+        dog.register_tag("dog_food")
+        dog.register_tag("dog_toys")
 
-        #run get_folders, and assert only dog's tags return
+        #run get_folders, and assert only dog's folders return
+        results = dog.get_tags()
 
-        self.assertTrue(True)
+        tag_names = []
+
+        for result in results:
+            tag_names.append(result.get_user_tag_name())
+
+        self.assertTrue(type(results) == list)
+        self.assertTrue(type(results[0]) == HSAccessTag)
+        self.assertTrue("dog_food" in tag_names)
+        self.assertTrue("dog_toys" in tag_names)
 
     def test_02_get_tags_returns_an_empty_list_if_current_user_has_no_folders(self):
         #log in as cat
-        cat = self.login('cat')
+        cat = self.login("cat")
 
-        #create a folder
+        #register a folder for cat
+        cat.register_tag("cat_food")
 
         #log in as dog
+        dog = self.login("dog")
 
-        #run get_folders, and assert it is an empty list
-        self.assertTrue(True)
+        #run get_folders, and assert nothing returns
+        self.assertEqual(dog.get_tags(), [])
 
 class T11RegisterFolder(unittest.TestCase):
     def setUp(self):
@@ -979,21 +1009,62 @@ class T11RegisterFolder(unittest.TestCase):
 
     def test_01_register_folder_fails_if_folder_name_is_none(self):
         # become an unprivileged user
-        cat = self.login('dog')
+        dog = self.login("dog")
 
-        self.assertTrue(True)
+        try:
+            dog.register_folder(None)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_02_register_folder_fails_if_folder_name_is_the_wrong_type(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login("dog")
+
+        try:
+            dog.register_folder(123)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_03_register_folder_fails_if_folder_name_is_empty(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login("dog")
+
+        try:
+            dog.register_folder("")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_04_register_folder_fails_if_folder_already_exists(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login("dog")
+
+        dog.register_folder("dog_food")
+
+        try:
+            dog.register_folder("dog_food")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_05_register_folder_succeeds_if_given_valid_folder_name(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login("dog")
+
+        result = dog.register_folder("dog_food")
+
+        self.assertTrue(type(result) == HSAccessFolder)
+        self.assertTrue(result.get_user_folder_name() == "dog_food")
 
 class T12RegisterTag(unittest.TestCase):
     def setUp(self):
@@ -1013,10 +1084,10 @@ class T12RegisterTag(unittest.TestCase):
 
     def test_01_register_tag_fails_if_tag_name_is_none(self):
         # become an unprivileged user
-        dog = self.login('dog')
+        dog = self.login("dog")
 
         try:
-            dog.register_folder(None)
+            dog.register_tag(None)
             self.fail("expected an exception")
         except HSAUsageException, ex:
             pass
@@ -1025,27 +1096,50 @@ class T12RegisterTag(unittest.TestCase):
 
     def test_02_register_tag_fails_if_tag_name_is_the_wrong_type(self):
         # become an unprivileged user
-        dog = self.login('dog')
+        dog = self.login("dog")
 
-        self.assertTrue(True)
+        try:
+            dog.register_tag(123)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_03_register_tag_fails_if_tag_name_is_empty(self):
         # become an unprivileged user
-        dog = self.login('dog')
+        dog = self.login("dog")
 
-        self.assertTrue(True)
+        try:
+            dog.register_tag("")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_04_register_tag_fails_if_tag_already_exists(self):
         # become an unprivileged user
-        dog = self.login('dog')
+        dog = self.login("dog")
 
-        self.assertTrue(True)
+        dog.register_tag("dog_food")
+
+        try:
+            dog.register_tag("dog_food")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_05_register_tag_succeeds_if_given_valid_tag_name(self):
         # become an unprivileged user
-        dog = self.login('dog')
+        dog = self.login("dog")
 
-        self.assertTrue(True)
+        result = dog.register_tag("dog_food")
+
+        self.assertTrue(type(result) == HSAccessTag)
+        self.assertTrue(result.get_user_tag_name() == "dog_food")
 
 class T13UnregisterFolder(unittest.TestCase):
     def setUp(self):
@@ -1065,21 +1159,61 @@ class T13UnregisterFolder(unittest.TestCase):
 
     def test_01_unregister_folder_fails_if_folder_name_is_none(self):
         # become an unprivileged user
-        cat = self.login('dog')
+        dog = self.login('dog')
 
-        self.assertTrue(True)
+        try:
+            dog.unregister_folder(None)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_02_unregister_folder_fails_if_folder_name_is_the_wrong_type(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        try:
+            dog.unregister_folder(123)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_03_unregister_folder_fails_if_folder_name_is_empty(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        try:
+            dog.unregister_folder("")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_04_unregister_folder_fails_if_folder_does_not_exist(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        try:
+            dog.unregister_folder("this_folder_does_not_exist")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_05_unregister_folder_succeeds_if_given_valid_folder_name(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog.register_folder("dog_food")
+
+        dog.unregister_folder("dog_food")
+
+        self.assertFalse(dog.get_access().folder_exists("dog_food"))
 
 class T14UnregisterTag(unittest.TestCase):
     def setUp(self):
@@ -1102,7 +1236,7 @@ class T14UnregisterTag(unittest.TestCase):
         dog = self.login('dog')
 
         try:
-            dog.unregister_folder(None)
+            dog.unregister_tag(None)
             self.fail("expected an exception")
         except HSAUsageException, ex:
             pass
@@ -1113,25 +1247,47 @@ class T14UnregisterTag(unittest.TestCase):
         # become an unprivileged user
         dog = self.login('dog')
 
-        self.assertTrue(True)
+        try:
+            dog.unregister_tag(123)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_03_unregister_tag_fails_if_tag_name_is_empty(self):
         # become an unprivileged user
         dog = self.login('dog')
 
-        self.assertTrue(True)
+        try:
+            dog.unregister_tag("")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_04_unregister_tag_fails_if_tag_does_not_exist(self):
         # become an unprivileged user
         dog = self.login('dog')
 
-        self.assertTrue(True)
+        try:
+            dog.unregister_tag("this_tag_does_not_exist")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_05_unregister_tag_succeeds_if_given_valid_tag_name(self):
         # become an unprivileged user
         dog = self.login('dog')
 
-        self.assertTrue(True)
+        dog.register_tag("dog_food")
+
+        dog.unregister_tag("dog_food")
+
+        self.assertFalse(dog.get_access().tag_exists("dog_food"))
 
 class T15AddResourceToFolder(unittest.TestCase):
     def setUp(self):
@@ -1143,6 +1299,10 @@ class T15AddResourceToFolder(unittest.TestCase):
         admin_caps['register_user']('cat', 'one mean meower')
         admin_caps['register_user']('dog', 'one little arfer')
 
+        dog = self.login("dog")
+        dog.register_folder("dog_food")
+        dog.register_resource("/dog/food", "kibbles")
+
     def login(self, login):
         self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
         self.login_name = login
@@ -1151,21 +1311,78 @@ class T15AddResourceToFolder(unittest.TestCase):
 
     def test_01_add_resource_to_folder_fails_if_resource_uuid_is_none(self):
         # become an unprivileged user
-        cat = self.login('dog')
+        dog = self.login('dog')
 
-        self.assertTrue(True)
+        dog_folder = dog.get_folders()[0]
+
+        try:
+            dog_folder.add_resource(None)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_02_add_resource_to_folder_fails_if_resource_uuid_is_the_wrong_type(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+
+        try:
+            dog_folder.add_resource(123)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_03_add_resource_to_folder_fails_if_resource_uuid_is_empty(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+
+        try:
+            dog_folder.add_resource("")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_04_add_resource_to_folder_fails_if_resource_does_not_exist(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+
+        try:
+            dog_folder.add_resource("this_resource_does_not_exist")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_05_add_resource_to_folder_succeeds_if_given_valid_resource_uuid(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+        dog_resources = dog.get_resources()
+        resource_uuid = dog_resources[0].get_uuid()
+        resource_name = dog_resources[0].get_title()
+
+        dog_folder.add_resource(resource_uuid)
+
+        dog_folder_resources = dog_folder.get_resources()
+
+        dog_folder_names = []
+        for resource in dog_folder_resources:
+            dog_folder_names.append(resource.get_title())
+
+        self.assertTrue(resource_name in dog_folder_names)
 
 class T16AddResourceToTag(unittest.TestCase):
     def setUp(self):
@@ -1177,6 +1394,10 @@ class T16AddResourceToTag(unittest.TestCase):
         admin_caps['register_user']('cat', 'one mean meower')
         admin_caps['register_user']('dog', 'one little arfer')
 
+        dog = self.login("dog")
+        dog.register_tag("dog_food")
+        dog.register_resource("/dog/food", "kibbles")
+
     def login(self, login):
         self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
         self.login_name = login
@@ -1185,21 +1406,78 @@ class T16AddResourceToTag(unittest.TestCase):
 
     def test_01_add_resource_to_tag_fails_if_resource_uuid_is_none(self):
         # become an unprivileged user
-        cat = self.login('dog')
+        dog = self.login('dog')
 
-        self.assertTrue(True)
+        dog_tag = dog.get_tags()[0]
+
+        try:
+            dog_tag.add_resource(None)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_02_add_resource_to_tag_fails_if_resource_uuid_is_the_wrong_type(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+
+        try:
+            dog_tag.add_resource(123)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_03_add_resource_to_tag_fails_if_resource_uuid_is_empty(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+
+        try:
+            dog_tag.add_resource("")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_04_add_resource_to_tag_fails_if_resource_does_not_exist(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+
+        try:
+            dog_tag.add_resource("this_resource_does_not_exist")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_05_add_resource_to_tag_succeeds_if_given_valid_resource_uuid(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+        dog_resources = dog.get_resources()
+        resource_uuid = dog_resources[0].get_uuid()
+        resource_name = dog_resources[0].get_title()
+
+        dog_tag.add_resource(resource_uuid)
+
+        dog_tag_resources = dog_tag.get_resources()
+
+        dog_tag_names = []
+        for resource in dog_tag_resources:
+            dog_tag_names.append(resource.get_title())
+
+        self.assertTrue(resource_name in dog_tag_names)
 
 class T17RemoveResourceFromFolder(unittest.TestCase):
     def setUp(self):
@@ -1211,6 +1489,10 @@ class T17RemoveResourceFromFolder(unittest.TestCase):
         admin_caps['register_user']('cat', 'one mean meower')
         admin_caps['register_user']('dog', 'one little arfer')
 
+        dog = self.login("dog")
+        dog.register_folder("dog_food")
+        dog.register_resource("/dog/food", "kibbles")
+
     def login(self, login):
         self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
         self.login_name = login
@@ -1219,24 +1501,103 @@ class T17RemoveResourceFromFolder(unittest.TestCase):
 
     def test_01_remove_resource_from_folder_fails_if_resource_uuid_is_none(self):
         # become an unprivileged user
-        cat = self.login('dog')
+        dog = self.login('dog')
 
-        self.assertTrue(True)
+        dog_folder = dog.get_folders()[0]
+
+        try:
+            dog_folder.remove_resource(None)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_02_remove_resource_from_folder_fails_if_resource_uuid_is_the_wrong_type(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+
+        try:
+            dog_folder.remove_resource(123)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_03_remove_resource_from_folder_fails_if_resource_uuid_is_empty(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+
+        try:
+            dog_folder.remove_resource("")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_04_remove_resource_from_folder_fails_if_resource_does_not_exist(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+
+        try:
+            dog_folder.remove_resource("this_resource_does_not_exist")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_05_remove_resource_from_folder_fails_if_folder_does_not_have_the_resource(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+        dog_resource = dog.get_resources()[0].get_uuid()
+
+        try:
+            dog_folder.remove_resource(dog_resource)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_06_remove_resource_from_folder_succeeds_if_given_valid_resource_uuid(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_folder = dog.get_folders()[0]
+        dog_resources = dog.get_resources()
+        resource_uuid = dog_resources[0].get_uuid()
+        resource_name = dog_resources[0].get_title()
+
+        dog_folder.add_resource(resource_uuid)
+
+        dog_folder_resources = dog_folder.get_resources()
+
+        dog_folder_names = []
+        for resource in dog_folder_resources:
+            dog_folder_names.append(resource.get_title())
+
+        self.assertTrue(resource_name in dog_folder_names)
+
+        dog_folder.remove_resource(resource_uuid)
+
+        dog_folder_resources = dog_folder.get_resources()
+
+        dog_folder_names = []
+        for resource in dog_folder_resources:
+            dog_folder_names.append(resource.get_title())
+
+        self.assertFalse(resource_name in dog_folder_names)
 
 class T18RemoveResourceFromTag(unittest.TestCase):
     def setUp(self):
@@ -1248,6 +1609,10 @@ class T18RemoveResourceFromTag(unittest.TestCase):
         admin_caps['register_user']('cat', 'one mean meower')
         admin_caps['register_user']('dog', 'one little arfer')
 
+        dog = self.login("dog")
+        dog.register_tag("dog_food")
+        dog.register_resource("/dog/food", "kibbles")
+
     def login(self, login):
         self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
         self.login_name = login
@@ -1256,24 +1621,103 @@ class T18RemoveResourceFromTag(unittest.TestCase):
 
     def test_01_remove_resource_from_tag_fails_if_resource_uuid_is_none(self):
         # become an unprivileged user
-        cat = self.login('dog')
+        dog = self.login('dog')
 
-        self.assertTrue(True)
+        dog_tag = dog.get_tags()[0]
+
+        try:
+            dog_tag.remove_resource(None)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_02_remove_resource_from_tag_fails_if_resource_uuid_is_the_wrong_type(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+
+        try:
+            dog_tag.remove_resource(123)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_03_remove_resource_from_tag_fails_if_resource_uuid_is_empty(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+
+        try:
+            dog_tag.remove_resource("")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_04_remove_resource_from_tag_fails_if_resource_does_not_exist(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+
+        try:
+            dog_tag.remove_resource("this_resource_does_not_exist")
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_05_remove_resource_from_tag_fails_if_tag_does_not_have_the_resource(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+        dog_resource = dog.get_resources()[0].get_uuid()
+
+        try:
+            dog_tag.remove_resource(dog_resource)
+            self.fail("expected an exception")
+        except HSAUsageException, ex:
+            pass
+        except:
+            self.fail("expected an HSAException")
 
     def test_06_remove_resource_from_tag_succeeds_if_given_valid_resource_uuid(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login('dog')
+
+        dog_tag = dog.get_tags()[0]
+        dog_resources = dog.get_resources()
+        resource_uuid = dog_resources[0].get_uuid()
+        resource_name = dog_resources[0].get_title()
+
+        dog_tag.add_resource(resource_uuid)
+
+        dog_tag_resources = dog_tag.get_resources()
+
+        dog_tag_names = []
+        for resource in dog_tag_resources:
+            dog_tag_names.append(resource.get_title())
+
+        self.assertTrue(resource_name in dog_tag_names)
+
+        dog_tag.remove_resource(resource_uuid)
+
+        dog_tag_resources = dog_tag.get_resources()
+
+        dog_tag_names = []
+        for resource in dog_tag_resources:
+            dog_tag_names.append(resource.get_title())
+
+        self.assertFalse(resource_name in dog_tag_names)
 
 class T19GetResourcesInFolder(unittest.TestCase):
     def setUp(self):
@@ -1285,6 +1729,10 @@ class T19GetResourcesInFolder(unittest.TestCase):
         admin_caps['register_user']('cat', 'one mean meower')
         admin_caps['register_user']('dog', 'one little arfer')
 
+        dog = self.login("dog")
+        dog.register_folder("dog_food")
+        dog.register_resource("/dog/food", "kibbles")
+
     def login(self, login):
         self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
         self.login_name = login
@@ -1293,12 +1741,28 @@ class T19GetResourcesInFolder(unittest.TestCase):
 
     def test_01_get_resources_in_folder_returns_a_list_of_resources(self):
         # become an unprivileged user
-        cat = self.login('dog')
+        dog = self.login("dog")
 
-        self.assertTrue(True)
+        dog_folder = dog.get_folders()[0]
+
+        dog_folder.add_resource(dog.get_resources()[0].get_uuid())
+
+        dog_folder_resources = dog_folder.get_resources()
+
+        self.assertTrue(type(dog_folder_resources) == list)
+        self.assertTrue(type(dog_folder_resources[0]) == HSAccessResource)
+        self.assertTrue(dog_folder_resources[0].get_title() == "kibbles")
 
     def test_02_get_resources_in_folder_returns_an_empty_list_in_no_resources_exist(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login("dog")
+
+        dog_folder = dog.get_folders()[0]
+
+        dog_folder_resources = dog_folder.get_resources()
+
+        self.assertTrue(type(dog_folder_resources) == list)
+        self.assertTrue(len(dog_folder_resources) == 0)
 
 class T20GetResourcesByTag(unittest.TestCase):
     def setUp(self):
@@ -1310,6 +1774,10 @@ class T20GetResourcesByTag(unittest.TestCase):
         admin_caps['register_user']('cat', 'one mean meower')
         admin_caps['register_user']('dog', 'one little arfer')
 
+        dog = self.login("dog")
+        dog.register_tag("dog_food")
+        dog.register_resource("/dog/food", "kibbles")
+
     def login(self, login):
         self.hsaccess_instance = HSAccess(login, 'unused', 'acouch', 'acouch', 'xyzzy', 'localhost', '5432')
         self.login_name = login
@@ -1318,12 +1786,28 @@ class T20GetResourcesByTag(unittest.TestCase):
 
     def test_01_get_resources_by_tag_returns_a_list_of_resources(self):
         # become an unprivileged user
-        cat = self.login('dog')
+        dog = self.login("dog")
 
-        self.assertTrue(True)
+        dog_tag = dog.get_tags()[0]
+
+        dog_tag.add_resource(dog.get_resources()[0].get_uuid())
+
+        dog_tag_resources = dog_tag.get_resources()
+
+        self.assertTrue(type(dog_tag_resources) == list)
+        self.assertTrue(type(dog_tag_resources[0]) == HSAccessResource)
+        self.assertTrue(dog_tag_resources[0].get_title() == "kibbles")
 
     def test_02_get_resources_by_tag_returns_an_empty_list_in_no_resources_exist(self):
-        self.assertTrue(True)
+        # become an unprivileged user
+        dog = self.login("dog")
+
+        dog_tag = dog.get_tags()[0]
+
+        dog_tag_resources = dog_tag.get_resources()
+
+        self.assertTrue(type(dog_tag_resources) == list)
+        self.assertTrue(len(dog_tag_resources) == 0)
 
 if __name__ == '__main__':
     unittest.main()
