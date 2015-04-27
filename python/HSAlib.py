@@ -4069,11 +4069,7 @@ class HSAccessCore(object):
 
         This returns a dictionary structure of the form::
 
-<<<<<<< HEAD
-            { folder: { resource_uuid : { title : <resource title>, 'access' : <access code> }}}
-=======
             { 'folder': { 'resource_uuid': { 'title' : *resource title*, 'access' : *access code* }}}
->>>>>>> master
 
         1. If folder is None, report on the whole hierarchy of user folders
 
